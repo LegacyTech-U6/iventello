@@ -78,7 +78,7 @@ async function seedPredefinedRoles() {
 const threst_hold = [{}];
 const env = process.env.NODE_ENV || "development";
 // ⚠️ ATTENTION: supprime les données existantes en dev
-db.sequelize.sync().then(async () => {
+db.sequelize.sync({alter:true}).then(async () => {
   console.log("✅ Toutes les tables ont été créées !");
 
   try {
