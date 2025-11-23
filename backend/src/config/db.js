@@ -4,34 +4,59 @@ dns.setDefaultResultOrder("ipv4first");
 const { Sequelize, DataTypes } = require("sequelize");
 require("dotenv").config();
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: "postgres",
-  protocol: "postgres",
-  dialectOptions: {
-    ssl: {
-      require: true,          // obligatoire pour Supabase
-      rejectUnauthorized: false // permet de ne pas valider le certificat
+let sequelize;
+
+// Si on est en local
+if (process.env.NODE_ENV === "development") {
+  console.log("🟢 Mode local: connexion à PostgreSQL local");
+
+  sequelize = new Sequelize(
+    process.env.LOCAL_DB_NAME,
+    process.env.LOCAL_DB_USER,
+    process.env.LOCAL_DB_PASSWORD,
+    {
+      host: process.env.LOCAL_DB_HOST,
+      port: process.env.LOCAL_DB_PORT,
+      dialect: "postgres",
+      logging: false,
     }
-  },
-  logging: false
-});
+  );
+
+} else {
+  // Production => Supabase
+  console.log("🔵 Mode production: connexion à Supabase");
+
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: "postgres",
+    protocol: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+    logging: false,
+  });
+}
 
 // Test de connexion
 async function testConnection() {
   try {
     await sequelize.authenticate();
-    console.log('✅ Connexion à la DB Supabase réussie !');
+    console.log("✅ Connexion DB réussie !");
   } catch (error) {
-    console.error('❌ Impossible de se connecter à la DB :', error);
+    console.error("❌ Connexion DB échouée :", error);
   }
 }
 
 testConnection();
 
-
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+
+
+
 
 
 // ===============================
@@ -52,24 +77,14 @@ db.Invoice = require("../models/invoice.model")(sequelize, DataTypes);
 db.InvoiceItem = require("../models/invoiceItem.model")(sequelize, DataTypes);
 db.Sales = require("../models/Sales.model")(sequelize, DataTypes);
 db.Order = require("../models/order.model")(sequelize, DataTypes);
-db.StockMovement = require("../models/StockMovement.model")(
-  sequelize,
-  DataTypes
-);
 db.CurrencyRate = require("../models/CurrencyRate.model")(sequelize, DataTypes);
 db.mailSettings = require("../models/mailSetting.model")(sequelize, DataTypes);
 db.Setting = require("../models/setting.model")(sequelize, DataTypes);
 db.activities = require("../models/activity.model")(sequelize, DataTypes);
 db.Entreprise = require("../models/enterprise.model")(sequelize, DataTypes);
-db.entrepriseUsers = require("../models/entrepriseUser.model")(
-  sequelize,
-  DataTypes
-);
+
 db.roles = require("../models/role.model")(sequelize, DataTypes);
-db.rolePermissions = require("../models/rolePermission.model")(
-  sequelize,
-  DataTypes
-);
+
 db.permissions = require("../models/permission.model")(sequelize, DataTypes);
 // =============================================================
 // 🔗 RELATIONS ENTRE LES MODÈLES (Stockly)
@@ -93,15 +108,6 @@ db.Worker.belongsTo(db.User, {
   as: "user",
 });
 
-// Un utilisateur peut être lié à plusieurs entreprises (via EntrepriseUsers)
-db.User.hasMany(db.entrepriseUsers, {
-  as: "entrepriseUsers",
-  foreignKey: "user_id",
-});
-db.entrepriseUsers.belongsTo(db.User, {
-  foreignKey: "user_id",
-  as: "user",
-});
 
 // Un utilisateur peut créer plusieurs factures
 db.User.hasMany(db.Invoice, { as: "invoices", foreignKey: "user_id" });
@@ -115,6 +121,12 @@ db.User.hasMany(db.activities, { as: "activities", foreignKey: "user_id" });
 db.activities.belongsTo(db.User, {
   foreignKey: "user_id",
   as: "user",
+});
+
+db.Worker.hasMany(db.activities, { as: "activities", foreignKey: "worker_id" });
+db.activities.belongsTo(db.Worker, {
+  foreignKey: "worker_id",
+  as: "worker",
 });
 
 
@@ -136,15 +148,6 @@ db.Worker.belongsTo(db.Entreprise, {
   as: "entreprise",
 });
 
-// Une entreprise peut avoir plusieurs utilisateurs internes
-db.Entreprise.hasMany(db.entrepriseUsers, {
-  as: "entrepriseUsers",
-  foreignKey: "entreprise_id",
-});
-db.entrepriseUsers.belongsTo(db.Entreprise, {
-  foreignKey: "entreprise_id",
-  as: "entreprise",
-});
 
 // Une entreprise peut avoir plusieurs clients
 db.Entreprise.hasMany(db.Client, {
@@ -206,16 +209,6 @@ db.Sales.belongsTo(db.Entreprise, {
 // Une entreprise peut avoir plusieurs commandes
 db.Entreprise.hasMany(db.Order, { as: "orders", foreignKey: "entreprise_id" });
 db.Order.belongsTo(db.Entreprise, {
-  foreignKey: "entreprise_id",
-  as: "entreprise",
-});
-
-// Une entreprise peut avoir plusieurs mouvements de stock
-db.Entreprise.hasMany(db.StockMovement, {
-  as: "stockMovements",
-  foreignKey: "entreprise_id",
-});
-db.StockMovement.belongsTo(db.Entreprise, {
   foreignKey: "entreprise_id",
   as: "entreprise",
 });
@@ -305,20 +298,11 @@ db.Sales.belongsTo(db.Product, { foreignKey: "product_id", as: "product" });
 db.Product.hasMany(db.Order, { as: "orders", foreignKey: "product_id" });
 db.Order.belongsTo(db.Product, { foreignKey: "product_id", as: "product" });
 
-// Produit peut avoir plusieurs mouvements de stock
-db.Product.hasMany(db.StockMovement, {
-  as: "movements",
-  foreignKey: "produit_id",
-});
-db.StockMovement.belongsTo(db.Product, {
-  foreignKey: "produit_id",
-  as: "product",
-});
+
 db.activities.belongsTo(db.Product, {
   foreignKey: "entity_id",
   as: "product",
 });
-
 // =======================
 // 📦 ORDER RELATIONS
 // =======================
@@ -326,18 +310,6 @@ db.Supplier.hasMany(db.Order, { as: "orders", foreignKey: "supplier_id" });
 db.Order.belongsTo(db.Supplier, {
   foreignKey: "supplier_id",
   as: "supplier",
-});
-
-// =======================
-// 🔁 STOCK MOVEMENTS
-// =======================
-db.entrepriseUsers.hasMany(db.StockMovement, {
-  as: "movements",
-  foreignKey: "created_by",
-});
-db.StockMovement.belongsTo(db.entrepriseUsers, {
-  foreignKey: "created_by",
-  as: "createdBy",
 });
 
 // =======================
@@ -352,19 +324,6 @@ db.Setting.belongsTo(db.Entreprise, {
   as: "entreprise",
 });
 
-// =======================
-// 🧱 ROLE / PERMISSION RELATIONS
-// =======================
-db.roles.belongsToMany(db.permissions, {
-  through: db.rolePermissions,
-  foreignKey: "role_id",
-  as: "permissions",
-});
-db.permissions.belongsToMany(db.roles, {
-  through: db.rolePermissions,
-  foreignKey: "permission_id",
-  as: "roles",
-});
 
 // ===============================
 // EXPORT

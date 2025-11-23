@@ -81,11 +81,11 @@ const InvoiceController = {
         });
 
         const entreprise = await Entreprise.findByPk(entreprise_id);
-    const user_id = req.user?.id || null;
+        const user_id = req.user?.id || null;
 
         // Log the sale activity
         await logActivity({
-          user_id,
+          user: req.user,
           action: "Sale",
           entity_type: "Product",
           entity_id: product.id,

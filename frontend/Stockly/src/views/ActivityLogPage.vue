@@ -97,8 +97,9 @@
               </td>
 
               <td class="px-6 py-4 text-gray-600">
-                {{ activity.user?.username || 'Ruxel Djeutchou' }}
+                {{ activity.performed_by?.username || activity.performed_by?.name || '—' }}
               </td>
+
               <td class="px-6 py-4 text-gray-900">
                 {{ activity.amount ? activity.amount.toFixed(2) : '200.00' }} FCFA
               </td>

@@ -134,11 +134,11 @@ exports.createProduct = async (req, res) => {
 
     const product = await Product.create(productData);
 
-    const user_id = req.user?.id || null;
+    const user = req.user || null;
 
     // 🔹 Log activity
     await logActivity({
-      user_id,
+      user,
       action: "Create Product",
       entity_type: "Product",
       entity_id: product.id,
