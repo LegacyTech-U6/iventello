@@ -30,7 +30,7 @@
 
             <div>
               <label class="text-gray-700 text-sm font-medium">Last Name</label>
-              <input v-model="user.last_name" placeholder="Doe"
+              <input v-model="user.Last_name" placeholder="Doe"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
             </div>
           </div>
