@@ -66,7 +66,7 @@
             </div>
 
             <router-link :to="dashboardRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(dashboardRoute)" @click="closeSidebarOnMobile">
               <span class="material-icons">
                 dashboard
@@ -84,14 +84,14 @@
             </div>
 
             <router-link :to="productsRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(productsRoute)" @click="closeSidebarOnMobile">
               <Package :size="20" class="flex-shrink-0" />
               <span>Produits</span>
             </router-link>
 
             <router-link :to="categoriesRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(categoriesRoute)" @click="closeSidebarOnMobile">
               <span class="material-icons">
                 category
@@ -100,7 +100,7 @@
             </router-link>
 
             <router-link :to="lowStocksRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(lowStocksRoute)" @click="closeSidebarOnMobile">
               <span class="material-icons">
                 trending_down
@@ -122,7 +122,7 @@
             </div>
 
             <router-link v-if="authStore.can('canMakeSales')" :to="salesRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(salesRoute)" @click="closeSidebarOnMobile">
               <span class="material-icons">
                 point_of_sale
@@ -131,7 +131,7 @@
             </router-link>
 
             <router-link v-if="authStore.can('canViewInvoices')" :to="invoicesRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(invoicesRoute)" @click="closeSidebarOnMobile">
               <span class="material-icons">
                 receipt_long
@@ -140,7 +140,7 @@
             </router-link>
 
             <router-link v-if="authStore.can('canMakeSales')" :to="clientsRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(clientsRoute)" @click="closeSidebarOnMobile">
               <span class="material-icons">
                 group
@@ -149,7 +149,7 @@
             </router-link>
 
             <router-link v-if="authStore.can('canViewDashboard')" :to="reportsRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(reportsRoute)" @click="closeSidebarOnMobile">
               <span class="material-icons">
                 analytics
@@ -158,7 +158,7 @@
             </router-link>
 
             <router-link v-if="authStore.can('canAccessSettings')" :to="ActivityRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(ActivityRoute)" @click="closeSidebarOnMobile">
               <span class="material-icons">
                 timeline
@@ -387,8 +387,8 @@ const userInitials = computed(() => {
 const isActive = (path) => {
   const isCurrentRoute = route.path === path
   return isCurrentRoute
-    ? 'bg-blue-50 text-blue-700 shadow-sm'
-    : 'text-gray-700 hover:bg-gray-50'
+    ? 'bg-green-300 text-green-700 shadow-sm'
+    : 'text-green-700 hover:bg-gray-50'
 }
 
 const toggleNotificationPanel = () => {
