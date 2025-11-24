@@ -169,7 +169,7 @@
         </nav>
         <div class="p-5">
           <ValidationButton :text="authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion'"
-            icon='<span class="material-symbols-outlined">logout</span>' size="large" :asyncClick="logoutEntreprise"
+             :icon="() => h('span', { class: 'material-symbols-outlined', style: 'font-size: 20px' }, 'logout')" size="large" :asyncClick="logoutEntreprise"
             class="w-full mt-3 flex justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-3 rounded-2xl font-semibold shadow-md hover:shadow-lg transition-all" />
         </div>
 
