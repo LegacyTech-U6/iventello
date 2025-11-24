@@ -77,32 +77,30 @@ async function seedPredefinedRoles() {
 }
 const threst_hold = [{}];
 const env = process.env.NODE_ENV || "production";
-// ⚠️ ATTENTION: supprime les données existantes en dev
-if (process.env.NODE_ENV === "development") {
-  // 🔧 En DEV seulement : sync automatique
-  db.sequelize.sync({ alter: true }).then(async () => {
-    console.log("🟢 Sync en développement !");
+async function startApp() {
 
-    try {
-      await startCurrencyCron();
-      await seedPredefinedRoles();
-      await createAllUsersView();
-    } catch (err) {
-      console.error("Error during setup:", err);
-    }
-  });
-} else {
-  // 🔵 En PRODUCTION : surtout pas de sync !!!
-  console.log("🚫 Sync désactivé en production");
+  if (process.env.NODE_ENV === "development") {
+    console.log("🟢 Sync DEV activé");
 
-  try {
-    await startCurrencyCron();
-    await seedPredefinedRoles();
-    await createAllUsersView();
-  } catch (err) {
-    console.error("Error during production setup:", err);
+    await db.sequelize.sync({ alter: true });
+
+  } else {
+    console.log("🚫 Sync désactivé en production");
   }
+
+  // Ici tu peux utiliser await
+  await startCurrencyCron();
+  await seedPredefinedRoles();
+  await createAllUsersView();
+
+  // Lancement du serveur Express
+  app.listen(PORT, () => {
+    console.log(`🚀 Serveur lancé sur le port ${PORT}`);
+  });
 }
+
+startApp();
+
 
 app.use(express.json());
 app.use((req, res, next) => {
