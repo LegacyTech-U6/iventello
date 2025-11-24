@@ -167,19 +167,13 @@
             </router-link>
           </div>
         </nav>
-
-        <!-- Desktop Notification Button -->
-        <div class="hidden lg:block px-4 py-3 border-t border-gray-100">
-
+        <div class="p-5">
+          <ValidationButton :text="authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion'"
+            icon='<span class="material-symbols-outlined">logout</span>' size="large" :asyncClick="logoutEntreprise"
+            class="w-full mt-3 flex justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-3 rounded-2xl font-semibold shadow-md hover:shadow-lg transition-all" />
         </div>
 
-        <button @click="logoutEntreprise"
-          class="w-full mt-3 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md">
-          <span class="material-icons">
-            logout
-          </span>
-          <span>{{ authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion' }}</span>
-        </button>
+
 
       </aside>
     </Transition>
@@ -262,6 +256,7 @@ import { useAuthStore } from '@/stores/authStore.js'
 import { useNotificationStore } from '@/stores/notificationStore'
 import NotificationPanel from '@/components/ui/NotificationPanel.vue'
 import Iventello from '@/assets/iventello.png'
+import ValidationButton from './ui/buttons/ValidationButton.vue'
 
 const router = useRouter()
 const route = useRoute()
