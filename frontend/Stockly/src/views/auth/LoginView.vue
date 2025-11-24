@@ -59,7 +59,7 @@
         <div class=" justify-center">
           <ValidationButton
             
-            text="Sign in" width="450px"  loadingText="Signing in" color="#0C333B" variant="flat" :icon="Check" size="large" :asyncClick="handleLogin"
+            text="Sign in" width="100%"  loadingText="Signing in" color="#0C333B" variant="flat" :icon="Check" size="large" :asyncClick="handleLogin"
             :loading="isLoading" />
         </div>
         <!-- Links -->
