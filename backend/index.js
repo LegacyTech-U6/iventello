@@ -82,7 +82,7 @@ async function startApp() {
   if (process.env.NODE_ENV === "development") {
     console.log("🟢 Sync DEV activé");
 
-    await db.sequelize.sync({ alter: true });
+    await db.sequelize.sync();
 
   } else {
     console.log("🚫 Sync désactivé en production");

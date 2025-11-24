@@ -3,7 +3,7 @@
     <div class="max-w-8xl mx-auto">
       <!-- Header -->
       <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">Daily Sales Reports</h1>
+       
         <p class="text-gray-600 mt-1">View and analyze your daily sales performance</p>
       </div>
 

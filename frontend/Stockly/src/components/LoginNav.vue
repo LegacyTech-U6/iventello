@@ -4,34 +4,28 @@
     <div class="fixed top-0 left-0 right-0 z-50 lg:hidden bg-white border-b border-gray-200 shadow-sm">
       <div class="flex items-center justify-between px-4 py-3">
         <!-- Menu Button -->
-        <button
-          @click="sidebarOpen = !sidebarOpen"
-          class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Toggle menu"
-        >
+        <button @click="sidebarOpen = !sidebarOpen" class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Toggle menu">
           <Menu v-if="!sidebarOpen" class="w-6 h-6 text-gray-700" />
           <X v-else class="w-6 h-6 text-gray-700" />
         </button>
 
         <!-- Logo -->
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-            <span class="text-white font-bold text-sm">I</span>
+          <div class=" border-gray-200/50 p-5">
+            <img :src="Iventello" alt="Logo" class="w-42" />
           </div>
-          <h1 class="font-semibold text-gray-900">Iventelo</h1>
+
         </div>
 
         <!-- Notification Button -->
-        <button
-          @click="toggleNotificationPanel"
-          class="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Notifications"
-        >
-          <Bell class="w-6 h-6 text-gray-700" />
-          <span
-            v-if="unreadCount > 0"
-            class="absolute top-1 right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-xs font-semibold rounded-full flex items-center justify-center px-1"
-          >
+        <button @click="toggleNotificationPanel" class="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Notifications">
+          <span class="material-icons">
+            notifications
+          </span>
+          <span v-if="unreadCount > 0"
+            class="absolute top-1 right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-xs font-semibold rounded-full flex items-center justify-center px-1">
             {{ unreadCount > 9 ? '9+' : unreadCount }}
           </span>
         </button>
@@ -40,33 +34,22 @@
 
     <!-- Overlay for mobile -->
     <Transition name="fade">
-      <div
-        v-if="sidebarOpen"
-        @click="sidebarOpen = false"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-      ></div>
+      <div v-if="sidebarOpen" @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"></div>
     </Transition>
 
     <!-- Sidebar -->
     <Transition name="slide">
-      <aside
-        v-show="sidebarOpen || isDesktop"
-        :class="[
-          'fixed lg:static top-0 left-0 h-screen bg-white border-r border-gray-200 z-40 flex flex-col shadow-xl lg:shadow-none',
-          'w-72',
-        ]"
-      >
+      <aside v-show="sidebarOpen || isDesktop" :class="[
+        'fixed lg:static top-0 left-0 h-screen bg-white border-r border-gray-200 z-40 flex flex-col shadow-xl lg:shadow-none',
+        'w-72',
+      ]">
         <!-- Desktop Logo -->
-        <div class="hidden lg:block px-6 py-5 border-b border-gray-100">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-sm">
-              <span class="text-white font-bold">I</span>
-            </div>
-            <div>
-              <h1 class="font-semibold text-gray-900 text-lg tracking-tight">Iventelo</h1>
-              <p class="text-xs text-gray-500">Gestion d'inventaire</p>
-            </div>
+        <div class="hidden lg:block px-6 py-5  ">
+          <div class=" border-gray-200/50 p-5">
+            <img :src="Iventello" alt="Logo" class="w-42" />
           </div>
+
         </div>
 
         <!-- Mobile spacer -->
@@ -82,13 +65,12 @@
               </span>
             </div>
 
-            <router-link
-              :to="dashboardRoute"
+            <router-link :to="dashboardRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(dashboardRoute)"
-              @click="closeSidebarOnMobile"
-            >
-              <LayoutDashboard :size="20" class="flex-shrink-0" />
+              :class="isActive(dashboardRoute)" @click="closeSidebarOnMobile">
+              <span class="material-icons">
+                dashboard
+              </span>
               <span>Tableau de bord</span>
             </router-link>
           </div>
@@ -101,38 +83,31 @@
               </span>
             </div>
 
-            <router-link
-              :to="productsRoute"
+            <router-link :to="productsRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(productsRoute)"
-              @click="closeSidebarOnMobile"
-            >
+              :class="isActive(productsRoute)" @click="closeSidebarOnMobile">
               <Package :size="20" class="flex-shrink-0" />
               <span>Produits</span>
             </router-link>
 
-            <router-link
-              :to="categoriesRoute"
+            <router-link :to="categoriesRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(categoriesRoute)"
-              @click="closeSidebarOnMobile"
-            >
-              <FolderTree :size="20" class="flex-shrink-0" />
+              :class="isActive(categoriesRoute)" @click="closeSidebarOnMobile">
+              <span class="material-icons">
+                category
+              </span>
               <span>Catégories</span>
             </router-link>
 
-            <router-link
-              :to="lowStocksRoute"
+            <router-link :to="lowStocksRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(lowStocksRoute)"
-              @click="closeSidebarOnMobile"
-            >
-              <TrendingDown :size="20" class="flex-shrink-0" />
+              :class="isActive(lowStocksRoute)" @click="closeSidebarOnMobile">
+              <span class="material-icons">
+                trending_down
+              </span>
               <span>Stock faible</span>
-              <span
-                v-if="lowStockCount > 0"
-                class="ml-auto bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-full"
-              >
+              <span v-if="lowStockCount > 0"
+                class="ml-auto bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-full">
                 {{ lowStockCount }}
               </span>
             </router-link>
@@ -146,58 +121,48 @@
               </span>
             </div>
 
-            <router-link
-              v-if="authStore.can('canMakeSales')"
-              :to="salesRoute"
+            <router-link v-if="authStore.can('canMakeSales')" :to="salesRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(salesRoute)"
-              @click="closeSidebarOnMobile"
-            >
-              <ShoppingCart :size="20" class="flex-shrink-0" />
+              :class="isActive(salesRoute)" @click="closeSidebarOnMobile">
+              <span class="material-icons">
+                point_of_sale
+              </span>
               <span>Ventes</span>
             </router-link>
 
-            <router-link
-              v-if="authStore.can('canViewInvoices')"
-              :to="invoicesRoute"
+            <router-link v-if="authStore.can('canViewInvoices')" :to="invoicesRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(invoicesRoute)"
-              @click="closeSidebarOnMobile"
-            >
-              <FileText :size="20" class="flex-shrink-0" />
+              :class="isActive(invoicesRoute)" @click="closeSidebarOnMobile">
+              <span class="material-icons">
+                receipt_long
+              </span>
               <span>Factures</span>
             </router-link>
 
-            <router-link
-              v-if="authStore.can('canMakeSales')"
-              :to="clientsRoute"
+            <router-link v-if="authStore.can('canMakeSales')" :to="clientsRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(clientsRoute)"
-              @click="closeSidebarOnMobile"
-            >
-              <Users :size="20" class="flex-shrink-0" />
+              :class="isActive(clientsRoute)" @click="closeSidebarOnMobile">
+              <span class="material-icons">
+                group
+              </span>
               <span>Clients</span>
             </router-link>
 
-            <router-link
-              v-if="authStore.can('canViewDashboard')"
-              :to="reportsRoute"
+            <router-link v-if="authStore.can('canViewDashboard')" :to="reportsRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(reportsRoute)"
-              @click="closeSidebarOnMobile"
-            >
-              <BarChart3 :size="20" class="flex-shrink-0" />
+              :class="isActive(reportsRoute)" @click="closeSidebarOnMobile">
+              <span class="material-icons">
+                analytics
+              </span>
               <span>Rapports</span>
             </router-link>
 
-            <router-link
-              v-if="authStore.can('canAccessSettings')"
-              :to="ActivityRoute"
+            <router-link v-if="authStore.can('canAccessSettings')" :to="ActivityRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group"
-              :class="isActive(ActivityRoute)"
-              @click="closeSidebarOnMobile"
-            >
-              <Activity :size="20" class="flex-shrink-0" />
+              :class="isActive(ActivityRoute)" @click="closeSidebarOnMobile">
+              <span class="material-icons">
+                timeline
+              </span>
               <span>Audit Trail</span>
             </router-link>
           </div>
@@ -205,16 +170,14 @@
 
         <!-- Desktop Notification Button -->
         <div class="hidden lg:block px-4 py-3 border-t border-gray-100">
-          <button
-            @click="toggleNotificationPanel"
-            class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 rounded-xl transition-colors group relative"
-          >
-            <Bell class="w-5 h-5 text-gray-600 group-hover:text-gray-700" />
+          <button @click="toggleNotificationPanel"
+            class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 rounded-xl transition-colors group relative">
+            <span class="material-icons">
+              notifications
+            </span>
             <span class="text-sm font-medium text-gray-700">Notifications</span>
-            <span
-              v-if="unreadCount > 0"
-              class="ml-auto bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full min-w-[20px] text-center"
-            >
+            <span v-if="unreadCount > 0"
+              class="ml-auto bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full min-w-[20px] text-center">
               {{ unreadCount > 9 ? '9+' : unreadCount }}
             </span>
           </button>
@@ -224,7 +187,8 @@
         <div class="mt-auto border-t border-gray-100">
           <div class="px-4 py-4">
             <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all cursor-pointer group">
-              <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-sm">
+              <div
+                class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-sm">
                 {{ userInitials }}
               </div>
               <div class="flex-1 min-w-0">
@@ -233,11 +197,11 @@
                 <p class="text-xs text-blue-600 font-medium mt-0.5">{{ userRoleDisplay }}</p>
               </div>
             </div>
-            <button
-              @click="logoutEntreprise"
-              class="w-full mt-3 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md"
-            >
-              <LogOut :size="18" />
+            <button @click="logoutEntreprise"
+              class="w-full mt-3 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md">
+              <span class="material-icons">
+                logout
+              </span>
               <span>{{ authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion' }}</span>
             </button>
           </div>
@@ -251,7 +215,7 @@
       <header class="hidden lg:flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
         <div>
           <h2 class="text-xl font-semibold text-gray-900">{{ pageTitle }}</h2>
-          <p class="text-sm text-gray-500">{{ activeEntreprise?.name || 'Entreprise' }}</p>
+          
         </div>
       </header>
 
@@ -264,10 +228,7 @@
     </div>
 
     <!-- Notification Panel -->
-    <NotificationPanel
-      v-model:notificationOpen="notificationOpen"
-      @close="notificationOpen = false"
-    />
+    <NotificationPanel v-model:notificationOpen="notificationOpen" @close="notificationOpen = false" />
   </div>
 </template>
 
@@ -293,6 +254,7 @@ import {
 import { useAuthStore } from '@/stores/authStore.js'
 import { useNotificationStore } from '@/stores/notificationStore'
 import NotificationPanel from '@/components/ui/NotificationPanel.vue'
+import Iventello from '@/assets/iventello.png'
 
 const router = useRouter()
 const route = useRoute()
@@ -315,13 +277,13 @@ const pageTitle = computed(() => {
   const routeName = route.name
   const titles = {
     dashboard: 'Tableau de bord',
-    products: 'Produits',
-    categories: 'Catégories',
-    sales: 'Ventes',
-    invoices: 'Factures',
-    clients: 'Clients',
+    product: 'Product inventory',
+    categories: 'Category management',
+    sales: 'Point of sale',
+    invoices: 'Invoices',
+    client: 'Clients',
     reports: 'Rapports',
-    lowStock: 'Stock faible',
+    lowStock: 'Low Stock',
     AuditTrail: 'Audit Trail'
   }
   return titles[routeName] || 'Iventelo'

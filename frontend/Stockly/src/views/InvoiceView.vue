@@ -1,88 +1,69 @@
 <template>
   <div class="h-full bg-gray-50 p-1 md:px-8">
-    <!-- Header with Add Button -->
-    <div class="flex justify-between items-center mb-6">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Invoice</h1>
-      </div>
-      <div class="flex items-center gap-3">
-        <n-button type="success" @click="addInvoice">
-          <template #icon>
-            <Plus :size="18" />
-          </template>
-          Add Invoice
-        </n-button>
-      </div>
-    </div>
-
-    <!-- Filter Pills and Actions -->
-    <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
-      <div class="flex flex-wrap items-center gap-3 mb-4">
-        <!-- Status Filter Pills -->
-<div class="flex gap-2 overflow-x-auto py-2">
+ 
+<div class="flex gap-3 overflow-x-auto py-2">
+  <!-- All Invoice -->
   <div
-    class="inline-flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-full transition-colors flex-shrink-0"
+    class="relative flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg"
     :class="selectedStatus === null ? 'bg-green-50' : 'bg-gray-100'"
     @click="selectedStatus = null"
   >
+    <span class="material-icons text-green-500 text-xl">receipt_long</span>
     <span class="text-sm font-medium text-gray-700">All Invoice</span>
-    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-500 text-white">
+    <span
+      class="absolute top-0 right-0 -translate-x-1/4 -translate-y-1/4 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-500 text-white"
+    >
       {{ invoices.length }}
     </span>
   </div>
 
+  <!-- Paid -->
   <div
-    class="inline-flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-full transition-colors flex-shrink-0"
+    class="relative flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg"
     :class="selectedStatus === 'payée' ? 'bg-blue-50' : 'bg-gray-100'"
     @click="selectedStatus = 'payée'"
   >
+    <span class="material-icons text-blue-500 text-xl">check_circle</span>
     <span class="text-sm font-medium text-gray-700">Paid</span>
-    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500 text-white">
+    <span
+      class="absolute top-0 right-0 -translate-x-1/4 -translate-y-1/4 px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500 text-white"
+    >
       {{ paidCount }}
     </span>
   </div>
 
+  <!-- Pending -->
   <div
-    class="inline-flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-full transition-colors flex-shrink-0"
+    class="relative flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg"
     :class="selectedStatus === 'en_attente' ? 'bg-cyan-50' : 'bg-gray-100'"
     @click="selectedStatus = 'en_attente'"
   >
+    <span class="material-icons text-cyan-500 text-xl">hourglass_top</span>
     <span class="text-sm font-medium text-gray-700">Pending</span>
-    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-cyan-400 text-white">
+    <span
+      class="absolute top-0 right-0 -translate-x-1/4 -translate-y-1/4 px-2 py-0.5 text-xs font-semibold rounded-full bg-cyan-400 text-white"
+    >
       {{ pendingCount }}
     </span>
   </div>
 
+  <!-- Overdue -->
   <div
-    class="inline-flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-full transition-colors flex-shrink-0"
+    class="relative flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg"
     :class="selectedStatus === 'overdue' ? 'bg-red-50' : 'bg-gray-100'"
     @click="selectedStatus = 'overdue'"
   >
+    <span class="material-icons text-red-500 text-xl">error</span>
     <span class="text-sm font-medium text-gray-700">Overdue</span>
-    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white">
+    <span
+      class="absolute top-0 right-0 -translate-x-1/4 -translate-y-1/4 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white"
+    >
       {{ overdueCount }}
     </span>
   </div>
 </div>
 
 
-        <div class="flex-1"></div>
-
-      
-
-        <n-input v-model:value="searchQuery" placeholder="Search by Email" size="small" style="width: 200px">
-          <template #prefix>
-            <Search :size="16" class="text-gray-400" />
-          </template>
-        </n-input>
-
-        <n-button text>
-          <Filter :size="18" />
-        </n-button>
-
-       
-      </div>
-    </div>
 
     <!-- Table -->
  <!-- Table avec loader et empty state -->

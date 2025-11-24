@@ -3,43 +3,24 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+        <div class="w-10 h-10  rounded-lg flex items-center justify-center">
           <!-- icon -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="text-orange-500"
-          >
-            <circle cx="8" cy="21" r="1" />
-            <circle cx="19" cy="21" r="1" />
-            <path
-              d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
-            />
-          </svg>
+          <span class="material-icons">
+            shopping_cart
+          </span>
+
         </div>
         <h2 class="text-xl font-semibold text-gray-800">Sales & Purchase</h2>
       </div>
 
       <!-- Tabs -->
       <div class="flex gap-2 bg-gray-100 rounded-lg p-1">
-        <button
-          v-for="tab in tabs"
-          :key="tab.value"
-          @click="activeTab = tab.value"
-          :class="[
-            'px-4 py-1.5 rounded-md text-sm font-medium transition-colors',
-            activeTab === tab.value
-              ? 'bg-orange-500 text-white'
-              : 'text-gray-600 hover:text-gray-800',
-          ]"
-        >
+        <button v-for="tab in tabs" :key="tab.value" @click="activeTab = tab.value" :class="[
+          'px-4 py-1.5 rounded-md text-sm font-medium transition-colors',
+          activeTab === tab.value
+            ? 'bg-green-600 text-white'
+            : 'text-gray-600 hover:text-gray-800',
+        ]">
           {{ tab.label }}
         </button>
       </div>
@@ -49,14 +30,14 @@
     <div class="flex gap-6 mb-6">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <div class="w-3 h-3 rounded-full bg-orange-200"></div>
+          <div class="w-3 h-3 rounded-full bg-blue-600"></div>
           <span class="text-sm text-gray-500">Total Purchase</span>
         </div>
         <div class="text-2xl font-bold text-gray-800">{{ totalPurchase.toLocaleString() }}</div>
       </div>
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+          <div class="w-3 h-3 rounded-full bg-[#0C333B]"></div>
           <span class="text-sm text-gray-500">Total Sales</span>
         </div>
         <div class="text-2xl font-bold text-gray-800">{{ totalSales.toLocaleString() }}</div>
@@ -68,25 +49,13 @@
       <svg :width="chartWidth" :height="chartHeight" class="w-full">
         <!-- Grid lines -->
         <g v-for="(tick, i) in yAxisTicks" :key="`grid-${i}`">
-          <line
-            :x1="chartPadding.left"
-            :y1="getYPosition(tick)"
-            :x2="chartWidth - chartPadding.right"
-            :y2="getYPosition(tick)"
-            stroke="#f0f0f0"
-            stroke-width="1"
-            stroke-dasharray="3,3"
-          />
+          <line :x1="chartPadding.left" :y1="getYPosition(tick)" :x2="chartWidth - chartPadding.right"
+            :y2="getYPosition(tick)" stroke="#f0f0f0" stroke-width="1" stroke-dasharray="3,3" />
         </g>
 
         <!-- Y-axis labels -->
         <g v-for="(tick, i) in yAxisTicks" :key="`y-label-${i}`">
-          <text
-            :x="chartPadding.left - 10"
-            :y="getYPosition(tick) + 4"
-            text-anchor="end"
-            class="text-xs fill-gray-400"
-          >
+          <text :x="chartPadding.left - 10" :y="getYPosition(tick) + 4" text-anchor="end" class="text-xs fill-gray-400">
             {{ formatYAxis(tick) }}
           </text>
         </g>
@@ -94,59 +63,34 @@
         <!-- Bars -->
         <g v-for="(item, i) in chartData" :key="`bar-${i}`">
           <!-- Purchase -->
-          <rect
-            :x="getXPosition(i)"
-            :y="getYPosition(item.purchase)"
-            :width="barWidth"
-            :height="getBarHeight(item.purchase)"
-            fill="#fed7aa"
-            rx="4"
-            ry="4"
-            @mouseenter="showTooltip(item, i, $event)"
-            @mouseleave="hideTooltip"
-          />
+          <rect :x="getXPosition(i)" :y="getYPosition(item.purchase)" :width="barWidth"
+            :height="getBarHeight(item.purchase)" fill="#fed7aa" rx="4" ry="4"
+            @mouseenter="showTooltip(item, i, $event)" @mouseleave="hideTooltip" />
           <!-- Sales -->
-          <rect
-            :x="getXPosition(i)"
-            :y="getYPosition(item.sales)"
-            :width="barWidth"
-            :height="getBarHeight(item.sales)"
-            fill="#fb923c"
-            rx="4"
-            ry="4"
-            @mouseenter="showTooltip(item, i, $event)"
-            @mouseleave="hideTooltip"
-          />
+          <rect :x="getXPosition(i)" :y="getYPosition(item.sales)" :width="barWidth" :height="getBarHeight(item.sales)"
+            fill="#0C333B" rx="4" ry="4" @mouseenter="showTooltip(item, i, $event)" @mouseleave="hideTooltip" />
         </g>
 
         <!-- X-axis labels -->
         <g v-for="(item, i) in chartData" :key="`x-label-${i}`">
-          <text
-            :x="getXPosition(i) + barWidth / 2"
-            :y="chartHeight - chartPadding.bottom + 20"
-            text-anchor="middle"
-            class="text-xs fill-gray-400"
-          >
+          <text :x="getXPosition(i) + barWidth / 2" :y="chartHeight - chartPadding.bottom + 20" text-anchor="middle"
+            class="text-xs fill-gray-400">
             {{ item.time }}
           </text>
         </g>
       </svg>
 
       <!-- Tooltip -->
-      <div
-        v-if="tooltip.visible"
-        :style="{
-          position: 'absolute',
-          left: tooltip.x + 'px',
-          top: tooltip.y + 'px',
-          transform: 'translate(-50%, -100%)',
-          marginTop: '-10px',
-        }"
-        class="bg-white border border-gray-200 rounded-lg shadow-lg p-3 text-xs pointer-events-none"
-      >
+      <div v-if="tooltip.visible" :style="{
+        position: 'absolute',
+        left: tooltip.x + 'px',
+        top: tooltip.y + 'px',
+        transform: 'translate(-50%, -100%)',
+        marginTop: '-10px',
+      }" class="bg-white border border-gray-200 rounded-lg shadow-lg p-3 text-xs pointer-events-none">
         <div class="font-semibold mb-1">{{ tooltip.data.time }}</div>
         <div class="flex items-center gap-2 mb-1">
-          <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+          <div class="w-2 h-2 rounded-full bg-[#0C333B]"></div>
           <span>Total Sales: {{ tooltip.data.sales?.toLocaleString() }}</span>
         </div>
         <div class="flex items-center gap-2">
@@ -161,7 +105,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStatisticsStore } from '@/stores/statisticStore'
-
+import { ShoppingCart } from "lucide-vue-next";
 const store = useStatisticsStore()
 const tabs = [
   { label: 'This week', value: 'day' },
