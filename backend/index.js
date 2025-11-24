@@ -93,10 +93,7 @@ async function startApp() {
   await seedPredefinedRoles();
   await createAllUsersView();
 
-  // Lancement du serveur Express
-  app.listen(PORT, () => {
-    console.log(`🚀 Serveur lancé sur le port ${PORT}`);
-  });
+ 
 }
 
 startApp();
