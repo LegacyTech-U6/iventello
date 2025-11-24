@@ -78,7 +78,6 @@ db.InvoiceItem = require("../models/invoiceItem.model")(sequelize, DataTypes);
 db.Sales = require("../models/Sales.model")(sequelize, DataTypes);
 db.Order = require("../models/order.model")(sequelize, DataTypes);
 db.CurrencyRate = require("../models/CurrencyRate.model")(sequelize, DataTypes);
-db.mailSettings = require("../models/mailSetting.model")(sequelize, DataTypes);
 db.Setting = require("../models/setting.model")(sequelize, DataTypes);
 db.activities = require("../models/activity.model")(sequelize, DataTypes);
 db.Entreprise = require("../models/enterprise.model")(sequelize, DataTypes);
