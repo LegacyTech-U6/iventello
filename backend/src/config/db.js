@@ -84,7 +84,6 @@ db.Entreprise = require("../models/enterprise.model")(sequelize, DataTypes);
 
 db.roles = require("../models/role.model")(sequelize, DataTypes);
 
-db.permissions = require("../models/permission.model")(sequelize, DataTypes);
 // =============================================================
 // 🔗 RELATIONS ENTRE LES MODÈLES (Stockly)
 // =============================================================
