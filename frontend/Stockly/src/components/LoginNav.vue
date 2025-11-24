@@ -170,42 +170,17 @@
 
         <!-- Desktop Notification Button -->
         <div class="hidden lg:block px-4 py-3 border-t border-gray-100">
-          <button @click="toggleNotificationPanel"
-            class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 rounded-xl transition-colors group relative">
-            <span class="material-icons">
-              notifications
-            </span>
-            <span class="text-sm font-medium text-gray-700">Notifications</span>
-            <span v-if="unreadCount > 0"
-              class="ml-auto bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full min-w-[20px] text-center">
-              {{ unreadCount > 9 ? '9+' : unreadCount }}
-            </span>
-          </button>
+
         </div>
 
-        <!-- User Profile Section -->
-        <div class="mt-auto border-t border-gray-100">
-          <div class="px-4 py-4">
-            <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all cursor-pointer group">
-              <div
-                class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-sm">
-                {{ userInitials }}
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-gray-900 truncate">{{ userName }}</p>
-                <p class="text-xs text-gray-500 truncate">{{ userEmail }}</p>
-                <p class="text-xs text-blue-600 font-medium mt-0.5">{{ userRoleDisplay }}</p>
-              </div>
-            </div>
-            <button @click="logoutEntreprise"
-              class="w-full mt-3 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md">
-              <span class="material-icons">
-                logout
-              </span>
-              <span>{{ authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion' }}</span>
-            </button>
-          </div>
-        </div>
+        <button @click="logoutEntreprise"
+          class="w-full mt-3 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md">
+          <span class="material-icons">
+            logout
+          </span>
+          <span>{{ authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion' }}</span>
+        </button>
+
       </aside>
     </Transition>
 
@@ -215,8 +190,40 @@
       <header class="hidden lg:flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
         <div>
           <h2 class="text-xl font-semibold text-gray-900">{{ pageTitle }}</h2>
-          
+
         </div>
+        <div class="mt-auto flex">
+          <div class="flex items-center gap-6 p-4">
+
+            <!-- Icône Notifications -->
+            <button @click="toggleNotificationPanel" class="relative">
+              <span class="material-icons text-blue-400 text-2xl">
+                notifications
+              </span>
+              <span v-if="unreadCount > 0"
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                {{ unreadCount > 9 ? '9+' : unreadCount }}
+              </span>
+            </button>
+
+            <!-- Icône Settings -->
+            <button class="relative">
+              <span class="material-icons text-blue-400 text-2xl">
+                settings
+              </span>
+            </button>
+
+
+            <!-- Avatar Initiales -->
+            <div
+              class="w-20 h-10 rounded bg-green-800 text-green-600 font-bold text-sm flex items-center justify-center shadow-sm">
+              {{ userInitials }}
+            </div>
+
+          </div>
+
+        </div>
+
       </header>
 
       <!-- Page Content -->

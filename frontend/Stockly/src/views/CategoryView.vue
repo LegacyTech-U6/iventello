@@ -8,11 +8,10 @@
   - Recherche et filtrage
 -->
 <template>
-  <div class="p-8 max-w-[1400px] mx-auto bg-gray-50 min-h-screen">
+  <div class="p-8 max-w-[1400px] mx-auto bg-gray-50 h-full">
     <!-- En-tête avec titre et actions -->
     <div class="flex flex-col md:flex-row justify-between items-start mb-8">
       <div class="flex-1">
-        <h1 class="text-2xl font-bold text-gray-900 mb-1.5 tracking-tight">Category Management</h1>
         <p class="text-sm text-gray-500 font-normal">Manage your product categories</p>
       </div>
       <!-- Boutons: Retour et Ajouter catégorie -->

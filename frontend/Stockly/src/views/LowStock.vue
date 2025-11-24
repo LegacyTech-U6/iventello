@@ -1,31 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <div class="bg-white border-b border-gray-200 sticky top-0 z-10">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex items-center justify-between mb-3">
-          <button
-            class="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
-            @click="$router.back()"
-          >
-            <ChevronLeft class="w-5 h-5" />
-          </button>
-          <div class="flex-1 lg:flex-none">
-            <h1 class="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-900">Low Stock Alert</h1>
-          </div>
-          <button
-            class="hidden lg:flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            @click="$router.back()"
-          >
-            <ArrowLeft class="w-4 h-4" />
-            Back to Inventory
-          </button>
-        </div>
-        <p class="text-xs sm:text-sm text-gray-500 text-center lg:text-left">
-          {{ lowStockProducts.length }} products need attention
-        </p>
-      </div>
-    </div>
+  <div class="h-full bg-gray-50">
 
     <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-20">
       <!-- Stats Grid - 2 cols mobile, 3 cols tablet, 3 cols desktop -->

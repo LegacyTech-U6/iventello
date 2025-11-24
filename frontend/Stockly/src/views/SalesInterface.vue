@@ -9,9 +9,9 @@
   - Gestion du panier (mobile et desktop)
 -->
 <template>
-  <div class="sales-interface min-h-screen bg-gray-50">
+  <div class="sales-interface h-full bg-gray-50">
     <!-- En-tête -->
-    <div class="bg-white border-b border-gray-200">
+    <div class="bg-white lg:hidden border-b border-gray-200">
       <div class="p-4 lg:p-6">
         <div class="flex justify-between items-start">
           <div class="flex gap-2">

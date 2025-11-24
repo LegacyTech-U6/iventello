@@ -1,50 +1,283 @@
 <template>
-  <div class="p-6">
-    <!-- Header -->
-    <div class="flex flex-wrap items-center justify-between mb-8 bg-white/70 rounded-xl shadow-sm p-4">
-      <div class="flex items-center gap-4">
-        <!-- Logo -->
-        <img
-          v-if="activeEntreprise?.logo_url"
-          class="w-16 h-16 rounded-lg object-cover shadow"
-          :src="activeEntreprise.logo_url"
-          :alt="activeEntreprise.name"
-        />
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900 leading-tight">
-            {{ activeEntreprise?.name || 'No enterprise selected' }}
-          </h1>
-          <p class="text-gray-500 text-sm">
-            Management Dashboard — Monitor your inventory and business performance
-          </p>
-        </div>
-      </div>
+  <div class="p-8 space-y-8">
+    <div class="flex space-x-5">
+      <WelcomeCard :user="authStore.user?.username || 'User'" :enterprise="entrepriseStore.activeEntreprise.name"
+        :image=mascot />
+      <Logo :logo="entrepriseStore.activeEntreprise.logo_url"/>
     </div>
 
-    <!-- Main content -->
-    <div v-if="activeTab === 'overview'">
-      <DashboardOverview />
+    <!-- Stat Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
+        :gradientFrom="stat.gradientFrom" :gradientTo="stat.gradientTo" :trend="stat.trend" />
     </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <MetricCard v-for="stat in statsTable" :key="stat.id" :icon="stat.icon" :value="stat.value" :label="stat.label"
+        :trend="stat.trend" :viewLink="stat.viewLink" :icon-bg="stat.iconBg" :icon-color="stat.iconColor"
+        :period="stat.period" />
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Sales & Orders Overview -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <!-- <SalesPerformanceChart /> -->
+          <SalesChart />
+        </div>
+      </div>
+      <!-- Product Distribution -->
+
+      <RevenueCatgeory />
+    </div>
+
+    <!-- Rest of your dashboard content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <TopSellingProducts />
+      <LowStockAlertsPanel />
+      <RecentSales />
+    </div>
+
   </div>
 </template>
 
-
 <script setup>
-import { ref, computed, onMounted } from 'vue'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
-import DashboardOverview from '@/components/main/DashboardView.vue'
+import { computed, ref, onMounted } from 'vue'
+import { useProductStore } from '@/stores/productStore'
+import { useAuthStore } from '@/stores/authStore'
+import NotificationsPanel from '@/components/main/NotificationsPanel.vue'
+import LowStockAlertsPanel from '@/components/statistics/LowStockAlertsPanel.vue'
+import SalesChart from '@/components/ui/charts/SalesChart.vue'
+import { useStatisticsStore } from '@/stores/statisticStore'
+import { LowStock, OutOfStock } from '@/service/api'
+import GridCard from '@/components/ui/cards/GridCard.vue'
+import MetricCard from '@/components/ui/cards/MetricCard.vue'
+import TopSellingProducts from '@/components/statistics/TopSellingProducts.vue'
+import RecentSales from '@/components/statistics/RecentSales.vue'
+// Lucide Vue Next icons
+import { useActionMessage } from '@/composable/useActionMessage'
+import {
+  Package,
+  DollarSign,
+  Users,
+  PieChart,
+  Clock,
+  Tag,
+  Layers,
+  RotateCcw,
+  Wallet,
+} from 'lucide-vue-next'
+import mascot from '@/assets/image/professional.png'
+import RevenueCatgeory from '@/components/statistics/RevenueCatgeory.vue'
+import WelcomeCard from '@/components/ui/WelcomeCard.vue'
+import Logo from '@/components/ui/Logo.vue'
 
-const activeTab = ref('overview')
-const isEntrepriseReady = ref(false)
+const authStore = useAuthStore()
+
+const enterpriseStore = useEntrepriseStore()
+
+const handleQuickAction = (action) => {
+  console.log('Selected action:', action.value)
+  // Example: navigate or open modal
+}
+
 const entrepriseStore = useEntrepriseStore()
-onMounted(() => {
-  // attendre la restauration de Pinia Persist
-
-  if (entrepriseStore.activeEntreprise) {
-    isEntrepriseReady.value = true
-  }
-  // court délai pour laisser Pinia se restaurer
+const productStore = useProductStore()
+const loading = ref(false)
+const avgRevenue = ref(0)
+const revenueTrendPercent = ref(0)
+const statisticStore = useStatisticsStore()
+const finishedProducts = ref([])
+const message = ref('')
+const { showSuccess, showError } = useActionMessage()
+// Remove the old handleLowStock function since we're using handleAlertAction now
+const statsTable = computed(() => [
+  {
+    id: 1,
+    label: 'Total profit',
+    value: statisticStore.profit.profit?.total,
+    trend: statisticStore.profit.profit?.history.at(-1)?.growth_percent,
+    icon: Layers,
+    iconBg: '#E6F4F0',
+    iconColor: '#16a34a',
+    viewLink: '/sales',
+    period: statisticStore.profit.period,
+  },
+  {
+    id: 2,
+    label: 'Total Returns',
+    value: '$156,000',
+    trend: -8,
+    icon: RotateCcw,
+    iconBg: '#FDEDEE',
+    iconColor: '#dc2626',
+    viewLink: '/returns',
+    period: 'Month',
+  },
+  {
+    id: 3,
+    label: 'Total Expenses',
+    value: '$2,780,000',
+    trend: -3,
+    icon: Wallet,
+    iconBg: '#FFF7E6',
+    iconColor: '#f59e0b',
+    viewLink: '/expenses',
+    period: statisticStore.client.period,
+  },
+  {
+    id: 4,
+    label: 'Total Customers',
+    value: statisticStore.client.clients?.total,
+    trend: statisticStore.client.clients?.history?.at(-1)?.growth_percent,
+    icon: Users,
+    iconBg: '#E6F0FF',
+    iconColor: '#2563eb',
+    viewLink: '/customers',
+    period: statisticStore.client.period,
+  },
+])
+onMounted(async () => {
+  loading.value = true
+  await productStore.fetchProducts()
+  await statisticStore.fetchProductSales('day')
+  await statisticStore.fetchProfit('day')
+  await statisticStore.fetclient('day')
+  productStore.fetchFinishedProducts()
+  await fetchLowStockProducts()
+  await fetchFinishedProducts()
+  loading.value = false
 })
-const activeEntreprise = computed(() => entrepriseStore.activeEntreprise)
-import { Download, ShoppingCart, Eye } from 'lucide-vue-next'
+
+const totalProductsValue = computed(() =>
+  productStore.products.reduce((sum, product) => {
+    const productTotal = product.selling_price * (product.quantity ?? 1)
+    return sum + productTotal
+  }, 0),
+)
+const lowStockProducts = ref([])
+
+async function fetchLowStockProducts() {
+  try {
+    const data = await LowStock()
+    lowStockProducts.value = Array.isArray(data.products) ? data.products : []
+    console.log('✅ Low products loaded:', lowStockProducts.value.length)
+  } catch (err) {
+    console.error('❌ Error fetching low stock:', err)
+    lowStockProducts.value = []
+  }
+}
+
+async function fetchFinishedProducts() {
+  try {
+    const orders = null
+    const data = await OutOfStock()
+    console.log('✅ API Response:', data)
+
+    // ✅ Store data properly
+    message.value = data.message
+    orders.value = data.orders
+    finishedProducts.value = data.products || [] // Important
+  } catch (err) {
+    showError('Failed to fetch out-of-stock products')
+    console.error('❌ Error fetching out-of-stock products:', err)
+  }
+}
+
+const topStats = computed(() => [
+  {
+    id: 1,
+    icon: Users,
+    label: 'Total products',
+    value: productStore.totalProducts,
+    subtext: 'Under this enterprise',
+    gradientFrom: '#0E9384',
+    gradientTo: '#0E9384',
+  },
+  {
+    id: 2,
+    icon: Package,
+    label: 'Total Products Value',
+    value: totalProductsValue,
+    gradientFrom: '#FE9F43',
+    gradientTo: '#FE9F43',
+  },
+  {
+    id: 3,
+    icon: DollarSign,
+    label: 'Total Sales',
+    value: computed(() => statisticStore.topProducts.sales?.total),
+    gradientFrom: '#092C4C',
+    gradientTo: '#092C4C',
+    trend: statisticStore.topProducts.sales?.history.at(-1)?.growth_percent,
+  },
+  {
+    id: 4,
+    icon: DollarSign,
+    label: 'Total Purchase',
+    value: avgRevenue.value,
+    gradientFrom: '#155EEF',
+    gradientTo: '#155EEF',
+    trendPercentage: revenueTrendPercent.value,
+  },
+])
+
+const alerts = computed(() => [
+  {
+    id: 1,
+    title: 'Out of Stock',
+    count: finishedProducts.value.length,
+    color: 'border-red-300 bg-red-50',
+    action: { label: 'Restock', color: 'border-red-400 text-red-600' },
+  },
+])
+
+const notifications = computed(() => [
+  {
+    id: 1,
+    type: 'low-stock',
+    title: 'Low Stock Alert',
+    description: '4 products are running low on stock',
+    timestamp: '5 minutes ago',
+  },
+  {
+    id: 2,
+    type: 'restock',
+    title: 'Restock Complete',
+    description: 'Gaming Laptop Pro successfully restocked',
+    timestamp: '1 hour ago',
+  },
+  {
+    id: 3,
+    type: 'supplier',
+    title: 'New Supplier Added',
+    description: 'Mobile Solutions Ltd has been added to suppliers',
+    timestamp: '3 hours ago',
+  },
+])
+
+const lowStockItems = ref([
+  { id: 1, name: 'Premium Smartphone', stock: 8, minStock: 10, critical: true },
+  { id: 2, name: 'Wireless Earbuds', stock: 5, minStock: 15, critical: false },
+  { id: 3, name: 'Smart Watch', stock: 3, minStock: 8, critical: true },
+  { id: 4, name: 'Tablet Stand', stock: 7, minStock: 12, critical: false },
+])
+
+const stockLevels = ref([
+  { name: 'Audio Equipment', current: 145, total: 200 },
+  { name: 'Mobile Devices', current: 89, total: 150 },
+  { name: 'Computers', current: 67, total: 100 },
+  { name: 'Peripherals', current: 234, total: 300 },
+  { name: 'Accessories', current: 156, total: 200 },
+])
 </script>
+
+<style scoped>
+/* Smooth transitions */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+</style>
