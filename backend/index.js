@@ -76,21 +76,34 @@ async function seedPredefinedRoles() {
   }
 }
 const threst_hold = [{}];
-const env = process.env.NODE_ENV || "development";
+const env = process.env.NODE_ENV || "production";
 // ⚠️ ATTENTION: supprime les données existantes en dev
-db.sequelize.sync({alter:true}).then(async () => {
-  console.log("✅ Toutes les tables ont été créées !");
+if (process.env.NODE_ENV === "development") {
+  // 🔧 En DEV seulement : sync automatique
+  db.sequelize.sync({ alter: true }).then(async () => {
+    console.log("🟢 Sync en développement !");
+
+    try {
+      await startCurrencyCron();
+      await seedPredefinedRoles();
+      await createAllUsersView();
+    } catch (err) {
+      console.error("Error during setup:", err);
+    }
+  });
+} else {
+  // 🔵 En PRODUCTION : surtout pas de sync !!!
+  console.log("🚫 Sync désactivé en production");
 
   try {
-    // const generator = new DemoDataGenerator();
-    //   await generator.generateAll();
     await startCurrencyCron();
     await seedPredefinedRoles();
     await createAllUsersView();
   } catch (err) {
-    console.error("Error seeding predefined roles:", err);
+    console.error("Error during production setup:", err);
   }
-});
+}
+
 app.use(express.json());
 app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
