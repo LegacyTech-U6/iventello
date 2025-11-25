@@ -50,7 +50,7 @@
           class="font-semibold"
           :class="activity.type === 'sale' ? 'text-green-600' : 'text-blue-600'"
         >
-          {{ activity.amount ? formatCurrency(activity.amount) : '-' }}
+          {{ activity.amount ? format(activity.amount) : '-' }}
         </p>
       </li>
     </ul>
@@ -64,6 +64,9 @@ import { storeToRefs } from 'pinia'
 import { ArrowUpRight, ArrowDownLeft, Bell } from 'lucide-vue-next'
 const activityStore = useActivityStore()
 const { activities, loading } = storeToRefs(activityStore)
+import { useCurrency } from '@/composable/useCurrency'
+
+const {format} = useCurrency()
 
 const loadActivities = async () => {
   await activityStore.fetchActivities()
@@ -84,14 +87,6 @@ const formatDate = (dateStr) => {
     hour: '2-digit',
     minute: '2-digit',
   })
-}
-
-// 💰 Formatage du montant
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(value)
 }
 
 // 🔄 Charger à l’ouverture

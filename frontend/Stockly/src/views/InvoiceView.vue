@@ -102,7 +102,7 @@
             <td class="px-6 py-4 text-sm text-gray-600">{{ invoice.client.email || 'N/A' }}</td>
             <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(invoice.createdAt) }}</td>
             <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(invoice.dueDate || invoice.createdAt) }}</td>
-            <td class="px-6 py-4 text-sm font-medium text-gray-900">${{ invoice.total.toFixed(2) }}</td>
+            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ format(invoice.total) }}</td>
             <td class="px-6 py-4">
               <n-tag :type="getStatusType(invoice.status)" :bordered="false" size="small" round>
                 {{ getStatusLabel(invoice.status) }}
@@ -163,7 +163,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { NButton, NTag, NInput, NSelect } from 'naive-ui'
 import { NSpin, NEmpty } from 'naive-ui'
-
+import { useCurrency } from '@/composable/useCurrency'
 import { Plus, Search, Filter, MoreVertical, ChevronRight, Minus, Trash2 } from 'lucide-vue-next'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
@@ -171,6 +171,8 @@ import InvoiceDetailModal from '@/components/invoices/InvoiceDetailModal.vue'
 import ActionModal from '@/components/ui/ActionModal.vue'
 import InvoicePart from '@/assets/icon svg/invoicePart.vue'
 
+
+const {format} = useCurrency()
 // Stores
 const invoiceStore = useInvoiceStore()
 const entrepriseStore = useEntrepriseStore()

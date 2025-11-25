@@ -2,8 +2,9 @@
   <div class="p-6 space-y-6 bg-gray-50 h-full">
     <!-- Header -->
     <div class="flex items-center justify-between">
-      <div>
-        <p class="text-gray-400 text-xs mb-1">← Default Report</p>
+      <div class="flex space-x-2">
+        <span class="material-icons">swap_horiz</span>
+
         <h1 class="text-2xl font-bold text-gray-900">Transactions</h1>
       </div>
     </div>
@@ -11,24 +12,14 @@
     <!-- Filters Bar -->
     <div class="flex items-center gap-3 bg-white p-4 rounded-lg shadow-sm">
       <div class="flex-1 relative">
-        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none"
-          stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+        <span class="material-icons  absolute left-3 top-1/2 transform -translate-y-1/2">
+          search
+        </span>
         <input v-model="search" type="text" placeholder="Search Transactions"
           class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
       </div>
 
-      <button
-        class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-        </svg>
-        Any transaction
-      </button>
-
+      
       <button
         class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,9 +76,12 @@
               <td class="px-6 py-4 text-gray-900 font-medium">
                 {{ activity.product.Prod_name || 'banana' }}
               </td>
-              <td :class="activity.action === 'Vente' || 'sale' ? 'text-red-600' : 'text-green-600'">
-                {{ activity.action === 'Vente' || 'sale' ? '-' : '+' }}{{ activity.quantity || 0 }} units
+              <td
+                :class="activity.action === 'Vente' || activity.action === 'Sale' ? 'text-red-600' : 'text-green-600'">
+                {{ activity.action === 'Vente' || activity.action === 'Sale' ? '-' : '+' }}{{ activity.quantity || 0 }}
+                units
               </td>
+
 
               <td class="px-6 py-4 text-gray-600">
                 {{ getTransactionType(activity.action) }}
@@ -101,14 +95,20 @@
               </td>
 
               <td class="px-6 py-4 text-gray-900">
-                {{ activity.amount ? activity.amount.toFixed(2) : '200.00' }} FCFA
+                {{ format(activity.amount) || 0 }}
               </td>
-              <td class="px-6 py-4 text-gray-900">{{ calculateValue(activity) }} FCFA</td>
+              <td class="px-6 py-4 text-gray-900">{{ format(calculateValue(activity)) }}</td>
             </tr>
 
             <tr v-if="filteredActivities.length === 0">
-              <td colspan="10" class="text-center py-8 text-gray-500">Aucune activité trouvée.</td>
+              <td colspan="10" class="py-8">
+                <div class="flex flex-col items-center justify-center space-y-4">
+                  <img :src="multitasking" alt="recent activity" class="max-w-xs" />
+                  <span class="text-gray-500 text-center">Aucune activité trouvée.</span>
+                </div>
+              </td>
             </tr>
+
           </tbody>
         </table>
       </div>
@@ -133,7 +133,9 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { useActivityStore } from '@/stores/activityStore'
-
+import { useCurrency } from '@/composable/useCurrency'
+import multitasking from '@/assets/image/multitasking.png'
+const { format } = useCurrency()
 const activityStore = useActivityStore()
 const loading = ref(true)
 const search = ref('')
@@ -162,16 +164,21 @@ const formatDate = (date) => {
 }
 
 const getTransactionType = (action) => {
-  const types = {
-    Sale: 'Sale of Goods',
-    Vente: 'Sale of Goods',
-    CREATE: 'Create',
-    UPDATE: 'Update Quantity',
-    DELETE: 'Delete',
-    Achat: 'Purchase of Goods',
-  }
-  return types[action] || 'Update Quantity'
+  if (!action) return 'Update Quantity'
+
+  const a = action.toLowerCase() // tout en minuscules
+
+  if (a.includes('sale') || a.includes('vente')) return 'Sale of Goods'
+  if (a.includes('create ')) return 'Created products'
+  if (a.includes('update')) return 'Update Quantity'
+  if (a.includes('delete')) return 'Delete'
+  if (a.includes('achat') || a.includes('purchase')) return 'Purchase of Goods'
+
+  return 'Update Quantity'
 }
+
+
+
 
 const calculateValue = (activity) => {
   const quantity = activity.quantity || 0

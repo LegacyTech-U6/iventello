@@ -14,21 +14,22 @@
     <div class="p-6 space-y-4">
       <div v-for="(product, index) in products" :key="index" class="flex items-center gap-4">
         <!-- Product Image -->
-        <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-          <img
-            v-if="product.image"
-            :src="product.image"
-            :alt="product.name"
-            class="w-full h-full object-cover"
-          />
-        </div>
+       
+          <!-- Product Image -->
+          <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+            <img :src="product.image || `https://picsum.photos/seed/${product.id || index}/150`"
+              :alt="product.name || 'No image'" class="w-full h-full object-cover" />
+          </div>
+        </
+
+
 
         <!-- Product Info -->
         <div class="flex-1 min-w-0">
           <h3 class="font-semibold text-gray-800 text-sm truncate">
             {{ product.name }}
           </h3>
-          <p class="text-sm text-gray-500">${{ product.selling_price }}</p>
+          <p class="text-sm text-gray-500">{{ format(product.selling_price) }}</p>
         </div>
 
         <!-- Sales Info -->
@@ -44,14 +45,16 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useStatisticsStore } from '@/stores/statisticStore'
+import { useCurrency } from '@/composable/useCurrency'
 
+const { format } = useCurrency()
 const statisticStore = useStatisticsStore()
 const selectedPeriod = ref('month')
 
 onMounted(() => {
   statisticStore.fetchBestSellingProduct(selectedPeriod)
 })
-
+const randomImageUrl = ref(`https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/150`)
 const products = computed(() => statisticStore.bestSellingProduct?.products)
 </script>
 

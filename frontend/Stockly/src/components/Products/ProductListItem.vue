@@ -38,7 +38,7 @@
         <!-- Stock Progress Bar -->
         <div class="mt-2">
           <div class="flex justify-between text-xs text-gray-500 mb-1">
-            <span>{{ product.quantity }} / {{ product.max_quantity }}</span>
+            <span>{{ product.quantity }} / {{ product.max_stock_level }}</span>
             <span>{{ Math.round(quantityRatio * 100) }}%</span>
           </div>
           <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -80,8 +80,8 @@ interface Product {
   id?: string | number
   Prod_name: string
   quantity: number
-  min_quantity?: number
-  max_quantity?: number
+  min_stock_level?: number
+  max_stock_level?: number
   cost_price: number
   selling_price: number
   category: { id: number; name: string }
@@ -98,8 +98,8 @@ const emit = defineEmits<{ view: [product: Product] }>()
 
 const quantityNum = computed(() => props.product.quantity)
 const quantityRatio = computed(() => {
-  const min = props.product.min_quantity ?? 0
-  const max = props.product.max_quantity ?? 1000
+  const min = props.product.min_stock_level ?? 0
+  const max = props.product.max_stock_level ?? 1000
   return Math.min(Math.max((quantityNum.value - min) / (max - min), 0), 1)
 })
 

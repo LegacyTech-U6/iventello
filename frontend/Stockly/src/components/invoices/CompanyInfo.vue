@@ -1,38 +1,43 @@
 <template>
-  <div class="company-info">
-    <div class="company-header">
-      <h1 class="company-name">{{ entreprise.name }}</h1>
-      <div class="company-tagline" v-if="entreprise.description">
-        {{ entreprise.description }}
-      </div>
+  <div class="company-info flex items-start justify-between p-5 ">
+    
+    <!-- Logo -->
+    <div class="flex-shrink-0 w-24 h-24 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+      <img v-if="entreprise.logo_url" :src="entreprise.logo_url" :alt="entreprise.name" class="object-contain w-full h-full" />
+      <span v-else class="text-gray-300 text-xs">Logo</span>
     </div>
 
-    <div class="company-details">
-      <div
-        class="contact-line"
-        v-if="entreprise.adresse || entreprise.ville || entreprise.code_postal"
-      >
+    <!-- Info principale -->
+    <div class="flex-1 ml-4 space-y-1">
+      <!-- Nom entreprise -->
+      <h1 class="text-xl font-bold text-gray-900">{{ entreprise.name }}</h1>
+      <!-- Description / tagline -->
+      <div v-if="entreprise.description" class="text-sm text-gray-500">{{ entreprise.description }}</div>
+
+      <!-- Adresse -->
+      <div v-if="entreprise.adresse || entreprise.ville || entreprise.code_postal" class="text-sm text-gray-700">
         {{ entreprise.adresse }}
-        <span v-if="entreprise.ville">, {{ entreprise.ville }}</span>
+        <span v-if="entreprise.ville"> {{ entreprise.ville }}</span>
         <span v-if="entreprise.code_postal"> {{ entreprise.code_postal }}</span>
       </div>
 
-      <div class="contact-line" v-if="entreprise.telephone_contact || entreprise.email_contact">
+      <!-- Contact -->
+      <div v-if="entreprise.telephone_contact || entreprise.email_contact" class="text-sm text-gray-700">
         <span v-if="entreprise.telephone_contact">📞 {{ entreprise.telephone_contact }}</span>
         <span v-if="entreprise.telephone_contact && entreprise.email_contact"> • </span>
         <span v-if="entreprise.email_contact">✉️ {{ entreprise.email_contact }}</span>
       </div>
 
-      <div class="contact-line" v-if="entreprise.site_web">🌐 {{ entreprise.site_web }}</div>
-
-      <div class="contact-line" v-if="entreprise.numero_fiscal || entreprise.nui">
-        <span v-if="entreprise.numero_fiscal">Numéro fiscal : {{ entreprise.numero_fiscal }}</span>
-        <span v-if="entreprise.numero_fiscal && entreprise.nui"> • </span>
-        <span v-if="entreprise.nui">NUI : {{ entreprise.nui }}</span>
+      <!-- Site web -->
+      <div v-if="entreprise.site_web" class="text-sm text-gray-700">
+        🌐 {{ entreprise.site_web }}
       </div>
 
-      <div class="contact-line" v-if="entreprise.informations_bancaires">
-        💳 {{ entreprise.informations_bancaires }}
+      <!-- Numéro fiscal / NUI -->
+      <div v-if="entreprise.numero_fiscal || entreprise.nui" class="text-sm text-gray-700">
+        <span v-if="entreprise.numero_fiscal">NIF : {{ entreprise.numero_fiscal }}</span>
+        <span v-if="entreprise.numero_fiscal && entreprise.nui"> • </span>
+        <span v-if="entreprise.nui">NUI : {{ entreprise.nui }}</span>
       </div>
     </div>
   </div>
@@ -45,6 +50,7 @@ defineProps({
     required: true,
     default: () => ({
       name: 'Nom Entreprise',
+      logo_url: '',
       description: '',
       adresse: '',
       ville: '',
@@ -54,7 +60,6 @@ defineProps({
       site_web: '',
       numero_fiscal: '',
       nui: '',
-      informations_bancaires: '',
     }),
   },
 })
@@ -62,46 +67,6 @@ defineProps({
 
 <style scoped>
 .company-info {
-  border-bottom: 2px solid #000;
-  padding-bottom: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.company-header {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.company-name {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #000;
-  margin: 0 0 0.25rem 0;
-  letter-spacing: 1px;
-}
-
-.company-tagline {
-  font-size: 0.875rem;
-  color: #666;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.company-details {
-  text-align: center;
-  font-size: 0.875rem;
-  color: #333;
-  line-height: 1.4;
-}
-
-.contact-line {
-  margin-bottom: 0.25rem;
-}
-
-@media print {
-  .company-info {
-    border-bottom: 2px solid #000;
-  }
+  font-family: 'Inter', sans-serif;
 }
 </style>

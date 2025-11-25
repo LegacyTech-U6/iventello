@@ -1,12 +1,12 @@
 <template>
   <div class="h-full bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col overflow-hidden">
-    <!-- Header reste inchangé -->
+    <!-- Header modifié pour le mode édition -->
     <div class="bg-white shadow-sm z-10 flex-shrink-0">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-start justify-between flex-wrap gap-4">
           <div class="flex-1 min-w-0 flex items-center gap-4">
             <button
-              @click="goBack"
+              @click="isEditing ? cancelEdit() : goBack()"
               class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-all group p-2 -ml-2 rounded-full hover:bg-gray-100"
             >
               <ChevronLeft class="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
@@ -22,13 +22,34 @@
               </p>
             </div>
           </div>
-          <button
-            @click="handleEdit"
-            class="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all hover:shadow-sm flex items-center justify-center gap-2 group text-sm"
-          >
-            <Edit3 class="w-4 h-4" />
-            Edit
-          </button>
+          <div class="flex gap-2">
+            <button
+              v-if="!isEditing"
+              @click="handleEdit"
+              class="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all hover:shadow-sm flex items-center justify-center gap-2 group text-sm"
+            >
+              <Edit3 class="w-4 h-4" />
+              Edit
+            </button>
+            <button
+              v-else
+              @click="handleSaveEdit"
+              :disabled="saving"
+              class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all hover:shadow-sm flex items-center justify-center gap-2 group text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Save class="w-4 h-4" v-if="!saving" />
+              <Loader2 class="w-4 h-4 animate-spin" v-else />
+              {{ saving ? 'Saving...' : 'Save' }}
+            </button>
+            <button
+              v-if="isEditing"
+              @click="cancelEdit"
+              class="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all hover:shadow-sm flex items-center justify-center gap-2 group text-sm"
+            >
+              <X class="w-4 h-4" />
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -63,18 +84,36 @@
         </div>
 
         <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Colonne principale - Modifiée pour correspondre à l'image -->
+          <!-- Colonne principale - Modifiée pour l'édition directe -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Section Sortly ID et Quantity -->
             <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-              <h2 class="text-lg font-bold text-gray-900 mb-4">banana</h2>
+              <h2 class="text-lg font-bold text-gray-900 mb-4">
+                <input
+                  v-if="isEditing"
+                  v-model="editForm.Prod_name"
+                  type="text"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Product Name"
+                />
+                <span v-else>{{ product.Prod_name }}</span>
+              </h2>
               
               <div class="space-y-4">
                 <div>
                   <h3 class="text-sm font-semibold text-gray-500 mb-1">Sortly ID: SLOIKTO001</h3>
                   <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-gray-700">Quantity</span>
-                    <span class="text-2xl font-bold text-gray-900">{{ product.quantity }} units</span>
+                    <div v-if="isEditing" class="flex items-center gap-2">
+                      <input
+                        v-model.number="editForm.quantity"
+                        type="number"
+                        min="0"
+                        class="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-right"
+                      />
+                      <span class="text-sm text-gray-500">units</span>
+                    </div>
+                    <span v-else class="text-2xl font-bold text-gray-900">{{ product.quantity }} units</span>
                   </div>
                 </div>
                 
@@ -94,8 +133,11 @@
                 
                 <div>
                   <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700">Total Value: {{ formatPrice(totalSellingValue) }} FCFA</span>
-                  </div>
+                    <span class="text-sm font-medium text-gray-700">
+                      Total Value: {{ formatPrice(totalSellingValue) }} FCFA
+                    </span>
+
+        </div>
                   <div class="flex items-center justify-between text-xs text-gray-500">
                     <span>Updated at: {{ formatDate(product.date_of_arrival) }}</span>
                   </div>
@@ -106,11 +148,74 @@
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <span class="text-sm font-medium text-gray-700">Price</span>
-                    <p class="text-lg font-bold text-gray-900">{{ formatPrice(product.selling_price) }} FCFA</p>
+                    <div v-if="isEditing" class="flex items-center gap-2">
+                      <input
+                        v-model.number="editForm.selling_price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <p v-else class="text-lg font-bold text-gray-900">{{ formatPrice(product.selling_price) }} FCFA</p>
                   </div>
                   <div>
                     <span class="text-sm font-medium text-gray-700">Total value</span>
                     <p class="text-lg font-bold text-gray-900">{{ formatPrice(totalSellingValue) }} FCFA</p>
+                  </div>
+                </div>
+
+                <!-- Champs supplémentaires en mode édition -->
+                <div v-if="isEditing" class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cost Price (FCFA)</label>
+                    <input
+                      v-model.number="editForm.cost_price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">SKU / Barcode</label>
+                    <input
+                      v-model="editForm.code_bar"
+                      type="text"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <input
+                      v-model="editForm.category_id"
+                      type="text"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+                    <input
+                      v-model="editForm.supplier_name"
+                      type="text"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      v-model="editForm.Prod_Description"
+                      rows="3"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    ></textarea>
+                  </div>
+                  <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                    <input
+                      v-model="editForm.Prod_image"
+                      type="url"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
                   </div>
                 </div>
               </div>
@@ -164,10 +269,10 @@
               <div
                 class="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl mb-4 flex items-center justify-center overflow-hidden group border border-gray-200"
               >
-                <div v-if="product.Prod_image" class="relative w-full h-full">
+                <div v-if="editForm.Prod_image" class="relative w-full h-full">
                   <img
-                    :src="product.Prod_image"
-                    :alt="product.Prod_name"
+                    :src="editForm.Prod_image"
+                    :alt="editForm.Prod_name"
                     class="w-full h-full object-contain p-4 transition-transform group-hover:scale-105"
                   />
                 </div>
@@ -177,15 +282,25 @@
                 </div>
               </div>
 
+              <div v-if="isEditing" class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                <input
+                  v-model="editForm.Prod_image"
+                  type="url"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+
               <div class="flex gap-2">
                 <div
                   class="w-1/4 aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-blue-500 p-1"
                 >
                   <img
-                    :src="product.Prod_image"
+                    :src="editForm.Prod_image"
                     alt="Thumbnail"
                     class="w-full h-full object-cover rounded-md"
-                    v-if="product.Prod_image"
+                    v-if="editForm.Prod_image"
                   />
                   <div v-else class="text-xs text-gray-400">Main</div>
                 </div>
@@ -213,157 +328,6 @@
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal d'édition (inchangé) -->
-    <div
-      v-if="showEditModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      @click.self="showEditModal = false"
-    >
-      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div
-          class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10"
-        >
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Edit3 class="w-5 h-5 text-blue-600" />
-            </div>
-            <h2 class="text-xl font-bold text-gray-900">Edit Product</h2>
-          </div>
-          <button
-            @click="showEditModal = false"
-            class="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X class="w-6 h-6" />
-          </button>
-        </div>
-
-        <div class="p-4 space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="md:col-span-2">
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Product Name</label>
-              <input
-                v-model="editForm.Prod_name"
-                type="text"
-                required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="Enter product name"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">SKU / Barcode</label>
-              <input
-                v-model="editForm.code_bar"
-                type="text"
-                required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="Enter SKU"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Category</label>
-              <input
-                v-model="editForm.category_id"
-                type="text"
-                required
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="Enter category"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Quantity</label>
-              <input
-                v-model.number="editForm.quantity"
-                type="number"
-                required
-                min="0"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="0"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Cost Price (FCFA)</label>
-              <input
-                v-model.number="editForm.cost_price"
-                type="number"
-                required
-                min="0"
-                step="0.01"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="0.00"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2"
-                >Selling Price (FCFA)</label
-              >
-              <input
-                v-model.number="editForm.selling_price"
-                type="number"
-                required
-                min="0"
-                step="0.01"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="0.00"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Supplier Name</label>
-              <input
-                v-model="editForm.supplier_name"
-                type="text"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="Enter supplier name"
-              />
-            </div>
-
-            <div class="md:col-span-2">
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-              <textarea
-                v-model="editForm.Prod_Description"
-                rows="4"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-                placeholder="Enter product description"
-              ></textarea>
-            </div>
-
-            <div class="md:col-span-2">
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Image URL</label>
-              <input
-                v-model="editForm.Prod_image"
-                type="url"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
-          </div>
-
-          <div class="flex gap-3 pt-4 border-t border-gray-200">
-            <button
-              @click="showEditModal = false"
-              class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              @click="handleSaveEdit"
-              :disabled="saving"
-              class="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              <Save class="w-5 h-5" v-if="!saving" />
-              <Loader2 class="w-5 h-5 animate-spin" v-else />
-              {{ saving ? 'Saving...' : 'Save Changes' }}
-            </button>
           </div>
         </div>
       </div>
@@ -416,7 +380,7 @@ const route = useRoute()
 
 const product = ref<Product | null>(null)
 const loading = ref(true)
-const showEditModal = ref(false)
+const isEditing = ref(false)
 const saving = ref(false)
 const editForm = ref<Product>({
   Prod_name: '',
@@ -515,7 +479,15 @@ const handleEdit = () => {
         : product.value.selling_price,
   }
 
-  showEditModal.value = true
+  isEditing.value = true
+}
+
+const cancelEdit = () => {
+  isEditing.value = false
+  // Reset edit form to original product data
+  if (product.value) {
+    editForm.value = { ...product.value }
+  }
 }
 
 const handleSaveEdit = async () => {
@@ -530,7 +502,7 @@ const handleSaveEdit = async () => {
 
     // @ts-ignore
     show('Product updated successfully', 'success')
-    showEditModal.value = false
+    isEditing.value = false
   } catch (error) {
     // @ts-ignore
     show('Failed to update product', 'error')

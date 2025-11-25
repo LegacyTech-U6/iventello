@@ -151,7 +151,7 @@ onMounted(async () => {
   await statisticStore.fetclient('day')
   productStore.fetchFinishedProducts()
   await fetchLowStockProducts()
-  await fetchFinishedProducts()
+
   loading.value = false
 })
 

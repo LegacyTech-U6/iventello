@@ -116,11 +116,11 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-semibold text-green-600">
-                  {{ formatCurrency(report.total_sales) }}
+                  {{ format(report.total_sales) }}
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ formatCurrency(report.average_sale) }}</div>
+                <div class="text-sm text-gray-900">{{ format(report.average_sale) }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button @click.stop="openDetail(report)" class="text-blue-600 hover:text-blue-900">
@@ -136,7 +136,7 @@
       <div v-if="filteredReports.length > 0" class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
         <div class="bg-white rounded-lg shadow-sm p-4">
           <p class="text-sm text-gray-600">Total Sales</p>
-          <p class="text-2xl font-bold text-green-600 mt-1">{{ formatCurrency(totalSales) }}</p>
+          <p class="text-2xl font-bold text-green-600 mt-1">{{ format(totalSales) }}</p>
         </div>
         <div class="bg-white rounded-lg shadow-sm p-4">
           <p class="text-sm text-gray-600">Total Items Sold</p>
@@ -148,7 +148,7 @@
         </div>
         <div class="bg-white rounded-lg shadow-sm p-4">
           <p class="text-sm text-gray-600">Average per Day</p>
-          <p class="text-2xl font-bold text-orange-600 mt-1">{{ formatCurrency(averagePerDay) }}</p>
+          <p class="text-2xl font-bold text-orange-600 mt-1">{{ format(averagePerDay) }}</p>
         </div>
       </div>
     </div>
@@ -166,7 +166,9 @@
 import { ref, onMounted, computed } from 'vue'
 import { useActivityStore } from '@/stores/activityStore'
 import SalesReportDetailModal from '@/components/reports/SalesReportDetailModal.vue'
+import { useCurrency } from '@/composable/useCurrency'
 
+const {format} = useCurrency()
 const activityStore = useActivityStore()
 const reports = ref([])
 const filteredReports = ref([])

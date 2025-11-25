@@ -51,7 +51,7 @@
           </span>
           <span class="text-xs text-green-500 font-medium">Total Spend</span>
         </div>
-        <p class="text-lg font-semibold text-green-900">{{ formatAmount(totalSpend) }}</p>
+        <p class="text-lg font-semibold text-green-900">{{ format(totalSpend) }}</p>
       </div>
 
       <div class="bg-amber-50 rounded-lg p-3">
@@ -82,8 +82,9 @@
 
 <script setup>
 import { computed } from 'vue'
-import { Mail, Phone, MapPin, Eye, Edit2, Trash2, FileText, DollarSign, CheckCircle } from 'lucide-vue-next'
+import { useCurrency } from '@/composable/useCurrency'
 
+const {format} = useCurrency()
 const props = defineProps({
   client: {
     type: Object,
@@ -97,12 +98,5 @@ defineEmits(['view', 'edit', 'delete'])
 const invoiceCount = computed(() => Math.floor(Math.random() * 20) + 1)
 const totalSpend = computed(() => Math.floor(Math.random() * 50000) + 5000)
 
-const formatAmount = (amount) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount)
-}
+
 </script>

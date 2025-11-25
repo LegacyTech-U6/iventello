@@ -121,7 +121,7 @@
                 </div>
                 <div>
                   <h4 class="font-semibold text-blue-900 text-sm">Discount {{ discount }}%</h4>
-                  <p class="text-blue-700 text-xs mt-1">For $20 Minimum Purchase, all Items</p>
+                 
                 </div>
               </div>
             </div>
@@ -129,7 +129,7 @@
             <div class="space-y-3">
               <div class="flex justify-between items-center text-gray-700">
                 <span class="text-sm">Shipping</span>
-                <span class="font-semibold">${{ subtotal.toFixed(2) }}</span>
+                <span class="font-semibold">{{ format(subtotal) }}</span>
               </div>
 
               <div class="flex justify-between items-center text-gray-700">
@@ -148,13 +148,13 @@
 
               <div class="flex justify-between items-center text-gray-700">
                 <span class="text-sm">Tax ({{ taxRate }}%)</span>
-                <span class="font-semibold">${{ taxAmount.toFixed(2) }}</span>
+                <span class="font-semibold">{{ format(taxAmount) }}</span>
               </div>
 
               <div class="border-t border-gray-200 pt-3 mt-3">
                 <div class="flex justify-between items-center text-gray-900">
                   <span class="text-base font-semibold">Total</span>
-                  <span class="text-2xl font-semibold">${{ total.toFixed(2) }}</span>
+                  <span class="text-2xl font-semibold">{{ format(total) }}</span>
                 </div>
               </div>
 
@@ -246,7 +246,7 @@
                 </div>
                 <div>
                   <h4 class="font-semibold text-blue-900 text-sm">Discount {{ discount }}%</h4>
-                  <p class="text-blue-700 text-xs mt-1">For $20 Minimum Purchase, all Items</p>
+                 
                 </div>
               </div>
             </div>
@@ -260,7 +260,7 @@
               <div class="space-y-3">
                 <div class="flex justify-between items-center text-gray-700">
                   <span class="text-sm">Shipping</span>
-                  <span class="font-semibold">${{ subtotal.toFixed(2) }}</span>
+                  <span class="font-semibold">{{ format(subtotal) }}</span>
                 </div>
 
                 <div class="flex justify-between items-center text-gray-700">
@@ -280,13 +280,13 @@
                 <div class="flex justify-between items-center text-gray-700">
                   <span class="text-sm">Tax ({{ taxRate }}%)</span>
                   <input type="text" v-model="taxRate" />
-                  <span class="font-semibold">${{ taxAmount.toFixed(2) }}</span>
+                  <span class="font-semibold">{{ format(taxAmount) }}</span>
                 </div>
 
                 <div class="border-t border-gray-200 pt-3 mt-3">
                   <div class="flex justify-between items-center text-gray-900">
                     <span class="text-base font-semibold">Total</span>
-                    <span class="text-2xl font-semibold">${{ total.toFixed(2) }}</span>
+                    <span class="text-2xl font-semibold">{{ format(total) }}</span>
                   </div>
                 </div>
 
@@ -447,6 +447,8 @@ import { useInvoiceStore } from '@/stores/FactureStore'
 import CreateInvoiceForm from '@/components/invoices/CreateInvoiceForm.vue'
 import { useRouter } from 'vue-router'
 import { useClientStore } from '@/stores/clientStore'
+import { useCurrency } from '@/composable/useCurrency'
+const { format } = useCurrency()
 const clientStore = useClientStore()
 const router = useRouter()
 const productStore = useProductStore()

@@ -38,7 +38,7 @@
           >
             <p class="text-sm text-green-700 font-medium">Total Sales</p>
             <p class="text-2xl font-bold text-green-900 mt-1">
-              {{ formatCurrency(report.total_sales) }}
+              {{ format(report.total_sales) }}
             </p>
           </div>
           <div
@@ -58,7 +58,7 @@
           >
             <p class="text-sm text-orange-700 font-medium">Average Sale</p>
             <p class="text-2xl font-bold text-orange-900 mt-1">
-              {{ formatCurrency(report.average_sale) }}
+              {{ format(report.average_sale) }}
             </p>
           </div>
         </div>
@@ -124,7 +124,7 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600">{{ product.quantity_sold }} pcs</td>
                 <td class="px-6 py-4 text-sm font-semibold text-green-600">
-                  {{ formatCurrency(product.total_amount) }}
+                  {{ format(product.total_amount) }}
                 </td>
               </tr>
             </tbody>
@@ -163,7 +163,7 @@
                   {{ cat.category }}
                 </td>
                 <td class="px-6 py-4 text-sm font-semibold text-green-600">
-                  {{ formatCurrency(cat.total) }}
+                  {{ format(cat.total) }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600">
                   {{ calculatePercentage(cat.total) }}%
@@ -208,7 +208,7 @@
                   <td class="px-6 py-4 text-sm text-gray-600">{{ formatDateTime(tx.date) }}</td>
                   <td class="px-6 py-4 text-sm text-gray-900">{{ tx.customer_name }}</td>
                   <td class="px-6 py-4 text-sm font-semibold text-green-600">
-                    {{ formatCurrency(tx.amount) }}
+                    {{ format(tx.amount) }}
                   </td>
                   <td class="px-6 py-4">
                     <span
@@ -261,18 +261,17 @@ ChartJS.register(
   Legend,
   Title
 );
+import { useCurrency } from '@/composable/useCurrency';
 
 import { Chart } from 'vue-chartjs'
 
 
+const {format} = useCurrency()
 const props = defineProps({
   report: { type: Object, required: true },
 })
 
-const formatCurrency = (value) => {
-  if (typeof value !== 'number') return value
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
-}
+
 
 const formatDateTime = (value) => {
   if (!value) return ''
@@ -369,7 +368,7 @@ const pieChartOptions = {
           const value = context.parsed || 0
           const total = context.dataset.data.reduce((a, b) => a + b, 0)
           const percentage = ((value / total) * 100).toFixed(1)
-          return `${context.label}: $${value.toFixed(2)} (${percentage}%)`
+          return `${context.label}: ${format(value)} (${percentage}%)`
         },
       },
     },
@@ -386,7 +385,7 @@ const barChartOptions = {
     tooltip: {
       callbacks: {
         label: function (context) {
-          return `Revenue: $${context.parsed.y.toFixed(2)}`
+          return `Revenue: ${format(context.parsed.y)}`
         },
       },
     },

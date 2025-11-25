@@ -1,0 +1,317 @@
+<div class="pos-product-card">
+    <div class="product-image">
+        <img src="https://picsum.photos/200/200?random=1" alt="iPhone 14">
+        <div class="stock-badge in-stock">In Stock</div>
+    </div>
+    <div class="product-info">
+        <h3 class="product-name">iPhone 14 Pro</h3>
+        <p class="product-sku">SKU: IP14P-256-BLK</p>
+        <div class="price-section">
+            <span class="current-price">$999.00</span>
+            <span class="cost-price">Cost: $850.00</span>
+        </div>
+        <div class="stock-info">
+            <span class="stock-count">Qty: 15</span>
+            <span class="low-stock-warning">Low Stock</span>
+        </div>
+    </div>
+    <div class="product-actions">
+        <button class="quick-add-btn" data-product="iPhone 14 Pro" data-price="999.00">
+            + Add to Sale
+        </button>
+    </div>
+</div>
+
+<style>
+.pos-product-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.pos-product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    border-color: #3b82f6;
+}
+
+.product-image {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    background: #f8f9fa;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stock-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.stock-badge.in-stock {
+    background: #10b981;
+    color: white;
+}
+
+.stock-badge.low-stock {
+    background: #f59e0b;
+    color: white;
+}
+
+.stock-badge.out-of-stock {
+    background: #ef4444;
+    color: white;
+}
+
+.product-info {
+    margin-bottom: 12px;
+}
+
+.product-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1f2937;
+    line-height: 1.3;
+}
+
+.product-sku {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.price-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.current-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #059669;
+}
+
+.cost-price {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.stock-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.stock-count {
+    color: #6b7280;
+}
+
+.low-stock-warning {
+    color: #dc2626;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+.quick-add-btn {
+    width: 100%;
+    padding: 10px 12px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-add-btn:hover {
+    background: #2563eb;
+    transform: scale(1.02);
+}
+
+.quick-add-btn:active {
+    transform: scale(0.98);
+}
+:root{
+    --primary-blue:#3b82f6;
+    --primary-blue-hover:#2563eb;
+    --success-green:#10b981;
+    --success-green-dark:#059669;
+    --warning-orange:#f59e0b;
+    --error-red:#ef4444;
+    --text-primary:#1f2937;
+    --text-secondary:#6b7280;
+    --text-light:#9ca3af;
+    --bg-white:#fff;
+    --bg-gray:#f8f9fa;
+    --border-light:#e5e7eb;
+    --shadow-sm:0 2px 8px rgba(0,0,0,.1);
+    --shadow-md:0 4px 16px rgba(0,0,0,.15);
+    --radius-md:12px;
+    --radius-sm:8px;
+    --transition:all .3s ease
+}
+.pos-product-card{
+    background:var(--bg-white);
+    border-radius:var(--radius-md);
+    padding:16px;
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--border-light);
+    transition:var(--transition);
+    cursor:pointer;
+    position:relative;
+    overflow:hidden
+}
+.pos-product-card:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-md);
+    border-color:var(--primary-blue)
+}
+.product-image{
+    position:relative;
+    width:100%;
+    height:120px;
+    border-radius:var(--radius-sm);
+    overflow:hidden;
+    margin-bottom:12px;
+    background:var(--bg-gray)
+}
+.product-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:transform .3s ease
+}
+.pos-product-card:hover .product-image img{
+    transform:scale(1.05)
+}
+.stock-badge{
+    position:absolute;
+    top:8px;
+    left:8px;
+    padding:4px 8px;
+    border-radius:4px;
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    z-index:2
+}
+.stock-badge.in-stock{
+    background:var(--success-green);
+    color:#fff
+}
+.stock-badge.low-stock{
+    background:var(--warning-orange);
+    color:#fff
+}
+.stock-badge.out-of-stock{
+    background:var(--error-red);
+    color:#fff
+}
+.product-info{
+    margin-bottom:12px
+}
+.product-name{
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:4px;
+    color:var(--text-primary);
+    line-height:1.3;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden
+}
+.product-sku{
+    font-size:11px;
+    color:var(--text-secondary);
+    margin-bottom:8px;
+    font-family:'Courier New',monospace
+}
+.price-section{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px
+}
+.current-price{
+    font-size:16px;
+    font-weight:700;
+    color:var(--success-green-dark)
+}
+.cost-price{
+    font-size:11px;
+    color:var(--text-secondary);
+    font-style:italic
+}
+.stock-info{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12px
+}
+.stock-count{
+    color:var(--text-secondary)
+}
+.low-stock-warning{
+    color:var(--error-red);
+    font-weight:600;
+    font-size:11px;
+    animation:pulse 2s infinite
+}
+@keyframes pulse{
+    0%,100%{opacity:1}50%{opacity:.7}
+}
+.product-actions{
+    margin-top:8px
+}
+.quick-add-btn{
+    width:100%;
+    padding:10px 12px;
+    background:var(--primary-blue);
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    transition:var(--transition);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    position:relative;
+    overflow:hidden
+}
+.quick-add-btn:hover{
+    background:var(--primary-blue-hover);
+    transform:scale(1.02)
+}
+.quick-add-btn:active{
+    transform:scale(.98)
+}
+</style> LE STYLE SI

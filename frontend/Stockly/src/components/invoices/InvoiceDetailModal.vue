@@ -146,10 +146,10 @@
                   </td>
                   <td class="border border-gray-300 px-3 py-2 text-center">{{ item.quantity }}</td>
                   <td class="border border-gray-300 px-3 py-2 text-right font-mono">
-                    {{ formatPrice(item.unit_price) }}
+                    {{ format(item.unit_price) }}
                   </td>
                   <td class="border border-gray-300 px-3 py-2 text-right font-mono font-semibold">
-                    {{ formatPrice(item.total_item) }}
+                    {{ format(item.total_item) }}
                   </td>
                 </tr>
               </tbody>
@@ -161,7 +161,7 @@
             <div class="w-72 border border-gray-300 text-sm">
               <div class="flex justify-between px-3 py-2 border-b border-gray-300">
                 <span class="font-semibold">Subtotal:</span>
-                <span class="font-mono">{{ formatPrice(invoice.total_hors_reduction) }}</span>
+                <span class="font-mono">{{ format(invoice.total_hors_reduction) }}</span>
               </div>
               <!-- <div v-if="invoice.reduction > 0" class="flex justify-between px-3 py-2 border-b border-gray-300">
               <span class="font-semibold">Discount ({{ invoice.reduction }}%):</span>
@@ -173,7 +173,7 @@
             </div> -->
               <div class="flex justify-between px-3 py-2 bg-gray-100 font-bold">
                 <span>TOTAL:</span>
-                <span class="font-mono">{{ formatPrice(invoice.total) }}</span>
+                <span class="font-mono">{{ format(invoice.total) }}</span>
               </div>
             </div>
           </div>
@@ -218,8 +218,12 @@
 import { ref } from 'vue'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import CompanyInfo from './CompanyInfo.vue'
+import { useCurrency } from '@/composable/useCurrency'
+
+const {format} = useCurrency()
 const invoiceContent = ref(null)
 const invoiceStore = useInvoiceStore()
+
 // const invoice = ref({
 //       id: '',
 //       date_of_creation: '',
@@ -264,13 +268,7 @@ function calculateTax() {
   return ((subtotal - discount) * (props.invoice.value.tva || 0)) / 100
 }
 
-// ✅ Format price avec devise XAF
-const formatPrice = (amount) => {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'XAF',
-  }).format(amount || 0)
-}
+
 
 defineEmits(['close'])
 
