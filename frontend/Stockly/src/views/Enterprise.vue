@@ -9,10 +9,10 @@
     <!-- Stat Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
-        :gradientFrom="stat.gradientFrom" :gradientTo="stat.gradientTo" :trend="stat.trend" />
+        :gradientFrom="stat.gradientFrom" :is-currency="stat.isCurrency" :gradientTo="stat.gradientTo" :trend="stat.trend" />
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <MetricCard v-for="stat in statsTable" :key="stat.id" :icon="stat.icon" :value="stat.value" :label="stat.label"
+      <MetricCard v-for="stat in statsTable" :disabled="stat.disabled"  :is-currency="stat.isCurrency" :key="stat.id" :icon="stat.icon" :value="stat.value" :label="stat.label"
         :trend="stat.trend" :viewLink="stat.viewLink" :icon-bg="stat.iconBg" :icon-color="stat.iconColor"
         :period="stat.period" />
     </div>
@@ -101,31 +101,10 @@ const statsTable = computed(() => [
     iconColor: '#16a34a',
     viewLink: '/sales',
     period: statisticStore.profit.period,
+    isCurrency: true,
   },
-  {
+   {
     id: 2,
-    label: 'Total Returns',
-    value: '$156,000',
-    trend: -8,
-    icon: RotateCcw,
-    iconBg: '#FDEDEE',
-    iconColor: '#dc2626',
-    viewLink: '/returns',
-    period: 'Month',
-  },
-  {
-    id: 3,
-    label: 'Total Expenses',
-    value: '$2,780,000',
-    trend: -3,
-    icon: Wallet,
-    iconBg: '#FFF7E6',
-    iconColor: '#f59e0b',
-    viewLink: '/expenses',
-    period: statisticStore.client.period,
-  },
-  {
-    id: 4,
     label: 'Total Customers',
     value: statisticStore.client.clients?.total,
     trend: statisticStore.client.clients?.history?.at(-1)?.growth_percent,
@@ -134,7 +113,35 @@ const statsTable = computed(() => [
     iconColor: '#2563eb',
     viewLink: '/customers',
     period: statisticStore.client.period,
+    isCurrency:false
   },
+  {
+    id: 3,
+    label: 'Total Returns',
+    value: '$156,000',
+    trend: -8,
+    icon: RotateCcw,
+    iconBg: '#FDEDEE',
+    iconColor: '#dc2626',
+    viewLink: '/returns',
+    period: 'Month',
+    isCurrency: true,
+    disabled:true
+  },
+  {
+    id: 4,
+    label: 'Total Expenses',
+    value: '$2,780,000',
+    trend: -3,
+    icon: Wallet,
+    iconBg: '#FFF7E6',
+    iconColor: '#f59e0b',
+    viewLink: '/expenses',
+    period: statisticStore.client.period,
+    isCurrency: true,
+    disabled:true
+  },
+ 
 ])
 onMounted(async () => {
   loading.value = true
@@ -150,10 +157,12 @@ onMounted(async () => {
 
 const totalProductsValue = computed(() =>
   productStore.products.reduce((sum, product) => {
-    const productTotal = product.selling_price * (product.quantity ?? 1)
-    return sum + productTotal
-  }, 0),
+    const price = Number(product.selling_price) || 0
+    const qty = Number(product.quantity) || 1
+    return sum + price * qty
+  }, 0)
 )
+
 const lowStockProducts = ref([])
 
 async function fetchLowStockProducts() {
@@ -192,23 +201,26 @@ const topStats = computed(() => [
     subtext: 'Under this enterprise',
     gradientFrom: '#0E9384',
     gradientTo: '#0E9384',
+    isCurrency: false, // nombre simple
   },
   {
     id: 2,
     icon: Package,
     label: 'Total Products Value',
-    value: totalProductsValue,
+    value: totalProductsValue.value,
     gradientFrom: '#FE9F43',
     gradientTo: '#FE9F43',
+    isCurrency: true, // montant en monnaie
   },
   {
     id: 3,
     icon: DollarSign,
     label: 'Total Sales',
-    value: computed(() => statisticStore.topProducts.sales?.total),
+    value: statisticStore.topProducts.sales?.total,
     gradientFrom: '#092C4C',
     gradientTo: '#092C4C',
     trend: statisticStore.topProducts.sales?.history.at(-1)?.growth_percent,
+    isCurrency: true, // montant en monnaie
   },
   {
     id: 4,
@@ -218,6 +230,7 @@ const topStats = computed(() => [
     gradientFrom: '#155EEF',
     gradientTo: '#155EEF',
     trendPercentage: revenueTrendPercent.value,
+    isCurrency: true, // montant en monnaie
   },
 ])
 

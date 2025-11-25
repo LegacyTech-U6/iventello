@@ -20,6 +20,8 @@ exports.getAllEntreprises = async (req, res) => {
       ...query,
       attributes: { exclude: [] },
     });
+const entreprise = await Entreprise.findOne({ where: { id: 1 } });
+console.log(entreprise.currency);
 
     const data = entreprises.map((p) => {
       const EntJSON = p.toJSON();

@@ -168,7 +168,9 @@
             <!-- Version désactivée -->
             <div v-if="isDisabled"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group disabled-link">
-              <span class="material-symbols-outlined"> trolley </span>
+              <span class="material-icons">
+                trolley
+              </span>
               <span>purchase</span>
             </div>
 
@@ -185,8 +187,8 @@
         </nav>
         <div class="p-5">
 
-          <ValidationButton :text="authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion'"
-            size="large" :asyncClick="logoutEntreprise"
+          <ValidationButton :text="authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion'" size="large"
+            :asyncClick="logoutEntreprise"
             class="w-full mt-3 flex justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-3 rounded-2xl font-semibold shadow-md hover:shadow-lg transition-all" />
 
         </div>
@@ -227,8 +229,8 @@
 
 
             <div class="relative">
-              <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <span class="material-symbols-outlined">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center">
+                <span class="material-icons md-48">
                   account_circle
                 </span>
               </div>

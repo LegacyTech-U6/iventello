@@ -68,6 +68,7 @@ export async function getProduct() {
 
 export async function getOneProduct(id) {
   const { data } = await API.get(`/products/${id}`)
+  console.log(data)
   return data
 }
 

@@ -124,13 +124,13 @@
         <div>
           <div class="lg:text-xs text-sm text-gray-500 mb-1">Selling Price</div>
           <div class="lg:text-2xl text-sm font-bold text-gray-900">
-            ${{ parseFloat(String(product.selling_price)).toFixed(2) }}
+          {{ format(product.selling_price)}}
           </div>
         </div>
         <div class="text-right">
           <div class="text-xs text-gray-500 mb-1">Cost</div>
           <div class="text-sm font-medium text-gray-600">
-            ${{ parseFloat(String(product.cost_price)).toFixed(2) }}
+          {{ format(product.cost_price)}}
           </div>
         </div>
       </div>
@@ -187,14 +187,14 @@
       <!-- Cost Price -->
       <div class="w-28 text-right hidden xl:block">
         <span class="text-sm text-gray-600">
-          ${{ parseFloat(String(product.cost_price)).toFixed(2) }}
+          {{ format(product.cost_price) }}
         </span>
       </div>
 
       <!-- Selling Price -->
       <div class="w-32 text-right">
         <span class="text-sm font-bold text-gray-900">
-          ${{ parseFloat(String(product.selling_price)).toFixed(2) }}
+          {{ format(product.selling_price)}}
         </span>
       </div>
 
@@ -220,7 +220,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-
+import { useCurrency } from '@/composable/useCurrency'
+const {format} = useCurrency()
 interface Product {
   id?: string | number
   Prod_name: string

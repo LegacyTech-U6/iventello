@@ -5,7 +5,6 @@ module.exports = (sequelize) => {
   const Entreprise = sequelize.define(
     "Entreprise",
     {
-     
       uuid: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -15,6 +14,12 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING(150),
         allowNull: false,
       },
+      currency: {
+        type: DataTypes.STRING(10),
+        allowNull: false,
+        defaultValue: "XAF",
+      },
+
       description: DataTypes.TEXT,
       logo_url: DataTypes.STRING,
       numero_fiscal: DataTypes.STRING,
