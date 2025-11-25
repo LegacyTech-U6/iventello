@@ -13,8 +13,8 @@ const path = require("path");
 const queryParser = sequelizeQuery(db);
 const BASE_URL = process.env.BASE_URL;
 const logActivity = require("../utils/activityLogger");
-const { sendNotification } = require('../utils/notification');
-const {supabase} = require('../middleware/supabase')
+const { sendNotification } = require("../utils/notification");
+const { supabase } = require("../middleware/supabase");
 
 // ===============================
 // 🔹 Récupérer tous les produits
@@ -33,9 +33,14 @@ exports.getAllProducts = async (req, res) => {
       ...query,
       include: [
         { model: Category, as: "category", attributes: ["id", "name"] },
-        { model: Supplier, as: "supplierInfo", attributes: ["id", "supplier_name"] },
+        {
+          model: Supplier,
+          as: "supplierInfo",
+          attributes: ["id", "supplier_name"],
+        },
       ],
     });
+    console.log(products[0]);
 
     const data = products.map((p) => {
       const prodJSON = p.toJSON();
@@ -55,7 +60,6 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-
 // ===============================
 // 🔹 Récupérer un produit par ID
 // ===============================
@@ -66,7 +70,11 @@ exports.getProductById = async (req, res) => {
       where: { id, entreprise_id: req.entrepriseId },
       include: [
         { model: Category, as: "category", attributes: ["id", "name"] },
-        { model: Supplier, as: "supplierInfo", attributes: ["id", "supplier_name"] },
+        {
+          model: Supplier,
+          as: "supplierInfo",
+          attributes: ["id", "supplier_name"],
+        },
       ],
     });
 
@@ -77,6 +85,7 @@ exports.getProductById = async (req, res) => {
       // URL publique Supabase
       product.Prod_image = `${product.Prod_image}`;
     }
+    console.log(product);
 
     res.status(200).json(product);
   } catch (err) {
@@ -85,13 +94,12 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-
 // ===============================
 // 🔹 Create a product (with image & category check)
-// ===============================
 exports.createProduct = async (req, res) => {
   try {
     const entreprise_id = req.entrepriseId;
+    const user_id = req.user?.id || null;
     const { category_id } = req.body;
     const Category = db.Category;
 
@@ -106,13 +114,22 @@ exports.createProduct = async (req, res) => {
         });
       }
     }
-    // 🔹 Si une image est uploadée, envoyer vers Supabase
-    let imageUrl = null;
-    if (req.file) {
-      const fileName = Date.now() + "-" + req.file.originalname;
 
-      const { error: uploadError } = await supabase.storage
-        .from("images") // nom du bucket
+    // 🔹 Si une image est uploadée, envoyer vers Supabase
+    let Prod_image = null;
+
+    if (req.file) {
+      console.log("📸 FICHIER REÇU :", {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+      });
+
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+      console.log("📝 Nom généré pour Supabase :", fileName);
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("images")
         .upload(fileName, req.file.buffer, {
           cacheControl: "3600",
           upsert: false,
@@ -120,31 +137,34 @@ exports.createProduct = async (req, res) => {
         });
 
       if (uploadError) throw uploadError;
+      console.log("📡 Résultat upload :", uploadData);
 
-      imageUrl = supabase.storage.from("images").getPublicUrl(fileName).data.publicUrl;
+      // 🔹 Générer l’URL publique directement
+      Prod_image = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${fileName}`;
+      console.log("🌍 URL publique générée :", Prod_image);
+    } else {
+      console.log("⚠️ Aucun fichier reçu → pas d’upload.");
     }
 
-    // 🔹 Créer le produit
+    // 🔹 Créer le produit avec l'URL publique
     const productData = {
       ...req.body,
       entreprise_id,
-      user_id: req.user?.id || null, // <-- enregistre l'auteur/créateur du produit si authentifié
-      Prod_image: imageUrl,
+      user_id,
+      Prod_image,
     };
 
     const product = await Product.create(productData);
 
-    const user = req.user || null;
-
     // 🔹 Log activity
     await logActivity({
-      user,
+      user: req.user || null,
       action: "Create Product",
       entity_type: "Product",
       entity_id: product.id,
       description: `Created product "${product.Prod_name}"`,
       quantity: product.quantity || 0,
-      amount: product.quantity || 0,
+      amount: product.selling_price || 0,
       ip_address: req.ip,
       user_agent: req.headers["user-agent"],
       entreprise_id,
@@ -152,7 +172,7 @@ exports.createProduct = async (req, res) => {
 
     // 🔹 Send notification
     await sendNotification({
-      type: 'product',
+      type: "product",
       message: `New product created: "${product.Prod_name}"`,
       user_id,
     });
@@ -209,7 +229,7 @@ exports.updateProduct = async (req, res) => {
 
     // ✅ Send notification
     await sendNotification({
-      type: 'product',
+      type: "product",
       message: `Product updated: ${product.Prod_name}`,
       user_id: req.user?.id,
     });
@@ -224,7 +244,6 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-
 // ===============================
 // 🔹 Delete a product
 // ===============================
@@ -237,14 +256,13 @@ exports.deleteProduct = async (req, res) => {
       where: { id, entreprise_id },
     });
 
-    if (!product)
-      return res.status(404).json({ message: "Product not found" });
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
     await Product.destroy({ where: { id, entreprise_id } });
 
     // ✅ Send notification
     await sendNotification({
-      type: 'product',
+      type: "product",
       message: `Product deleted: ${product.Prod_name}`,
       user_id: req.user?.id,
     });
@@ -267,8 +285,7 @@ exports.createSale = async (req, res) => {
       where: { id: productId, entreprise_id },
     });
 
-    if (!product)
-      return res.status(404).json({ message: "Product not found" });
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
     const total_profit =
       (product.selling_price - product.cost_price) * quantitySold;
@@ -300,7 +317,7 @@ exports.createSale = async (req, res) => {
 
     // ✅ Send notification
     await sendNotification({
-      type: 'sale',
+      type: "sale",
       message: `New sale: ${quantitySold} units of "${product.Prod_name}"`,
       user_id: req.user?.id,
     });
@@ -356,7 +373,7 @@ exports.addQuantity = async (req, res) => {
 
       // 🔹 3. Enregistrer le log d’activité hors transaction
       const entreprise = await db.Entreprise.findByPk(entrepriseId);
-    const user_id = req.user?.id || null;
+      const user_id = req.user?.id || null;
 
       await logActivity({
         user_id,
@@ -376,14 +393,13 @@ exports.addQuantity = async (req, res) => {
         message: "Quantité ajoutée avec succès",
         product,
       });
-
     } catch (err) {
       await t.rollback();
 
       if (err.code === "ER_LOCK_WAIT_TIMEOUT") {
         attempt++;
         console.log(`⚠️ Lock timeout, tentative ${attempt}... retrying`);
-        await new Promise(r => setTimeout(r, 100 * attempt)); // wait avant retry
+        await new Promise((r) => setTimeout(r, 100 * attempt)); // wait avant retry
       } else {
         console.error("🔥 Transaction échouée :", err);
         return res.status(500).json({ success: false, message: err.message });
@@ -461,17 +477,21 @@ exports.getLowStockProducts = async (req, res) => {
   try {
     const entrepriseId = req.entrepriseId;
     console.log(entrepriseId);
-    
+
     const settings = await Settings.findOne({
       where: { entreprise_id: entrepriseId },
     });
     const threshold = settings?.stock_alert_threshold || 5;
-  
+
     const products = await Product.findAll({
       where: { entreprise_id: entrepriseId, quantity: { [Op.lte]: threshold } },
       include: [
         { model: Category, as: "category", attributes: ["id", "name"] },
-        { model: Supplier, as: "supplierInfo", attributes: ["id", "supplier_name"] },
+        {
+          model: Supplier,
+          as: "supplierInfo",
+          attributes: ["id", "supplier_name"],
+        },
       ],
     });
 
@@ -484,15 +504,14 @@ exports.getLowStockProducts = async (req, res) => {
       return prodJSON;
     });
 
-    console.log('====================================');
+    console.log("====================================");
     console.log(data);
-    console.log('====================================');
+    console.log("====================================");
     res.json({ threshold, data });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 // ===============================
 // 🔹 Produits en rupture de stock
@@ -517,7 +536,7 @@ exports.getOutOfStockProducts = async (req, res) => {
       return prodJSON;
     });
 
-    res.json( data);
+    res.json(data);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -561,7 +580,7 @@ exports.getProductsByCategory = async (req, res) => {
         entreprise_id: req.entrepriseId,
       },
     });
-   // Transformer le nom du fichier en URL publique Supabase
+    // Transformer le nom du fichier en URL publique Supabase
     const products = products.map((p) => {
       const prodJSON = p.toJSON();
       if (prodJSON.Prod_image) {
