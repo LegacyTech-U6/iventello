@@ -165,12 +165,31 @@
               </span>
               <span>Audit Trail</span>
             </router-link>
+            <!-- Version désactivée -->
+            <div v-if="isDisabled"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group disabled-link">
+              <span class="material-symbols-outlined"> trolley </span>
+              <span>purchase</span>
+            </div>
+
+            <!-- Version active -->
+            <router-link v-else to="/"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
+              :class="isActive(ActivityRoute)" @click="closeSidebarOnMobile">
+              <span class="material-symbols-outlined"> trolley </span>
+              <span>purchase</span>
+            </router-link>
+
+
           </div>
         </nav>
         <div class="p-5">
+
           <ValidationButton :text="authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion'"
-             :icon="() => h('span', { class: 'material-symbols-outlined', style: 'font-size: 20px' }, 'logout')" size="large" :asyncClick="logoutEntreprise"
+            :icon="() => h('span', { class: 'material-symbols-outlined', style: 'font-size: 20px' }, 'logout')"
+            size="large" :asyncClick="logoutEntreprise"
             class="w-full mt-3 flex justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-3 rounded-2xl font-semibold shadow-md hover:shadow-lg transition-all" />
+
         </div>
 
 
@@ -208,10 +227,22 @@
             </button>
 
 
-            <!-- Avatar Initiales -->
-            <div
-              class="w-20 h-10 rounded bg-green-800 text-green-600 font-bold text-sm flex items-center justify-center shadow-sm">
-              {{ userInitials }}
+            <div class="relative">
+              <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <span class="material-symbols-outlined">
+                  account_circle
+                </span>
+              </div>
+            </div>
+
+            <!-- Informations utilisateur -->
+            <div class="flex flex-col">
+              <span class="text-gray-900 font-medium text-sm">
+                {{ authStore.user?.username || 'Utilisateur' }} {{ authStore.user?.Last_name || '' }}
+              </span>
+              <span class="text-gray-400 text-xs">
+                {{ formattedDate }}
+              </span>
             </div>
 
           </div>
@@ -234,7 +265,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, h } from 'vue'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import { useRouter, useRoute } from 'vue-router'
 import {
@@ -257,6 +288,7 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import NotificationPanel from '@/components/ui/NotificationPanel.vue'
 import Iventello from '@/assets/iventello.png'
 import ValidationButton from './ui/buttons/ValidationButton.vue'
+const isDisabled = true; // ou ta condition logique
 
 const router = useRouter()
 const route = useRoute()
@@ -397,6 +429,16 @@ const toggleNotificationPanel = () => {
     notificationStore.fetchNotifications()
   }
 }
+const formattedDate = ref('')
+
+const updateDate = () => {
+  const today = new Date()
+  const options = { day: 'numeric', month: 'long', year: 'numeric' }
+  formattedDate.value = today.toLocaleDateString('fr-FR', options)
+}
+
+// Appel initial
+updateDate()
 
 const closeSidebarOnMobile = () => {
   if (!isDesktop.value) {
@@ -482,5 +524,23 @@ onUnmounted(() => {
   aside {
     padding-top: env(safe-area-inset-top);
   }
+}
+
+.disabled-link {
+  pointer-events: none;
+  /* désactive le clic */
+  opacity: 0.4;
+  /* effet désactivé */
+  position: relative;
+}
+
+/* Trait dotted en haut */
+.disabled-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-top: 2px dotted #999;
 }
 </style>
