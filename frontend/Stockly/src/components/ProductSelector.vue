@@ -2,10 +2,7 @@
 <template>
   <div class="product-selector bg-gray-50 min-h-screen p-6">
     <!-- Header -->
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 mb-1">Welcome, Wesley Adrian</h1>
-      <p class="text-gray-500">December 24, 2024</p>
-    </div>
+  
 
     <!-- Search and Filters -->
     <div class="flex gap-3 mb-6">

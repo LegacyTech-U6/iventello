@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 space-y-8">
+  <div class="p-15 space-y-8">
     <div class="flex space-x-5">
       <WelcomeCard :user="authStore.user?.username || 'User'" :enterprise="entrepriseStore.activeEntreprise.name"
         :image=mascot />

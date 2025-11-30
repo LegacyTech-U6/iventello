@@ -3,22 +3,22 @@
     <div class="summary-table">
       <div class="summary-row">
         <span class="label">Subtotal:</span>
-        <span class="value">${{ formatCurrency(subtotal) }}</span>
+        <span class="value">{{ format(subtotal) }}</span>
       </div>
 
       <div v-if="discount > 0" class="summary-row">
         <span class="label">Discount ({{ discount }}%):</span>
-        <span class="value discount">- ${{ formatCurrency(discountAmount) }}</span>
+        <span class="value discount">-{{ format(discountAmount) }}</span>
       </div>
 
       <div class="summary-row">
         <span class="label">Tax ({{ taxRate }}%):</span>
-        <span class="value">${{ formatCurrency(taxAmount) }}</span>
+        <span class="value">{{ format(taxAmount) }}</span>
       </div>
 
       <div class="summary-row total">
         <span class="label">TOTAL:</span>
-        <span class="value total-amount">${{ formatCurrency(total) }}</span>
+        <span class="value total-amount">{{ format(total) }}</span>
       </div>
     </div>
   </div>
@@ -26,6 +26,8 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useCurrency} from '@/composable/useCurrency'
+const {format} = useCurrency()
 
 const props = defineProps({
   items: { type: Array, default: () => [] },
@@ -49,12 +51,7 @@ const total = computed(() =>
   parseFloat((subtotal.value - discountAmount.value + taxAmount.value).toFixed(2)),
 )
 
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount)
-}
+
 </script>
 
 <style scoped>

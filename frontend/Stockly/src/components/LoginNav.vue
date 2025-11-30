@@ -34,16 +34,16 @@
 
     <!-- Overlay for mobile -->
     <Transition name="fade">
-      <div v-if="sidebarOpen" @click="sidebarOpen = false"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"></div>
+      <div v-if="sidebarOpen && !isDesktop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+        @click="sidebarOpen = false"></div>
     </Transition>
+
 
     <!-- Sidebar -->
     <Transition name="slide">
-      <aside v-show="sidebarOpen || isDesktop" :class="[
-        'fixed lg:static top-0 left-0 h-screen bg-white border-r border-gray-200 z-40 flex flex-col shadow-xl lg:shadow-none',
-        'w-72',
-      ]">
+      <aside v-if="sidebarOpen || isDesktop" class="fixed lg:static top-0 left-0 h-screen bg-white border-r border-gray-200 
+           z-50 flex flex-col shadow-xl lg:shadow-none w-72" @click.stop>
+
         <!-- Desktop Logo -->
         <div class="hidden lg:block px-6 py-5  ">
           <div class=" border-gray-200/50 p-5">
@@ -188,7 +188,7 @@
         <div class="p-5">
 
           <ValidationButton :text="authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion'" size="large"
-            :asyncClick="logoutEntreprise"
+            :asyncClick="logoutEntreprise" :icon="LogoutIcon"
             class="w-full mt-3 flex justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-3 rounded-2xl font-semibold shadow-md hover:shadow-lg transition-all" />
 
         </div>
@@ -254,7 +254,7 @@
 
       <!-- Page Content -->
       <main class="flex-1 overflow-y-auto bg-gray-50 pt-16 lg:pt-0">
-        <div class="p-4 lg:p-6">
+        <div class="">
           <slot></slot>
         </div>
       </main>
@@ -266,7 +266,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, h } from 'vue'
+import { ref, computed, onMounted, onUnmounted, h,watch } from 'vue'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import { useRouter, useRoute } from 'vue-router'
 import {
@@ -289,6 +289,7 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import NotificationPanel from '@/components/ui/NotificationPanel.vue'
 import Iventello from '@/assets/iventello.png'
 import ValidationButton from './ui/buttons/ValidationButton.vue'
+import LogoutIcon from './icons/LogoutIcon.vue'
 const isDisabled = true; // ou ta condition logique
 
 const router = useRouter()
@@ -302,6 +303,14 @@ const sidebarOpen = ref(false)
 const notificationOpen = ref(false)
 const isDesktop = ref(window.innerWidth >= 1024)
 const lowStockCount = ref(0) // À remplacer par une vraie valeur du store
+
+watch(sidebarOpen, (value) => {
+  if (value) notificationOpen.value = false
+})
+
+watch(notificationOpen, (value) => {
+  if (value) sidebarOpen.value = false
+})
 
 // Computed
 const unreadCount = computed(() => notificationStore.unreadCount)
@@ -416,13 +425,12 @@ const userInitials = computed(() => {
   return 'U'
 })
 
-// Methods
 const isActive = (path) => {
-  const isCurrentRoute = route.path === path
-  return isCurrentRoute
-    ? 'bg-green-300 text-green-700 shadow-sm'
-    : 'text-green-700 hover:bg-gray-50'
+  return route.path === path
+    ? 'bg-blue-50 text-blue-600 font-semibold'
+    : 'text-gray-700 hover:bg-gray-100'
 }
+
 
 const toggleNotificationPanel = () => {
   notificationOpen.value = !notificationOpen.value
@@ -442,10 +450,9 @@ const updateDate = () => {
 updateDate()
 
 const closeSidebarOnMobile = () => {
-  if (!isDesktop.value) {
-    sidebarOpen.value = false
-  }
+  if (!isDesktop.value) sidebarOpen.value = false
 }
+
 
 const logoutEntreprise = () => {
   entrepriseStore.clearActiveEntreprise()
@@ -478,29 +485,20 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Transitions */
+/* Fade */
 .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
+.fade-leave-active { transition: opacity .25s ease; }
 .fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+.fade-leave-to { opacity: 0; }
 
-.slide-enter-active {
-  transition: transform 0.3s ease-out;
-}
-
-.slide-leave-active {
-  transition: transform 0.3s ease-in;
-}
-
+/* Slide */
+.slide-enter-active,
+.slide-leave-active { transition: transform .25s ease; }
 .slide-enter-from,
-.slide-leave-to {
-  transform: translateX(-100%);
-}
+.slide-leave-to { transform: translateX(-100%); }
+
+
+
 
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {

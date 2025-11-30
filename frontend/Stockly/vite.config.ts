@@ -37,7 +37,7 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone', // plein écran
         scope: '/',
-        start_url: '/',
+        start_url: '/login',
         icons: [
           {
             src: '/iventello.png',

@@ -8,7 +8,7 @@
 
       <!-- Colonne 2 -->
       <div class="flex justify-center">
-        All rights reserved
+        All rights reserved designed and developed by Fillin Corporation
       </div>
 
       <!-- Colonne 3 -->

@@ -60,7 +60,7 @@
     </template>
 
     <!-- LIST VIEW -->
-    <template v-else>
+    <template  v-else>
       <div class="flex-1 text-sm font-medium text-gray-700">{{ product.Prod_name }}</div>
       <div class="w-32 text-sm text-gray-600">{{ product.category.name }}</div>
       <div class="w-32 text-sm font-mono text-gray-600">{{ product.code_bar }}</div>

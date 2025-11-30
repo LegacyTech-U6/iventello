@@ -105,6 +105,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useStatisticsStore } from '@/stores/statisticStore'
+import { useCurrency } from '@/composable/useCurrency';
 import { ShoppingCart } from "lucide-vue-next";
 const store = useStatisticsStore()
 const tabs = [
@@ -112,6 +113,7 @@ const tabs = [
   { label: 'This month', value: 'week' },
   { label: 'This year', value: 'month' },
 ]
+
 
 const activeTab = ref('month')
 const chartData = ref([])

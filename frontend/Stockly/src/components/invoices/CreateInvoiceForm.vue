@@ -134,7 +134,6 @@ async function downloadPDF() {
 
 function printInvoice() {
   const printContent = invoiceContent.value.innerHTML
-  const originalContent = document.body.innerHTML
 
   // Remplace tout le body temporairement par le contenu de la facture
   document.body.innerHTML = printContent
@@ -142,11 +141,6 @@ function printInvoice() {
   // Lance l’impression
   window.print()
 
-  // Restaure le contenu original
-  document.body.innerHTML = originalContent
-
-  // Recharge le composant Vue pour éviter les bugs de réactivité
-  window.location.reload()
 }
 
 </script>

@@ -18,8 +18,8 @@
             <div v-if="item.description" class="item-desc">{{ item.description }}</div>
           </td>
           <td class="quantity">{{ item.quantity }}</td>
-          <td class="unit-price">${{ item.selling_price.toFixed(2) }}</td>
-          <td class="amount">${{ (item.quantity * item.selling_price).toFixed(2) }}</td>
+          <td class="unit-price">{{ format(item.selling_price) }}</td>
+          <td class="amount">{{format(item.quantity * item.selling_price) }}</td>
         </tr>
       </tbody>
     </table>
@@ -27,6 +27,8 @@
 </template>
 
 <script setup>
+import { useCurrency } from '@/composable/useCurrency';
+const {format} = useCurrency()
 defineProps({
   items: Array,
 })
