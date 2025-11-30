@@ -1,6 +1,6 @@
 // ProductSelector.vue const ProductSelector = `
 <template>
-  <div class="product-selector bg-gray-50 min-h-screen p-6">
+  <div class="product-selector bg-gray-50 h-full p-6">
     <!-- Header -->
   
 

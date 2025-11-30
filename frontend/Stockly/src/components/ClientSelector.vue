@@ -57,7 +57,6 @@
         class="mt-2 px-2 py-1 hover:bg-gray-100 cursor-pointer"
         @click="selectWalkIn"
       >
-        Walk-in Customer
       </div>
 
       <!-- Add new client -->
