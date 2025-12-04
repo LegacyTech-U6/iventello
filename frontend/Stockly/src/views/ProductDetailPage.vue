@@ -233,8 +233,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div class="bg-gray-50 p-4 rounded-lg">
                     <dt class="text-sm font-medium text-gray-500 mb-1">Total Stock Value (Cost)</dt>
-                    <dd class="text-xl font-bold text-gray-900">{{ format(product.quantity
-                      * parseFloat(product.cost_price.toString())) }}</dd>
+                    <dd class="text-xl font-bold text-gray-900">{{ format(total) }}</dd>
                   </div>
                   <div class="bg-gray-50 p-4 rounded-lg">
                     <dt class="text-sm font-medium text-gray-500 mb-1">Potential Revenue (Sell)</dt>
@@ -323,7 +322,14 @@ interface Product {
 
 const router = useRouter()
 const route = useRoute()
-
+const total = computed(() => {
+  if (!product || !product.value) return 0
+  const qty = typeof product.value.quantity === 'string'
+    ? parseInt(product.value.quantity)
+    : (product.value.quantity || 0)
+  const cost = parseFloat(product.value.cost_price?.toString() || '0')
+  return qty * cost
+})
 const product = ref<Product | null>(null)
 const loading = ref(true)
 const isEditing = ref(false)
