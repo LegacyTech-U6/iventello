@@ -38,7 +38,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/ad',
     component: () => import('@/views/AdminLayout.vue'),
-    meta: { showNavbarAndFooter: false, requiresAuth: true },
+    meta: { showNavbarAndFooter: false, requiresAuth: false },
     children: [
       {
         path: 'admin',

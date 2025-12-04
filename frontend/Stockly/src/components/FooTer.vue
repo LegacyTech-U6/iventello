@@ -1,6 +1,6 @@
 <template>
   <footer class=" items-center flex justify-center py-4 text-gray-600 text-sm">
-    <div class="max-w-7xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center sm:text-left sm:text-base">
+    <div class="max-w-7xl flex gap-4 text-center sm:text-left sm:text-base">
       <!-- Colonne 1 -->
       <div class="flex justify-center sm:justify-start">
         © 2025 Iventello

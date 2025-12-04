@@ -61,19 +61,20 @@
           </div>
           <ChevronDown class="w-4 h-4 text-gray-400 flex-shrink-0 transition-transform group-hover:rotate-180 duration-300" />
         </div>
-        <button
-          @click="logout()"
-          class="w-full mt-2 py-2.5 px-4 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-sm"
-        >
-          Sign Out
-        </button>
+        <ValidationButton
+        text="Sign Out"
+        color="#0C333B"
+        :asyncClick="logout"
+        width="100%"
+        class="rounded-xl hover:green-950"
+         />
       </div>
     </aside>
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
       <header
-        class="bg-white/80 backdrop-blur-md border-b border-gray-200/60 px-6 py-4 h-[88px] flex items-center"
+        class="bg-white/80 backdrop-blur-md border-b border-gray-200/60 px-6 py-4  flex items-center"
       >
         <div class="flex items-center justify-between w-full">
           <h2 class="text-lg font-semibold text-gray-900 hidden sm:block">
@@ -95,6 +96,7 @@ import { Menu, X, ChevronDown } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/authStore.js'
 import Iventello from '@/assets/iventello.png'
 import { RouterLink } from 'vue-router'
+import ValidationButton from './ui/buttons/ValidationButton.vue'
 
 const authStore = useAuthStore()
 const sidebarOpen = ref(false)
@@ -107,7 +109,6 @@ const navLinks = [
   { to: '/ad/dashboard', icon: 'dashboard', label: 'Dashboard' },
   { to: '/ad/workers', icon: 'group', label: 'Workers' },
   { to: '/ad/admin', icon: 'business', label: 'Companies' },
-  { to: '/ad/company', icon: 'bar_chart', label: 'Reports' },
   { to: '/ad/settings', icon: 'settings', label: 'Settings' },
 ]
 

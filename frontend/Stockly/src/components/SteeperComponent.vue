@@ -265,7 +265,8 @@
                   type="number"
                   step="0.01"
                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  :class="{ 'border-red-500': errors.costPrice }"
+                 
+                  
                 />
                 <p v-if="errors.costPrice" class="text-red-600 text-xs mt-1">
                   {{ errors.costPrice }}

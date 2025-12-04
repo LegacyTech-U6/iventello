@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen max-w-7xl mx-auto items-center grid grid-cols-1 gap-5 lg:grid-cols-2">
+  <div class="h-full max-w-5xl mx-auto items-center grid grid-cols-1 gap-5 lg:grid-cols-2">
 
 
 
     <!-- Section droite (formulaire) -->
     <div class="flex items-center justify-center p-8 lg:px-10 py-12">
       <div class="w-full max-w-lg space-y-8">
-        <div class="text-start space-y-6">
+        <div class="text-start space-y-4">
           <router-link to="/">
             <img :src=Iventello alt="">
           </router-link>
@@ -18,7 +18,7 @@
 
 
         <!-- Formulaire -->
-        <form @submit.prevent="handleRegister" class="space-y-6">
+        <form @submit.prevent="handleRegister" class="space-y-2">
 
           <!-- Names -->
           <div class="grid grid-cols-2 gap-4">
@@ -119,7 +119,7 @@
     <!-- Section gauche (texte + image) -->
     <div class="hidden lg:flex flex-col items-center justify-center  space-y-8">
       <!-- PARTIE GAUCHE (Logo + texte) -->
-      <div class=" lg:flex flex-col bg-[#0C333B] hidden  rounded-xl h-[800px] p-10 items-center justify-center">
+      <div class=" lg:flex flex-col bg-[#0C333B] hidden  rounded-xl h-[600px] p-10 items-center justify-center">
         <img :src="image" alt="">
 
         <p class="text-white text-lg text-center max-w-sm">

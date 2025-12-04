@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen max-w-7xl mx-auto items-center grid grid-cols-1 gap-10 lg:grid-cols-2">
+  <div class="h-full max-w-5xl mx-auto items-center grid grid-cols-1 gap-10 lg:grid-cols-2">
 
 
-    <div class=" lg:flex bg-[#0C333B] hidden  rounded-xl h-[800px] p-10 items-center justify-center">
-      <img :src="image" alt="">
+    <div class=" lg:flex bg-[#0C333B] hidden  rounded-xl h-[600px] p-10 items-center justify-center">
+      <img :src="image" alt="iventello illustration">
     </div>
 
     <!-- PARTIE DROITE (Formulaire) -->

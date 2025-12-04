@@ -27,8 +27,8 @@
 
       <!-- 🖼️ Image content -->
       <div class="flex justify-center">
-        <div class="rounded-xl overflow-hidden shadow-lg w-[250px] h-[250px] lg:w-[300px] lg:h-[300px]">
-          <!-- Place ton image ici -->
+        <div class="rounded-xl">
+          <img :src="multitasking" class="w-full" alt="">
         </div>
       </div>
     </div>
@@ -36,5 +36,6 @@
 </template>
 
 <script setup>
+import multitasking from '@/assets/image/multitasking.png'
 // Aucun script nécessaire
 </script>

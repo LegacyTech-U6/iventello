@@ -1,10 +1,10 @@
 <template>
-  <section class="relative flex justify-center items-center max-h-150 px-6 py-12 overflow-hidden">
+  <section class="relative flex justify-center items-center max-h-150 px-6  overflow-hidden">
  
-    <div class="grid lg:grid-cols-2 gap-10 max-w-6xl w-full items-center relative z-10">
+    <div class="grid lg:grid-cols-2 gap-10 max-w-7xl w-full items-center relative z-10">
       <!-- 🖼️ Section image -->
-      <div class="hidden lg:flex justify-center">
-        <TechIcon class="w-78 h-78 lg:w-94 lg:h-94" />
+      <div class="hidden lg:flex w-full justify-center">
+        <TechIcon class="w-78 h-78 lg:w-full lg:h-94" />
       </div>
 
       <!-- 📝 Section texte -->

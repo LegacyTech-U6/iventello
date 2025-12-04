@@ -1,5 +1,6 @@
 <template>
   <n-button
+  class="rounded-xl border-0"
     :block="block"
     :disabled="loading || disabled"
     :size="size"
