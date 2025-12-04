@@ -8,7 +8,7 @@
         <div v-if="isEditing" class="flex items-center gap-2">
             <input 
                 :value="modelValue" 
-                @input="$emit('update:value', isCurrency ? parseFloat($event.target.value) : parseInt($event.target.value))"
+                @input="onInput"
                 :type="isCurrency ? 'number' : 'number'" 
                 :min="0" 
                 :step="isCurrency ? '0.01' : '1'"
@@ -34,7 +34,10 @@ const props = defineProps<{
     formatter?: (value: string | number) => string
 }>()
 
-const emit = defineEmits(['update:value'])
+const emit = defineEmits<{
+    (e: 'update:modelValue', value: string | number): void
+    (e: 'update:value', value: string | number): void
+}>()
 
 // Utilise la fonction formatter si elle est fournie, sinon affiche la valeur brute
 const formatter = (value: string | number) => {
@@ -42,5 +45,19 @@ const formatter = (value: string | number) => {
         return props.formatter(value)
     }
     return value.toString()
+}
+
+function onInput(e: Event) {
+    const input = e.target as HTMLInputElement
+    let val: string | number = input.value
+    if (props.isCurrency) {
+        const n = parseFloat(String(val))
+        val = Number.isNaN(n) ? val : n
+    } else {
+        const n = parseInt(String(val))
+        val = Number.isNaN(n) ? val : n
+    }
+    emit('update:modelValue', val)
+    emit('update:value', val)
 }
 </script>
