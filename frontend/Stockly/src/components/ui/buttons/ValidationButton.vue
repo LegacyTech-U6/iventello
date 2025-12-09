@@ -17,7 +17,7 @@
     </template>
 
     <!-- Texte et spinner -->
-    <span class="flex items-center justify-center gap-2">
+    <span class="flex items-center justify-center gap-2 text-[0.7em]">
       <span>{{ loading ? loadingText : text }}</span>
       <n-spin v-if="loading" size="small" />
     </span>

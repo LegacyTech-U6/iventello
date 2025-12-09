@@ -4,6 +4,8 @@ const { sendNotification } = require('../utils/notification');
 const {supabase} = require('../middleware/supabase')
 
 const Client = db.Client;
+const invoice = db.Invoice;
+
 const queryParser = sequelizeQuery(db);
 
 // 🔹 Récupérer tous les clients
@@ -14,11 +16,19 @@ exports.getAllClients = async (req, res) => {
 
     const clients = await Client.findAll({ ...query });
 
-    const data = clients.map(c => {
+    const data = await Promise.all(clients.map(async (c) => {
       const obj = c.toJSON();
       if (obj.image) obj.image = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${obj.image}`;
+      
+      // Get all invoices for this client
+      const invoices = await db.Invoice.findAll({
+        where: { client_id: c.id, entreprise_id: req.entrepriseId }
+      });
+      
+      obj.invoices = invoices.map(inv => inv.toJSON());
+      
       return obj;
-    });
+    }));
 
     const count = await Client.count({ where: query.where });
 

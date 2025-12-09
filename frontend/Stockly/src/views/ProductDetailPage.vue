@@ -1,17 +1,16 @@
 <template>
-  <div
-    class="h-full max-w-8xl mx-auto bg-white flex flex-col overflow-hidden shadow-lg border-l border-r border-gray-100">
+  <div class="h-full max-w-6xl mx-auto bg-white flex flex-col overflow-hidden shadow border-l border-r border-gray-100 text-sm">
     <div class="border-b border-gray-200 bg-white sticky px-5 top-0 z-20 shrink-0">
-      <div class="max-w-8xl mx-auto  py-4">
-        <div class="flex items-center justify-between flex-wrap gap-4">
-          <div class="flex-1 min-w-0 flex items-center gap-4">
+      <div class="max-w-6xl mx-auto py-3">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="flex-1 min-w-0 flex items-center gap-5">
             <button @click="isEditing ? cancelEdit() : goBack()"
               class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-all group p-2 -ml-2 rounded-full hover:bg-indigo-50/50">
-              <span class="material-icons w-5 h-5 transition-transform group-hover:-translate-x-0.5">chevron_left</span>
+              <span class="material-icons w-5 h-5 transition-transform group-hover:-translate-x-0.5 flex items-center justify-center">chevron_left</span>
             </button>
 
-            <div class="max-w-xs sm:max-w-md md:max-w-xl lg:max-w-3xl">
-              <h1 class="text-3xl capitalize font-extrabold text-gray-900 truncate">
+            <div class="max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl">
+              <h1 class="text-base capitalize font-bold text-gray-900 truncate">
                 {{ product?.Prod_name || 'Product Details' }}
               </h1>
               <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">
@@ -22,7 +21,7 @@
             </div>
           </div>
 
-          <div class="flex gap-3">
+          <div class="flex gap-2 items-center">
             <validation-button v-if="!isEditing" text="Edit Product" :loading="saving" :disabled="saving"
               color="primary" size="medium" :icon="EditIcon" @click="handleEdit" />
 
@@ -31,192 +30,183 @@
 
             <validation-button v-if="isEditing" text="Cancel" color="default" size="medium" :icon="CancelIcon"
               @click="cancelEdit" />
-
           </div>
         </div>
       </div>
     </div>
 
     <div class="flex-1 overflow-y-auto bg-gray-50">
-      <div class="mx-auto px-6 py-8">
-        <div v-if="loading" class="bg-white rounded-xl shadow-lg p-12">
+      <div class="mx-auto px-5 py-5">
+        <div v-if="loading" class="bg-white rounded-xl shadow p-7">
           <div class="flex flex-col items-center justify-center">
             <span class="material-icons w-12 h-12 text-indigo-400 animate-spin mb-4">refresh</span>
             <p class="text-gray-500 font-medium">Loading product details...</p>
           </div>
         </div>
 
-        <div v-else-if="!product" class="bg-white rounded-xl shadow-lg p-12">
+        <div v-else-if="!product" class="bg-white rounded-xl shadow p-7">
           <div class="text-center">
             <div class="w-20 h-20 bg-indigo-50 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <span class="material-icons w-10 h-10 text-indigo-600">inventory_2</span>
+              <span class="material-icons w-6 h-6 text-indigo-600">inventory_2</span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h3>
-            <p class="text-gray-500 mb-6">The product ID seems invalid or the data is unavailable.</p>
+            <h3 class="text-base font-bold text-gray-900 mb-2">Product Not Found</h3>
+            <p class="text-sm text-gray-500 mb-4">The product ID seems invalid or the data is unavailable.</p>
             <button @click="goBack"
-              class="px-6 py-3 bg-gray-800 text-white font-medium rounded-xl hover:bg-gray-700 transition-all shadow-md inline-flex items-center gap-2">
+              class="px-4 py-2 bg-gray-800 text-white font-normal rounded hover:bg-gray-700 transition-all shadow inline-flex items-center gap-2 text-sm">
               <span class="material-icons w-4 h-4">arrow_back</span>
               Go Back to Products
             </button>
           </div>
         </div>
 
-        <div v-else class="space-y-6">
-
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-
-            <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 flex items-center justify-between">
+        <div v-else class="space-y-5">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded shadow border border-gray-100 p-3 flex items-center justify-between text-sm">
               <div>
                 <span class="text-sm font-medium text-gray-500 block mb-1">Stock Quantity</span>
                 <div v-if="isEditing">
                   <input v-model.number="editForm.quantity" type="number" min="0"
-                    class="w-full text-xl font-bold px-2 py-1 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-right" />
+                    class="w-full text-sm font-bold px-2 py-1 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 text-right" />
                 </div>
-                <span v-else class="text-3xl font-extrabold text-gray-900">{{ product.quantity }}</span>
+                <span v-else class="text-sm font-bold text-gray-900">{{ product.quantity }}</span>
               </div>
-              <span class="material-icons w-8 h-8 text-indigo-500">inventory_2</span>
-            </div>
+              <span class="material-icons w-5 h-5 text-indigo-500">inventory_2</span>
+              </div>
 
-            <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 flex items-center justify-between">
+            <div class="bg-white rounded shadow border border-gray-100 p-3 flex items-center justify-between text-sm">
               <div>
                 <span class="text-sm font-medium text-gray-500 block mb-1">Min. Stock Level</span>
                 <div v-if="isEditing">
                   <input v-model.number="editForm.min_stock_level" type="number" min="0"
-                    class="w-full text-xl font-bold px-2 py-1 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-right" />
+                    class="w-full text-sm font-bold px-2 py-1 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 text-right" />
                 </div>
-                <span v-else class="text-3xl font-extrabold text-red-600">{{ product.min_stock_level }}</span>
+                <span v-else class="text-sm font-bold text-red-600">{{ product.min_stock_level }}</span>
               </div>
-              <span class="material-icons w-8 h-8 text-red-500">warning</span>
-            </div>
+              <span class="material-icons w-5 h-5 text-red-500">warning</span>
+              </div>
 
-            <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 flex items-center justify-between">
+            <div class="bg-white rounded shadow border border-gray-100 p-3 flex items-center justify-between text-sm">
               <div>
                 <span class="text-sm font-medium text-gray-500 block mb-1">Selling Price</span>
                 <div v-if="isEditing">
                   <input v-model.number="editForm.selling_price" type="number" min="0" step="0.01"
-                    class="w-full text-xl font-bold px-2 py-1 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-right" />
+                    class="w-full text-sm font-bold px-2 py-1 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 text-right" />
                 </div>
-                <span v-else class="text-3xl font-extrabold text-green-600">{{ format(product.selling_price) }}</span>
+                <span v-else class="text-sm font-bold text-green-600">{{ format(product.selling_price) }}</span>
               </div>
-              <span class="material-icons w-8 h-8 text-green-500">sell</span>
-            </div>
+              <span class="material-icons w-5 h-5 text-green-500">sell</span>
+              </div>
 
-            <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 flex items-center justify-between">
+            <div class="bg-white rounded shadow border border-gray-100 p-3 flex items-center justify-between text-sm">
               <div>
                 <span class="text-sm font-medium text-gray-500 block mb-1">Cost Price</span>
                 <div v-if="isEditing">
                   <input v-model.number="editForm.cost_price" type="number" min="0" step="0.01"
-                    class="w-full text-xl font-bold px-2 py-1 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-right" />
+                    class="w-full text-sm font-bold px-2 py-1 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 text-right" />
                 </div>
-                <p v-else class="text-3xl font-extrabold text-gray-900">{{ format(product.cost_price) }}</p>
+                <p v-else class="text-sm font-bold text-gray-900">{{ format(product.cost_price) }}</p>
               </div>
-              <span class="material-icons w-8 h-8 text-yellow-500">trending_down</span>
-            </div>
+              <span class="material-icons w-5 h-5 text-yellow-500">trending_down</span>
+              </div>
           </div>
 
-          <!-- Image + QR + Quick Actions + General Info + Financial Snapshot -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <div class="lg:col-span-1 space-y-4"> <!-- gap réduit -->
-              <div class="bg-white rounded-xl shadow-md border border-gray-100 p-3 sticky top-16">
-                <!-- padding réduit et top plus petit -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div class="lg:col-span-1 space-y-4">
+              <div class="bg-white rounded shadow border border-gray-100 p-3 sticky top-3 text-sm">
                 <div
                   class="aspect-square rounded-lg mb-3 flex items-center justify-center overflow-hidden group border border-gray-200 bg-gray-50">
-                  <!-- margin-bottom réduit -->
                   <div v-if="editForm.Prod_image || product.Prod_image" class="relative w-full h-full">
                     <img :src="isEditing ? editForm.Prod_image : product.Prod_image" :alt="product.Prod_name"
                       class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" />
-                    <!-- padding réduit -->
                   </div>
-                  <div v-else class="text-center p-4"> <!-- padding réduit -->
-                    <span class="material-icons w-12 h-12 text-gray-300 mx-auto mb-2">image_not_supported</span>
-                    <p class="text-xs text-gray-400">No image available</p>
+                  <div v-else class="text-center p-5">
+                    <span class="material-icons w-6 h-6 text-gray-300 mx-auto mb-2">image_not_supported</span>
+                    <p class="text-sm text-gray-400">No image available</p>
                   </div>
                 </div>
 
-                <div v-if="isEditing" class="mb-3"> <!-- margin-bottom réduit -->
+                <div v-if="isEditing" class="mb-3">
                   <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
                   <input v-model="editForm.Prod_image" type="url"
-                    class="w-full px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                    placeholder="https://example.com/image.jpg" /> <!-- padding réduit -->
-                </div>
+                    class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    placeholder="https://example.com/image.jpg" />
+                  </div>
 
-                <div class="flex gap-2 border-t border-gray-100 pt-3"> <!-- padding-top réduit -->
+                <div class="flex gap-2 border-t border-gray-100 pt-3">
                   <div
                     class="w-1/4 aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-indigo-500 p-1">
                     <img :src="editForm.Prod_image || product.Prod_image" alt="Thumbnail"
                       class="w-full h-full object-cover rounded-md" v-if="editForm.Prod_image || product.Prod_image" />
-                    <span v-else class="text-xs text-gray-500">Main</span>
+                    <span v-else class="text-sm text-gray-500">Main</span>
                   </div>
                   <div v-for="i in 3" :key="i"
                     class="w-1/4 aspect-square bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200 hover:border-indigo-300 transition-all">
-                    <span class="material-icons w-4 h-4 text-gray-400">photo_camera</span> <!-- taille icône réduite -->
-                  </div>
+                    <span class="material-icons w-5 h-5 text-gray-400">photo_camera</span>
+                    </div>
                 </div>
               </div>
 
 
             </div>
 
-            <div class="lg:col-span-2 space-y-6">
-
-              <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-5 border-b border-gray-100 pb-3 flex items-center gap-2">
-                  <span class="material-icons w-6 h-6 text-indigo-500">list_alt</span>
+            <div class="lg:col-span-2 space-y-4">
+              <div class="bg-white rounded shadow border border-gray-100 p-4">
+                <h2 class="text-base font-bold text-gray-900 mb-3 border-b border-gray-100 pb-2 flex items-center gap-2">
+                  <span class="material-icons w-5 h-5 text-indigo-500">list_alt</span>
                   General Information
                 </h2>
 
-                <div v-if="isEditing" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                <div v-if="isEditing" class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
                     <input v-model="editForm.Prod_name" type="text"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                       placeholder="e.g. Samsung Galaxy S23" />
-                  </div>
+                    </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">SKU / Barcode</label>
                     <input v-model="editForm.code_bar" type="text"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                  </div>
+                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                    </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Category ID (Temp)</label>
                     <input v-model="editForm.category.id" type="text"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                       placeholder="Should be a select field in production" />
-                  </div>
+                    </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Supplier Name</label>
                     <input v-model="editForm.supplier_name" type="text"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                  </div>
+                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                    </div>
                   <div class="col-span-1 sm:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea v-model="editForm.Prod_Description" rows="4"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                    <textarea v-model="editForm.Prod_Description" rows="3"
+                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none text-sm"
                       placeholder="Enter a detailed description of the product..."></textarea>
-                  </div>
+                    </div>
                 </div>
 
-                <div v-else class="divide-y divide-gray-100">
-                  <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                <div v-else class="divide-y divide-gray-100 text-sm">
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Description</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                       {{ product.Prod_Description || 'No detailed description provided.' }}
                     </dd>
                   </div>
-                  <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Category</dt>
                     <dd class="mt-1 text-sm text-indigo-600 font-semibold sm:col-span-2 sm:mt-0">
                       {{ product.category.name }}
                     </dd>
                   </div>
-                  <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Supplier</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                       {{ product.supplier_name || 'N/A' }}
                     </dd>
                   </div>
-                  <div class="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Date Arrived</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                       {{ formatDate(product.date_of_arrival) }}
@@ -225,42 +215,42 @@
                 </div>
               </div>
 
-              <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6">
-                <h2 class="text-xl font-bold text-gray-900 mb-5 border-b border-gray-100 pb-3 flex items-center gap-2">
-                  <span class="material-icons w-6 h-6 text-indigo-500">pie_chart</span>
+              <div class="bg-white rounded shadow border border-gray-100 p-4">
+                <h2 class="text-base font-bold text-gray-900 mb-3 border-b border-gray-100 pb-2 flex items-center gap-2">
+                  <span class="material-icons w-5 h-5 text-indigo-500">pie_chart</span>
                   Financial Snapshot
                 </h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div class="bg-gray-50 p-3 rounded">
                     <dt class="text-sm font-medium text-gray-500 mb-1">Total Stock Value (Cost)</dt>
-                    <dd class="text-xl font-bold text-gray-900">{{ format(total) }}</dd>
+                    <dd class="text-sm font-bold text-gray-900">{{ format(total) }}</dd>
                   </div>
-                  <div class="bg-gray-50 p-4 rounded-lg">
+                  <div class="bg-gray-50 p-3 rounded">
                     <dt class="text-sm font-medium text-gray-500 mb-1">Potential Revenue (Sell)</dt>
-                    <dd class="text-xl font-bold text-green-700">{{ format(totalSellingValue) }}</dd>
+                    <dd class="text-sm font-bold text-green-700">{{ format(totalSellingValue) }}</dd>
                   </div>
                 </div>
               </div>
-              <div class="flex space-x-5">
-                <div class="p-6 bg-white rounded-xl shadow-md border border-gray-100">
-                  <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <div class="flex space-x-4">
+                <div class="p-4 bg-white rounded shadow border border-gray-100 text-sm flex-1">
+                  <h2 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <span class="material-icons w-5 h-5 text-indigo-500">qr_code</span>
                     QR / Barcode Management
                   </h2>
                   <button
-                    class="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-indigo-400 hover:text-indigo-600 transition-all flex items-center justify-center gap-2 font-medium">
-                    <span class="material-icons w-5 h-5">add</span>
+                    class="w-full py-2 border-2 border-dashed border-gray-300 rounded text-gray-600 hover:border-indigo-400 hover:text-indigo-600 transition-all flex items-center justify-center gap-2 font-normal text-sm">
+                    <span class="material-icons w-4 h-4">add</span>
                     Add New Barcode
                   </button>
                 </div>
 
-                <div class="p-6 bg-white rounded-xl shadow-md border border-gray-100 space-y-3">
-                  <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <div class="p-4 bg-white rounded shadow border border-gray-100 space-y-2 text-sm flex-1">
+                  <h2 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <span class="material-icons w-5 h-5 text-indigo-500">bolt</span>
                     Quick Actions
                   </h2>
                   <button @click="handleRestock"
-                    class="w-full  py-2 px-4 bg-indigo-50 border border-indigo-300 text-indigo-700 font-medium rounded-lg hover:bg-indigo-100 transition-all flex items-center justify-center gap-2 text-sm">
+                    class="w-full py-2 px-3 bg-indigo-50 border border-indigo-300 text-indigo-700 font-normal rounded hover:bg-indigo-100 transition-all flex items-center justify-center gap-2 text-sm">
                     <span class="material-icons w-4 h-4">local_shipping</span>
                     Perform Restock
                   </button>
