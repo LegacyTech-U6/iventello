@@ -18,6 +18,12 @@
             Yes! Iventello updates stock levels in real-time whenever products are added, sold, or transferred, ensuring accurate inventory management at all times.
           </p>
         </n-collapse-item>
+        <n-collapse-item name="3" title="Does iventello generates daily sales Analytics">
+           <p class="text-gray-700 mt-2">
+            Yes Iventello generate both daily,weekly 
+           </p>
+
+        </n-collapse-item>
       </n-collapse>
     </div>
   </section>

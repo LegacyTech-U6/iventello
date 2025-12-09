@@ -55,7 +55,7 @@ exports.register = async (req, res) => {
     
     const htmlContent = `
       <h2>Bienvenue, ${username} 👋</h2>
-      <p>Merci de vous être inscrit sur <strong>Stockly</strong>.</p>
+      <p>Merci de vous être inscrit sur <strong>Iventello</strong>.</p>
       <p>Cliquez sur le bouton ci-dessous pour activer votre compte :</p>
       <a href="${activationLink}" 
          style="display:inline-block;background:#2563eb;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;">

@@ -1,6 +1,6 @@
 <template>
   <div class="rounded-xl p-5 text-white shadow-sm transition-transform duration-200 hover:scale-[1.02]"
-    :class="isTailwind ? `bg-gradient-to-br from-${gradientFrom} to-${gradientTo}` : ''" :style="!isTailwind
+    :class="isTailwind ? `bg-linear-to-br from-${gradientFrom} to-${gradientTo}` : ''" :style="!isTailwind
         ? { background: `linear-gradient(to bottom right, ${gradientFrom}, ${gradientTo})` }
         : {}
       ">

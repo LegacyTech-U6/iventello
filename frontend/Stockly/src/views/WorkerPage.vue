@@ -19,31 +19,19 @@
         </div>
         <!-- Boutons d'action: Vue, Export, Ajouter -->
         <div class="flex items-center gap-3">
-          <!-- Bouton vue liste -->
-          <button class="p-2 hover:bg-gray-100 rounded-lg transition">
-            <List class="w-5 h-5 text-gray-600" />
-          </button>
-          <!-- Bouton vue grille -->
-          <button class="p-2 hover:bg-gray-100 rounded-lg transition">
-            <Grid3x3 class="w-5 h-5 text-gray-600" />
-          </button>
-          <!-- Bouton export PDF -->
-          <button class="p-2 hover:bg-gray-100 rounded-lg transition">
-            <FileText class="w-5 h-5 text-gray-600" />
-          </button>
-          <!-- Bouton export Excel -->
-          <button class="p-2 hover:bg-gray-100 rounded-lg transition">
-            <FileSpreadsheet class="w-5 h-5 text-gray-600" />
-          </button>
+        
+        
           <!-- Bouton rafraîchir -->
           <button class="p-2 hover:bg-gray-100 rounded-lg transition">
             <RefreshCw class="w-5 h-5 text-gray-600" />
           </button>
           <!-- Bouton trier -->
-          <button class="p-2 hover:bg-gray-100 rounded-lg transition">
-            <ChevronUp class="w-5 h-5 text-gray-600" />
-          </button>
+          
           <!-- Bouton ajouter employé -->
+            <ValidationButton
+            
+            text="Add Employer" width="100%"  loadingText="Signing in" color="#0C333B" variant="flat" :icon="Check" size="large" :asyncClick="handleLogin"
+            :loading="isLoading" />
           <button
             @click="showModal = true"
             class="bg-orange-500 text-white px-5 py-2.5 rounded-lg hover:bg-orange-600 transition flex items-center gap-2 text-sm font-medium shadow-sm"
@@ -55,7 +43,7 @@
       </div>
 
       <!-- Cartes de statistiques -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <GridCard
           title="Total Employee"
           :value="stats.total"
@@ -88,7 +76,7 @@
 
       <!-- Search and Filters -->
       <div class="mb-6 flex gap-3">
-        <div class="flex-1 relative">
+        <div class="flex-1 max-w-1/2 relative">
           <Search
             class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"
           />
@@ -103,16 +91,10 @@
           v-model="filterDepartment"
           class="border border-gray-200 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white text-sm text-gray-600"
         >
-          <option value="">Select Employees</option>
+          <option value="">Select department</option>
           <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
         </select>
-        <select
-          v-model="filterDesignation"
-          class="border border-gray-200 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white text-sm text-gray-600"
-        >
-          <option value="">Designation</option>
-          <option v-for="pos in positions" :key="pos" :value="pos">{{ pos }}</option>
-        </select>
+      
       </div>
 
       <!-- Workers Grid -->

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full max-w-5xl mx-auto items-center grid grid-cols-1 gap-10 lg:grid-cols-2">
+  <div class="  min-h-screen max-w-5xl mx-auto items-center grid grid-cols-1 gap-10 lg:grid-cols-2">
 
 
     <div class=" lg:flex bg-[#0C333B] hidden  rounded-xl h-[600px] p-10 items-center justify-center">

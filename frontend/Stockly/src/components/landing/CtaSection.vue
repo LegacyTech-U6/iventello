@@ -16,10 +16,12 @@
           Track stock levels, manage multiple companies, and streamline operations with a simple, intuitive dashboard.
         </p>
         <div class="flex gap-4 mt-4">
-          <button class="bg-green-500 text-white px-6 py-3 rounded-lg border border-green-500 font-medium hover:bg-gray-900 hover:border hover:text-green-500 hover:border-green-500 transition">
+          <button @click="login"
+            class="bg-green-500 text-white px-6 py-3 rounded-lg border border-green-500 font-medium hover:bg-gray-900 hover:border hover:text-green-500 hover:border-green-500 transition">
             Get Started
           </button>
-          <button class="border border-green-500 text-green-500 px-6 py-3 rounded-lg font-medium hover:bg-green-500 hover:text-white transition">
+          <button
+            class="border border-green-500 text-green-500 px-6 py-3 rounded-lg font-medium hover:bg-green-500 hover:text-white transition">
             Contact Us
           </button>
         </div>
@@ -36,6 +38,12 @@
 </template>
 
 <script setup>
+import router from '@/router';
 import multitasking from '@/assets/image/multitasking.png'
+
+const login = () => {
+  router.push('/register')
+
+}
 // Aucun script nécessaire
 </script>
