@@ -30,7 +30,7 @@
           <!-- Bouton ajouter employé -->
             <ValidationButton
             
-            text="Add Employer" width="100%"  loadingText="Signing in" color="#0C333B" variant="flat" :icon="Check" size="large" :asyncClick="handleLogin"
+            text="Add Employer" width="100%"   color="#0C333B" variant="flat" :size="large" :asyncClick="create"
             :loading="isLoading" />
           <button
             @click="showModal = true"
@@ -287,6 +287,9 @@ const stats = computed(() => {
     newJoiners: store.workers.filter((w) => new Date(w.date_hired) >= thirtyDaysAgo).length,
   }
 })
+const create = () => {
+  showModal.value = true
+}
 
 /**
  * Extrait la liste unique des départements
