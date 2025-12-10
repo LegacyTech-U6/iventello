@@ -13,16 +13,11 @@
             <!-- Quick Links -->
             <router-link
               to="/OutOfStock"
-              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#93000A] bg-red-50 hover:bg-red-100 rounded-md transition-colors"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
+<span class="material-symbols-rounded">
+warning
+</span>
               Out of Stock
             </router-link>
 
@@ -30,14 +25,9 @@
               to="/lowStock"
               class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-md transition-colors"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+<span class="material-symbols-rounded">
+trending_down
+</span>
               Low Stock
             </router-link>
 
@@ -97,29 +87,25 @@
             title="Total Products"
             :value="productStore.totalProducts || 0"
             :icon="Users"
-            gradientFrom="purple-500"
-            gradientTo="purple-600"
+            bgColor="#006879"
           />
           <GridCard
             title="in Stock"
             :value="inStockCount"
             :icon="UserCheck"
-            gradientFrom="teal-500"
-            gradientTo="teal-600"
+            bgColor="#3E4565"
           />
           <GridCard
             title="Low Stock"
             :value="lowStockCount"
             :icon="UserX"
-            gradientFrom="slate-700"
-            gradientTo="slate-800"
+          bgColor="#3E4565"
           />
           <GridCard
             title="Nember of categories"
             :value="categories.length"
             :icon="UserPlus"
-            gradientFrom="blue-500"
-            gradientTo="blue-600"
+           bgColor="#3E4565"
           />
         </div>
       </div>
@@ -255,29 +241,36 @@
       <!-- List View -->
       <div v-else class="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <!-- List Header -->
-        <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
-          <div
-            class="flex items-center gap-4 text-xs font-medium text-gray-600 uppercase tracking-wide"
-          >
-            <div class="flex-1">Product Name</div>
-            <div class="w-36 hidden lg:block">Last time Restock</div>
-            <div class="w-36 hidden lg:block">Category</div>
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 sticky top-0 z-10">
+          <div class="flex items-center gap-4 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+            <div class="flex-1 min-w-0">Product Name</div>
+            <div class="w-32 hidden sm:block">Category</div>
             <div class="w-32 hidden md:block">Barcode</div>
             <div class="w-24 text-center hidden sm:block">Stock</div>
-            <div class="w-28 text-right hidden xl:block">Cost Price</div>
+            <div class="w-28 text-right hidden lg:block">Cost Price</div>
             <div class="w-32 text-right">Selling Price</div>
-            <div class="w-10"></div>
+            <div class="w-12 text-right"></div>
           </div>
         </div>
 
-        <!-- List Items -->
-        <ProductListItem
-          v-for="product in filteredProducts"
-          :key="product.id"
-          :product="product"
-          :display-mode="viewMode"
-          @view="handleViewProduct"
-        />
+        <!-- List Items Container -->
+        <div class="divide-y divide-gray-200">
+          <ProductListItem
+            v-for="product in filteredProducts"
+            :key="product.id"
+            :product="product"
+            :display-mode="viewMode"
+            @view="handleViewProduct"
+          />
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="filteredProducts.length === 0" class="px-6 py-12 text-center">
+          <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          <p class="text-gray-500 text-sm">No products found</p>
+        </div>
       </div>
     </div>
     <ValidationModal />

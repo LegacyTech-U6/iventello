@@ -21,7 +21,7 @@
         <!-- Notification Button -->
         <button @click="toggleNotificationPanel" class="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
           aria-label="Notifications">
-          <span class="material-icons">
+          <span class="material-symbols-rounded">
             notifications
           </span>
           <span v-if="unreadCount > 0"
@@ -68,7 +68,7 @@
             <router-link :to="dashboardRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(dashboardRoute)" @click="closeSidebarOnMobile">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 dashboard
               </span>
               <span>Tableau de bord</span>
@@ -93,7 +93,7 @@
             <router-link :to="categoriesRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(categoriesRoute)" @click="closeSidebarOnMobile">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 category
               </span>
               <span>Catégories</span>
@@ -102,7 +102,7 @@
             <router-link :to="lowStocksRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(lowStocksRoute)" @click="closeSidebarOnMobile">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 trending_down
               </span>
               <span>Stock faible</span>
@@ -124,7 +124,7 @@
             <router-link v-if="authStore.can('canMakeSales')" :to="salesRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(salesRoute)" @click="closeSidebarOnMobile">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 point_of_sale
               </span>
               <span>Ventes</span>
@@ -133,7 +133,7 @@
             <router-link v-if="authStore.can('canViewInvoices')" :to="invoicesRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(invoicesRoute)" @click="closeSidebarOnMobile">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 receipt_long
               </span>
               <span>Factures</span>
@@ -142,7 +142,7 @@
             <router-link v-if="authStore.can('canMakeSales')" :to="clientsRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(clientsRoute)" @click="closeSidebarOnMobile">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 group
               </span>
               <span>Clients</span>
@@ -151,7 +151,7 @@
             <router-link v-if="authStore.can('canViewDashboard')" :to="reportsRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(reportsRoute)" @click="closeSidebarOnMobile">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 analytics
               </span>
               <span>Rapports</span>
@@ -160,7 +160,7 @@
             <router-link v-if="authStore.can('canAccessSettings')" :to="ActivityRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(ActivityRoute)" @click="closeSidebarOnMobile">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 timeline
               </span>
               <span>Audit Trail</span>
@@ -168,7 +168,7 @@
             <!-- Version désactivée -->
             <div v-if="isDisabled"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group disabled-link">
-              <span class="material-icons">
+              <span class="material-symbols-rounded">
                 trolley
               </span>
               <span>purchase</span>
@@ -201,7 +201,7 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
       <!-- Desktop Header -->
-      <header class="hidden lg:flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
+      <header class="hidden lg:flex items-center justify-between px-6 py-1 bg-white border-b border-gray-200">
         <div>
           <h2 class="text-xl font-semibold text-gray-900">{{ pageTitle }}</h2>
 
@@ -211,7 +211,7 @@
 
             <!-- Icône Notifications -->
             <button @click="toggleNotificationPanel" class="relative">
-              <span class="material-icons text-blue-400 text-2xl">
+              <span class="material-symbols-rounded text-[#004E5B] text-2xl">
                 notifications
               </span>
               <span v-if="unreadCount > 0"
@@ -222,7 +222,7 @@
 
             <!-- Icône Settings -->
             <button class="relative">
-              <span class="material-icons text-blue-400 text-2xl">
+              <span class="material-symbols-rounded text-[#004E5B] text-2xl">
                 settings
               </span>
             </button>
@@ -230,7 +230,7 @@
 
             <div class="relative">
               <div class="w-10 h-10 rounded-full flex items-center justify-center">
-                <span class="material-icons md-48">
+                <span class="material-symbols-rounded md-48 text-2xl">
                   account_circle
                 </span>
               </div>
@@ -289,7 +289,7 @@ import { useNotificationStore } from '@/stores/notificationStore'
 import NotificationPanel from '@/components/ui/NotificationPanel.vue'
 import Iventello from '@/assets/iventello.png'
 import ValidationButton from './ui/buttons/ValidationButton.vue'
-import LogoutIcon from './icons/LogoutIcon.vue'
+
 const isDisabled = true; // ou ta condition logique
 
 const router = useRouter()
@@ -427,7 +427,7 @@ const userInitials = computed(() => {
 
 const isActive = (path) => {
   return route.path === path
-    ? 'bg-blue-50 text-blue-600 font-semibold'
+    ? 'bg-[#4B6268] text-[#FFFFFF] font-light'
     : 'text-gray-700 hover:bg-gray-100'
 }
 

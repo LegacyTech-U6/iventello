@@ -9,7 +9,7 @@
     <!-- Stat Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
-        :gradientFrom="stat.gradientFrom" :is-currency="stat.isCurrency" :gradientTo="stat.gradientTo" :trend="stat.trend" />
+        :gradientFrom="stat.gradientFrom" :is-currency="stat.isCurrency" :gradientTo="stat.gradientTo" :bgColor="stat.bgColor" :trend="stat.trend" />
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <MetricCard v-for="stat in statsTable" :disabled="stat.disabled"  :is-currency="stat.isCurrency" :key="stat.id" :icon="stat.icon" :value="stat.value" :label="stat.label"
@@ -199,8 +199,7 @@ const topStats = computed(() => [
     label: 'Total products',
     value: productStore.totalProducts,
     subtext: 'Under this enterprise',
-    gradientFrom: '#0E9384',
-    gradientTo: '#0E9384',
+   bgColor:"#006879",
     isCurrency: false, // nombre simple
   },
   {
@@ -208,8 +207,7 @@ const topStats = computed(() => [
     icon: Package,
     label: 'Total Products Value',
     value: totalProductsValue.value,
-    gradientFrom: '#FE9F43',
-    gradientTo: '#FE9F43',
+    bgColor:"#3E4565",
     isCurrency: true, // montant en monnaie
   },
   {
@@ -217,8 +215,7 @@ const topStats = computed(() => [
     icon: DollarSign,
     label: 'Total Sales',
     value: statisticStore.topProducts.sales?.total,
-    gradientFrom: '#092C4C',
-    gradientTo: '#092C4C',
+   bgColor:"#565D7E",
     trend: statisticStore.topProducts.sales?.history.at(-1)?.growth_percent,
     isCurrency: true, // montant en monnaie
   },
@@ -227,8 +224,8 @@ const topStats = computed(() => [
     icon: DollarSign,
     label: 'Total Purchase',
     value: avgRevenue.value,
-    gradientFrom: '#155EEF',
-    gradientTo: '#155EEF',
+   
+   bgColor:"#BA1A1A",
     trendPercentage: revenueTrendPercent.value,
     isCurrency: true, // montant en monnaie
   },

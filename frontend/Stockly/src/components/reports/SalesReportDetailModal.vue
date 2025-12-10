@@ -8,7 +8,7 @@
     >
       <!-- Header -->
       <div
-        class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex justify-between items-center"
+        class="bg-gradient-to-r from-[#004E5B] to-[#006879] px-6 py-4 flex justify-between items-center"
       >
         <div>
           <h2 class="text-2xl font-bold text-white">Sales Report Details</h2>

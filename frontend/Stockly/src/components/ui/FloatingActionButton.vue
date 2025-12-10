@@ -4,7 +4,7 @@
       <!-- Floating Action Button -->
       <button
         @click="toggleMenu"
-        class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all animate-pulse"
+        class="w-14 h-14 rounded-full bg-[#006879] text-white flex items-center justify-center shadow-lg hover:bg-[#004E5B] "
       >
         <span
           class="text-3xl transform transition-transform duration-300"

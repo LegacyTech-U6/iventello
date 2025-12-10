@@ -1,12 +1,9 @@
 <template>
   <div class=" max-w-8xl mx-auto bg-gray-50 h-full">
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6  shadow-sm border border-gray-100">
-      <div class="flex-1 min-w-0">
-        <h1 class="text-3xl font-extrabold text-gray-900 truncate">Product Categories</h1>
-        <p class="text-sm text-gray-500 font-normal mt-1">Manage, add, and organize your product classifications.</p>
-      </div>
+    
       
-      <div class="flex gap-3 mt-4 md:mt-0 flex-shrink-0">
+      <div class="flex gap-3 justify-end mt-4 md:mt-0 flex-shrink-0">
         <button
           @click="$router.back()"
           class="bg-white text-gray-700 border border-gray-300 px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-100 hover:border-gray-400 transition flex items-center gap-2 shadow-sm"

@@ -36,7 +36,7 @@
     <div class="grid grid-cols-3 gap-4 pt-4 border-t border-gray-200">
       <div class="bg-purple-50 rounded-lg p-3">
         <div class="flex items-center gap-2 mb-1">
-          <span class="material-icons">
+          <span class="material-symbols-rounded">
             receipt
           </span>
           <span class="text-xs text-purple-700 font-medium">Invoices</span>
@@ -46,7 +46,7 @@
 
       <div class="bg-green-100 rounded-lg p-3">
         <div class="flex items-center gap-2 mb-1">
-          <span class="material-icons">
+          <span class="material-symbols-rounded">
             paid
           </span>
           <span class="text-xs text-green-500 font-medium">Total Spend</span>
@@ -56,7 +56,7 @@
 
       <div class="bg-amber-50 rounded-lg p-3">
         <div class="flex items-center gap-2 mb-1">
-          <span class="material-icons">
+          <span class="material-symbols-rounded">
             done_all
           </span>
           <span class="text-xs text-amber-700 font-medium">Status</span>
@@ -95,8 +95,8 @@ const props = defineProps({
 defineEmits(['view', 'edit', 'delete'])
 
 // Mock data - À remplacer par les vraies données de votre API
-const invoiceCount = computed(() => Math.floor(Math.random() * 20) + 1)
-const totalSpend = computed(() => Math.floor(Math.random() * 50000) + 5000)
+const invoiceCount = computed(() => props.client.invoices?.length || 0)
+const totalSpend = computed(() => props.client.invoices?.reduce((sum, invoice) => sum + invoice.total, 0) || 0)
 
 
 </script>

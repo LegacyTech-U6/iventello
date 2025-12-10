@@ -13,15 +13,18 @@
             @click="handleRefresh"
             class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
           >
-            <RefreshCw :size="20" class="text-gray-700" />
+            <span class="material-symbols-rounded">
+refresh
+</span>
           </button>
-          <button
-            @click="handleAddClient"
-            class="h-10 px-5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center gap-2 transition-colors"
-          >
-            <Plus :size="20" />
-            <span>Add Customer</span>
-          </button>
+          
+        
+            <ValidationButton 
+            color="#334A50"
+            :asyncClick="handleAddClient"
+            text="Add Customer"
+            icon="Plus"
+            />
         </div>
       </div>
     </div>
@@ -163,6 +166,7 @@ import { useActionMessage } from '@/composable/useActionMessage'
 import FromModal from '../components/clients/FromModal.vue'
 import ClientCard from '../components/clients/ClientCard.vue'
 import Noclient from '@/assets/icon svg/Noclient.vue'
+import  ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
 
 const { show } = useGlobalModal()
 const { showSuccess } = useActionMessage()

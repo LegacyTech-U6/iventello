@@ -1,12 +1,12 @@
 <template>
   <n-button
-  class="rounded-xl border-0"
+    class="rounded-xl border-0"
     :block="block"
     :disabled="loading || disabled"
     :size="size"
     @click="handleClick"
     v-bind="$attrs"
-    :type="!isHexColor ? colorType : 'default'"
+    :type="isNaiveType ? colorType : 'default'"
     :style="computedStyle"
   >
     <!-- Icône gauche si définie et pas en loading -->
@@ -31,22 +31,34 @@ import { NButton, NIcon, NSpin } from 'naive-ui'
 const props = defineProps({
   text: { type: String, default: 'Submit' },
   loadingText: { type: String, default: 'Chargement...' },
-  color: { type: String, default: 'primary' }, 
-  size: { type: String, default: 'medium' },   
+  color: { type: String, default: 'primary' },
+  size: { type: String, default: 'medium' },
   icon: { type: [Object, Function], default: null },
   block: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   asyncClick: { type: Function, default: null },
-  loading: { type: Boolean, default: false },  
-  width: { type: String, default: null }       
+  loading: { type: Boolean, default: false },
+  width: { type: String, default: null }
 })
 
 const internalLoading = ref(false)
 const loading = computed(() => props.loading || internalLoading.value)
-const isHexColor = computed(() => props.color.startsWith('#'))
-const colorType = computed(() => {
-  return ['primary','success','warning','error','info'].includes(props.color) ? props.color : 'default'
+
+const naiveTypes = ['primary','success','warning','error','info']
+const isNaiveType = computed(() => naiveTypes.includes(props.color))
+
+const isCssColor = computed(() => {
+  if (!props.color) return false
+  return (
+    props.color.startsWith('#') ||
+    props.color.startsWith('rgb') ||
+    props.color.startsWith('hsl') ||
+    props.color.startsWith('var(') ||
+    /^([a-z]+)$/i.test(props.color) // e.g. 'red', 'blue', etc.
+  ) && !isNaiveType.value
 })
+
+const colorType = computed(() => isNaiveType.value ? props.color : 'default')
 
 const handleClick = async () => {
   if (!props.asyncClick) return
@@ -60,10 +72,14 @@ const handleClick = async () => {
   }
 }
 
-// computedStyle uniquement pour hex et width
+// computedStyle pour toutes les couleurs CSS valides et width
 const computedStyle = computed(() => {
   const style = {}
-  if (isHexColor.value) style.backgroundColor = props.color, style.color = 'white'  , style.border = 'none' 
+  if (isCssColor.value) {
+    style.background = props.color
+    style.color = 'white'
+    style.border = 'none'
+  }
   if (props.width) style.width = props.width
   return style
 })

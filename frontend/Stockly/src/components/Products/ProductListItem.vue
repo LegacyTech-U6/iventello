@@ -1,9 +1,14 @@
 <template>
-  <div :class="displayMode === 'grid' ? 'bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 hover:border-gray-200 overflow-hidden' : 'bg-white hover:bg-gray-50 transition-colors border-b border-gray-100 px-6 py-4 flex items-center gap-4'" @click="handleView">
-    
+  <div
+    :class="[
+      displayMode === 'grid'
+        ? 'bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 hover:border-gray-200 overflow-hidden cursor-pointer'
+        : 'hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 px-6 py-4 flex items-center gap-4'
+    ]"
+  >
     <!-- GRID VIEW -->
     <template v-if="displayMode === 'grid'">
-      <div class="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100">
+      <div class="relative aspect-square bg-linear-to-br from-gray-50 to-gray-100">
         <img v-if="product.Prod_image" :src="product.Prod_image" :alt="product.Prod_name" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
         <div v-else class="w-full h-full flex items-center justify-center">
           <svg class="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -12,12 +17,12 @@
         </div>
 
         <div class="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-          <button class="px-4 py-2 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 flex items-center gap-2">
+          <button @click="handleView" class="px-4 py-2 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 flex items-center gap-2">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
-            Voir le produit
+            View
           </button>
         </div>
 
@@ -26,17 +31,17 @@
         </div>
       </div>
 
-      <div class="p-4 space-y-2">
+      <div class="p-4 space-y-3">
         <h3 class="text-lg font-bold text-gray-900 hover:text-blue-600 transition-colors line-clamp-2">{{ product.Prod_name }}</h3>
 
         <div class="text-sm text-gray-600 space-y-1">
           <p><strong>Code:</strong> {{ product.code_bar }}</p>
-          <p><strong>Catégorie:</strong> {{ product.category.name }}</p>
-          <p><strong>Quantité:</strong> {{ product.quantity }} unités</p>
+          <p><strong>Category:</strong> {{ product.category.name }}</p>
+          <p><strong>Qty:</strong> {{ product.quantity }} units</p>
         </div>
 
         <!-- Stock Progress Bar -->
-        <div class="mt-2">
+        <div class="mt-3">
           <div class="flex justify-between text-xs text-gray-500 mb-1">
             <span>{{ product.quantity }} / {{ product.max_stock_level }}</span>
             <span>{{ Math.round(quantityRatio * 100) }}%</span>
@@ -46,13 +51,13 @@
           </div>
         </div>
 
-        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
           <div>
-            <small class="text-gray-500">Prix de vente</small>
+            <small class="text-gray-500">Selling Price</small>
             <div class="text-lg font-bold text-gray-900">{{ format(product.selling_price) }}</div>
           </div>
           <div>
-            <small class="text-gray-500">Coût</small>
+            <small class="text-gray-500">Cost</small>
             <div class="text-sm font-medium text-gray-600">{{ format(product.cost_price) }}</div>
           </div>
         </div>
@@ -60,13 +65,55 @@
     </template>
 
     <!-- LIST VIEW -->
-    <template  v-else>
-      <div class="flex-1 text-sm font-medium text-gray-700">{{ product.Prod_name }}</div>
-      <div class="w-32 text-sm text-gray-600">{{ product.category.name }}</div>
-      <div class="w-32 text-sm font-mono text-gray-600">{{ product.code_bar }}</div>
-      <div class="w-24 text-xs font-semibold px-2.5 py-1 rounded-full text-center" :class="stockBadgeClass">{{ product.quantity }}</div>
-      <div class="w-28 text-sm text-right text-gray-600">{{ format(product.cost_price) }}</div>
-      <div class="w-32 text-sm font-bold text-right text-gray-900">{{ format(product.selling_price) }}</div>
+    <template v-else>
+      <!-- Product Name (flex-1) -->
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-gray-900 truncate hover:text-blue-600 transition-colors">
+          {{ product.Prod_name }}
+        </p>
+      </div>
+
+      <!-- Category (hidden on mobile) -->
+      <div class="w-32 hidden sm:block">
+        <p class="text-sm text-gray-600 truncate">{{ product.category.name }}</p>
+      </div>
+
+      <!-- Barcode (hidden on mobile/tablet) -->
+      <div class="w-32 hidden md:block">
+        <p class="text-xs font-mono text-gray-500 truncate">{{ product.code_bar }}</p>
+      </div>
+
+      <!-- Stock Quantity (hidden on mobile) -->
+      <div class="w-24 hidden sm:block">
+        <div class="text-center">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full inline-block" :class="stockBadgeClass">
+            {{ product.quantity }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Cost Price (hidden on mobile/tablet) -->
+      <div class="w-28 hidden lg:block">
+        <p class="text-sm text-gray-600 text-right">{{ format(product.cost_price) }}</p>
+      </div>
+
+      <!-- Selling Price (always visible) -->
+      <div class="w-32">
+        <p class="text-sm font-bold text-gray-900 text-right">{{ format(product.selling_price) }}</p>
+      </div>
+
+      <!-- Action Button -->
+      <div class="w-12 flex justify-end">
+        <button
+          class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+          @click="handleView"
+          title="View product details"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+      </div>
     </template>
   </div>
 </template>

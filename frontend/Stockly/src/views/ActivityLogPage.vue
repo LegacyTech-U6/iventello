@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div class="flex space-x-2">
-        <span class="material-icons">swap_horiz</span>
+        <span class="material-symbols-rounded">swap_horiz</span>
 
         <h1 class="text-2xl font-bold text-gray-900">Transactions</h1>
       </div>
@@ -12,7 +12,7 @@
     <!-- Filters Bar -->
     <div class="flex items-center gap-3 bg-white p-4 rounded-lg shadow-sm">
       <div class="flex-1 relative">
-        <span class="material-icons  absolute left-3 top-1/2 transform -translate-y-1/2">
+        <span class="material-symbols-rounded  absolute left-3 top-1/2 transform -translate-y-1/2">
           search
         </span>
         <input v-model="search" type="text" placeholder="Search Transactions"

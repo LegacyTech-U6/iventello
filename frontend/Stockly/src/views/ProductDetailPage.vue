@@ -1,6 +1,6 @@
 <template>
-  <div class="h-full max-w-6xl mx-auto bg-white flex flex-col overflow-hidden shadow border-l border-r border-gray-100 text-sm">
-    <div class="border-b border-gray-200 bg-white sticky px-5 top-0 z-20 shrink-0">
+  <div class="h-full max-w-7xl mx-auto flex flex-col overflow-hidden s  text-sm">
+    <div class=" sticky px-5 top-0 z-20 shrink-0">
       <div class="max-w-6xl mx-auto py-3">
         <div class="flex items-center justify-between flex-wrap gap-3">
           <div class="flex-1 min-w-0 flex items-center gap-5">
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div class="flex-1 overflow-y-auto bg-gray-50">
+    <div class="flex-1 overflow-y-aut0">
       <div class="mx-auto px-5 py-5">
         <div v-if="loading" class="bg-white rounded-xl shadow p-7">
           <div class="flex flex-col items-center justify-center">
@@ -141,7 +141,7 @@
                   </div>
                   <div v-for="i in 3" :key="i"
                     class="w-1/4 aspect-square bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200 hover:border-indigo-300 transition-all">
-                    <span class="material-icons w-5 h-5 text-gray-400">photo_camera</span>
+                    <span class="material-icons items-center w-5 h-5 text-gray-400">photo_camera</span>
                     </div>
                 </div>
               </div>
@@ -151,9 +151,9 @@
 
             <div class="lg:col-span-2 space-y-4">
               <div class="bg-white rounded shadow border border-gray-100 p-4">
-                <h2 class="text-base font-bold text-gray-900 mb-3 border-b border-gray-100 pb-2 flex items-center gap-2">
-                  <span class="material-icons w-5 h-5 text-indigo-500">list_alt</span>
-                  General Information
+                <h2 class="text-base font-bold text-gray-900 mb-3 border-b border-gray-100 pb-2 flex items-center justify-start gap-2">
+                  <span class="material-icons w-5 h-5 text-indigo-500 flex-shrink-0">list_alt</span>
+                  <span>General Information</span>
                 </h2>
 
                 <div v-if="isEditing" class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">

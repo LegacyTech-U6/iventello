@@ -1,9 +1,14 @@
 <template>
-  <div class="rounded-xl p-5 text-white shadow-sm transition-transform duration-200 hover:scale-[1.02]"
-    :class="isTailwind ? `bg-linear-to-br from-${gradientFrom} to-${gradientTo}` : ''" :style="!isTailwind
+  <div
+    class="rounded-xl p-5 text-white shadow-sm   transition-transform duration-200"
+    :class="bgColor && !isHexOrRgb ? bgColor : (isTailwind ? `bg-linear-to-br from-${gradientFrom} to-${gradientTo}` : '')"
+    :style="bgColor && isHexOrRgb
+      ? { background: props.bgColor }
+      : (!isTailwind
         ? { background: `linear-gradient(to bottom right, ${gradientFrom}, ${gradientTo})` }
-        : {}
-      ">
+        : {})
+    "
+  >
     <div class="flex items-center justify-between mb-3">
       <span class="text-sm font-medium opacity-90">{{ title }}</span>
       <component :is="icon" class="w-5 h-5 opacity-80" />
@@ -41,12 +46,22 @@ const props = defineProps({
   icon: [Object, Function],
   gradientFrom: { type: String, default: 'blue-500' },
   gradientTo: { type: String, default: 'blue-600' },
-  isCurrency: { type: Boolean, default: false }, // <-- ajout
+  isCurrency: { type: Boolean, default: false },
+  bgColor: { type: String, default: '' }, // new prop for single color
 })
 
 const isTailwind = computed(
   () => props.gradientFrom.includes('-') && props.gradientTo.includes('-'),
 )
+
+const isHexOrRgb = computed(() => {
+  if (!props.bgColor) return false
+  return (
+    props.bgColor.startsWith('#') ||
+    props.bgColor.startsWith('rgb') ||
+    props.bgColor.startsWith('hsl')
+  )
+})
 
 // Computed pour gérer les nombres simples vs les montants en currency
 const displayValue = computed(() => {

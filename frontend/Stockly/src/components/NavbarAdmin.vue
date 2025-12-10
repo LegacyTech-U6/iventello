@@ -40,7 +40,7 @@
           class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50/80 transition-all duration-300"
           @click="closeSidebarOnMobile"
         >
-          <span class="material-icons text-gray-700">{{ link.icon }}</span>
+          <span class="material-symbols-rounded text-gray-700">{{ link.icon }}</span>
           <span class="text-gray-900 font-medium">{{ link.label }}</span>
         </RouterLink>
       </nav>

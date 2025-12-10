@@ -126,7 +126,7 @@ onMounted(() => {
           <component
             :is="feature.icon"
             :size="30"
-            class="text-gray-800 mb-6"
+            class="text-[#006879] mb-6"
           />
 
           <h3 class="text-2xl font-light text-gray-900 mb-4">
