@@ -1,41 +1,49 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+
 import NavBar from './components/NavBar.vue'
 import FooTer from './components/FooTer.vue'
-import LoginNav from './components/LoginNav.vue'
 import FloatingActionButton from './components/ui/FloatingActionButton.vue'
 import ValidationModal from '@/components/ui/ValidationModal.vue'
+import GlobalLoader from '@/components/ui/GlobalLoader.vue'
+import { useUIStore } from '@/stores/uiStore'
+
 const route = useRoute()
-import { useRouter } from 'vue-router'
+const uiStore = useUIStore()
 
 const router = useRouter()
 
 const onActionSelect = (item) => {
   if (item.route) router.push(item.route)
 }
+
+const isLoading = computed(() => uiStore.isLoading)
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <div class="items-center">
-        <NavBar v-if="$route.meta.showNavbarAndFooter !== false" />
+  <GlobalLoader v-if="isLoading" />
+
+  <div v-show="!isLoading">
+    <header>
+      <div class="wrapper">
+        <div class="items-center">
+          <NavBar v-if="$route.meta.showNavbarAndFooter !== false" />
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <FloatingActionButton
-   v-if="$route.params.uuid"
+    <FloatingActionButton v-if="$route.params.uuid" />
 
-  />
+    <RouterView />
 
-  <RouterView />
+    <FooTer v-if="$route.meta.showNavbarAndFooter !== false" />
 
-  <FooTer v-if="$route.meta.showNavbarAndFooter !== false" />
-
-  <!-- ✅ Modal global de validation -->
-  <ValidationModal />
+    <!-- ✅ Modal global de validation -->
+    <ValidationModal />
+  </div>
 </template>
 
 <style scoped>
