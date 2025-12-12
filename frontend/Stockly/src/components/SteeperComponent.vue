@@ -445,10 +445,10 @@ import { useProductStore } from '@/stores/productStore'
 import { useCategoryStore } from '@/stores/CategoryStore'
 import { useSupplierStore } from '@/stores/SupplierStore'
 import ImageUploader from './main/ImageUploader.vue'
-import { useGlobalModal } from '@/composable/useValidation'
-const { show } = useGlobalModal()
+import { useActionMessage } from '@/composable/useActionMessage'
 import { useRouter } from 'vue-router'
 const productStore = useProductStore()
+const { showSuccess, showError } = useActionMessage()
 const categoryStore = useCategoryStore()
 const supplierStore = useSupplierStore()
 const router = useRouter()
@@ -550,7 +550,7 @@ const submit = async () => {
     if (!result.success) {
       throw new Error(result.message || 'Failed to add product')
     }
-    show('Product added successfully!', 'success') // ✅ Affiche le modal global
+    showSuccess('Product added successfully!')
     resetForm()
     router.back()
   } catch (error) {
@@ -559,7 +559,7 @@ const submit = async () => {
       error.message ||
       'An error occurred while adding the product.'
     console.error('❌ Error adding product:', error)
-    show(error?.message || 'Failed to add product', 'error') // ✅ Affiche erreur dans modal
+    showError(error?.message || 'Failed to add product')
   }
 }
 

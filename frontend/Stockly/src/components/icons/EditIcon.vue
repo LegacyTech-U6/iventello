@@ -1,3 +1,3 @@
 <template>
-  <span class="material-icons">edit</span>
+  <span class="material-symbols-rounded">edit</span>
 </template>

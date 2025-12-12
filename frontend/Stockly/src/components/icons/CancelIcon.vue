@@ -1,5 +1,5 @@
 <template>
-    <span class="material-icons">
+    <span class="material-symbols-rounded">
         cancel
     </span>
 </template>

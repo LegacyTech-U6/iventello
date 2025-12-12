@@ -7,6 +7,24 @@
   - Point d'entrée pour les nouveaux utilisateurs
 -->
 <script setup lang="ts">
+import { useHead } from '@unhead/vue'
+
+// SEO Optimization for the Homepage
+useHead({
+  title: 'Iventello | Modern Inventory & Sales Management SaaS',
+  meta: [
+    {
+      name: 'description',
+      content:
+        'Streamline your business with Iventello, the all-in-one SaaS platform for real-time inventory management, point-of-sale (POS), and automated invoicing. Perfect for small to medium businesses.'
+    },
+    {
+      name: 'keywords',
+      content:
+        'inventory management, SaaS, POS system, stock control, invoicing software, small business ERP, inventory tracking, sales automation'
+    }
+  ]
+})
 // Imports des sections composant la page de landing
 import CharacTeristics from '@/components/landing/CharacTeristics.vue'
 import CtaSection from '@/components/landing/CtaSection.vue'

@@ -33,6 +33,7 @@ const props = defineProps({
   loadingText: { type: String, default: 'Chargement...' },
   color: { type: String, default: 'primary' },
   size: { type: String, default: 'medium' },
+  customTextColor: { type: String, default: 'white' },
   icon: { type: [Object, Function], default: null },
   block: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
@@ -77,8 +78,13 @@ const computedStyle = computed(() => {
   const style = {}
   if (isCssColor.value) {
     style.background = props.color
-    style.color = 'white'
+    style.color = props.customTextColor
     style.border = 'none'
+  } else if (props.color === 'default') {
+    // Special handling for 'default' to match MD3 text/outlined button style
+    style.background = 'transparent'
+    style.color = 'var(--md-on-surface-variant)'
+    style.border = '1px solid var(--md-outline)'
   }
   if (props.width) style.width = props.width
   return style

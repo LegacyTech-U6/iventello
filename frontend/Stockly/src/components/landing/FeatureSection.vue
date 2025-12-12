@@ -3,50 +3,41 @@ import { ref, onMounted, nextTick, computed } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-import {
-  Package,
-  ShoppingCart,
-  Users,
-  TrendingUp,
-  FileText,
-  Bell
-} from 'lucide-vue-next'
-
 gsap.registerPlugin(ScrollTrigger)
 
 const features = computed(() => [
   {
-    icon: Package,
+    icon: 'inventory_2',
     title: 'Complete Inventory Management',
     description:
       'Track your stock levels in real time, monitor incoming and outgoing product movements, and receive automatic alerts when items reach low or critical levels. Enjoy advanced categorization, batch and expiry tracking, and full product history for complete control over your inventory.',
   },
   {
-    icon: ShoppingCart,
+    icon: 'point_of_sale',
     title: 'Integrated Point of Sale',
     description:
       'Generate sales instantly with an intuitive POS interface that supports VAT automation, discounts, refunds, and multiple payment methods. Print professional receipts, create invoices on the fly, and sync all transactions directly with your inventory in real time.',
   },
   {
-    icon: Users,
+    icon: 'groups',
     title: 'Customer & Supplier Management',
     description:
       'Centralize all your business contacts in one place. Access detailed purchase histories, manage supplier relationships, automate purchase orders, and personalize communication based on customer behavior and previous interactions.',
   },
   {
-    icon: TrendingUp,
+    icon: 'analytics',
     title: 'Advanced Analytics & Reporting',
     description:
       'Analyze your business performance with detailed dashboards and KPIs. Identify your best-selling products, monitor sales trends, compare categories, and access daily, weekly, and monthly performance insights to make better, data-driven decisions.',
   },
   {
-    icon: FileText,
+    icon: 'domain',
     title: 'Multi-Company Management',
     description:
       'Manage multiple businesses from a single account while ensuring complete data isolation between companies. Customize configurations, products, user roles, and dashboards independently for each business, all under one secure interface.',
   },
   {
-    icon: Bell,
+    icon: 'notifications_active',
     title: 'Smart & Automated Notifications',
     description:
       'Receive real-time alerts for low stock levels, upcoming supplier orders, pending tasks, employee activity, and critical system events. Customize your notification settings to stay informed and never miss an important update.',
@@ -85,7 +76,7 @@ onMounted(() => {
 
 
 <template>
-  <section ref="sectionRef" class="bg-gray-50 py-20 px-6 overflow-hidden relative">
+  <section ref="sectionRef" class="bg-background py-20 px-6 overflow-hidden relative">
     <div class="max-w-7xl mx-auto">
 
       <svg
@@ -96,26 +87,26 @@ onMounted(() => {
         xmlns="http://www.w3.org/2000/svg"
         class="absolute top-0 right-0 z-10 w-full h-full opacity-20 hidden lg:block"
       >
-        <path d="M 0,600 L 0,150 C 27.3758486096744,147.71800206430567 54.7516972193488,145.43600412861133 83,170 C 111.2483027806512,194.56399587138867 140.36905973227923,245.9739855498604 175,275 C 209.63094026772077,304.0260144501396 249.77206385153426,310.668053671947 285,311 C 320.22793614846574,311.331946328053 350.5426848615836,305.35379976235157 385,345 C 419.4573151384164,384.64620023764843 458.05719670213136,469.91674727864677 486,521 C 513.9428032978686,572.0832527213532 531.2285283298909,588.9792111230613 559,598 C 586.7714716701091,607.0207888769387 625.028689978305,608.1664082291084 659,601 C 692.971310021695,593.8335917708916 722.6567117568893,578.3551559605056 760,624 C 797.3432882431107,669.6448440394944 842.3444629941376,776.4129679288689 878,821 C 913.6555370058624,865.5870320711311 939.9654362665597,847.9929723240189 964,846 C 988.0345637334403,844.0070276759811 1009.7937919396236,857.6151427750556 1042,887 C 1074.2062080603764,916.3848572249444 1116.8593959749462,961.5464565757584 1148,1004 C 1179.1406040250538,1046.4535434242416 1198.7686241605911,1086.1990309219113 1235,1096 C 1271.2313758394089,1105.8009690780887 1324.0661073826882,1085.6574197365967 1361,1098 C 1397.9338926173118,1110.3425802634033 1418.966946308656,1155.1712901317017 1440,1200 L 1440,600 L 0,600 Z" stroke="none" stroke-width="0" fill="#0693e3" fill-opacity="0.53" class="transition-all duration-300 ease-in-out delay-150 path-0"></path>
+        <path d="M 0,600 L 0,150 C 27.3758486096744,147.71800206430567 54.7516972193488,145.43600412861133 83,170 C 111.2483027806512,194.56399587138867 140.36905973227923,245.9739855498604 175,275 C 209.63094026772077,304.0260144501396 249.77206385153426,310.668053671947 285,311 C 320.22793614846574,311.331946328053 350.5426848615836,305.35379976235157 385,345 C 419.4573151384164,384.64620023764843 458.05719670213136,469.91674727864677 486,521 C 513.9428032978686,572.0832527213532 531.2285283298909,588.9792111230613 559,598 C 586.7714716701091,607.0207888769387 625.028689978305,608.1664082291084 659,601 C 692.971310021695,593.8335917708916 722.6567117568893,578.3551559605056 760,624 C 797.3432882431107,669.6448440394944 842.3444629941376,776.4129679288689 878,821 C 913.6555370058624,865.5870320711311 939.9654362665597,847.9929723240189 964,846 C 988.0345637334403,844.0070276759811 1009.7937919396236,857.6151427750556 1042,887 C 1074.2062080603764,916.3848572249444 1116.8593959749462,961.5464565757584 1148,1004 C 1179.1406040250538,1046.4535434242416 1198.7686241605911,1086.1990309219113 1235,1096 C 1271.2313758394089,1105.8009690780887 1324.0661073826882,1085.6574197365967 1361,1098 C 1397.9338926173118,1110.3425802634033 1418.966946308656,1155.1712901317017 1440,1200 L 1440,600 L 0,600 Z" stroke="none" stroke-width="0" :fill="'var(--md-primary)'" fill-opacity="0.1" class="transition-all duration-300 ease-in-out delay-150 path-0"></path>
  
-        <path d="M 0,600 L 0,350 C 28.51707951182344,359.84569346726903 57.03415902364688,369.69138693453806 88,366 C 118.96584097635312,362.30861306546194 152.38044341723594,345.08014572911674 185,391 C 217.61955658276406,436.91985427088326 249.44406730740928,545.9880301489948 280,567 C 310.5559326925907,588.0119698510052 339.843287353127,520.9677336749045 371,533 C 402.156712646873,545.0322663250955 435.18278328008273,636.1410351513874 468,670 C 500.81721671991727,703.8589648486126 533.4255795265424,680.4681257195462 570,704 C 606.5744204734576,727.5318742804538 647.1148986137478,797.9864619704283 684,828 C 720.8851013862522,858.0135380295717 754.1148260184665,847.5860263987406 782,854 C 809.8851739815335,860.4139736012594 832.4257973123862,883.6694324346095 862,921 C 891.5742026876138,958.3305675653905 928.1819847319883,1009.7362438628213 959,1032 C 989.8180152680117,1054.2637561371787 1014.8462637596608,1047.385592114106 1041,1085 C 1067.1537362403392,1122.614407885894 1094.4329602293692,1204.7213876807552 1134,1232 C 1173.5670397706308,1259.2786123192448 1225.4218953228622,1231.7288571628737 1260,1225 C 1294.5781046771378,1218.2711428371263 1311.8794584791822,1232.3631836677503 1339,1265 C 1366.1205415208178,1297.6368163322497 1403.060270760409,1348.8184081661248 1440,1400 L 1440,600 L 0,600 Z" stroke="none" stroke-width="0" fill="#0693e3" fill-opacity="1" class="transition-all duration-300 ease-in-out delay-150 path-1"></path>
+        <path d="M 0,600 L 0,350 C 28.51707951182344,359.84569346726903 57.03415902364688,369.69138693453806 88,366 C 118.96584097635312,362.30861306546194 152.38044341723594,345.08014572911674 185,391 C 217.61955658276406,436.91985427088326 249.44406730740928,545.9880301489948 280,567 C 310.5559326925907,588.0119698510052 339.843287353127,520.9677336749045 371,533 C 402.156712646873,545.0322663250955 435.18278328008273,636.1410351513874 468,670 C 500.81721671991727,703.8589648486126 533.4255795265424,680.4681257195462 570,704 C 606.5744204734576,727.5318742804538 647.1148986137478,797.9864619704283 684,828 C 720.8851013862522,858.0135380295717 754.1148260184665,847.5860263987406 782,854 C 809.8851739815335,860.4139736012594 832.4257973123862,883.6694324346095 862,921 C 891.5742026876138,958.3305675653905 928.1819847319883,1009.7362438628213 959,1032 C 989.8180152680117,1054.2637561371787 1014.8462637596608,1047.385592114106 1041,1085 C 1067.1537362403392,1122.614407885894 1094.4329602293692,1204.7213876807552 1134,1232 C 1173.5670397706308,1259.2786123192448 1225.4218953228622,1231.7288571628737 1260,1225 C 1294.5781046771378,1218.2711428371263 1311.8794584791822,1232.3631836677503 1339,1265 C 1366.1205415208178,1297.6368163322497 1403.060270760409,1348.8184081661248 1440,1400 L 1440,600 L 0,600 Z" stroke="none" stroke-width="0" :fill="'var(--md-primary)'" fill-opacity="0.2" class="transition-all duration-300 ease-in-out delay-150 path-1"></path>
       </svg>
       <div class="text-center mb-20 relative z-20">
         
-        <p class="text-sm uppercase tracking-wider text-gray-500 mb-3">
+        <p class="text-sm uppercase tracking-wider text-on-surface-variant mb-3">
           THE ULTIMATE STOCK MANAGEMENT SOLUTION
         </p>
 
         <h2
           ref="headerRef"
-          class="text-3xl md:text-4xl font-light text-gray-900 inline-block relative pb-4"
+          class="text-3xl md:text-4xl font-light text-on-surface inline-block relative pb-4"
         >
           Everything You Need to Manage Your Business
           <svg class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-40 h-8"
             viewBox="0 0 300 40" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M0 20 C30 35, 60 5, 90 25 C120 40, 150 10, 180 30 C210 40, 240 15, 270 25 C300 20, 300 20, 300 20"
-              stroke="#10B981"
+              :stroke="'var(--md-primary)'"
               stroke-width="10"
               fill="none"
               stroke-linecap="round"
@@ -123,29 +114,29 @@ onMounted(() => {
           </svg>
         </h2>
 
-        <p ref="subtitleRef" class="text-gray-600 mt-6 text-lg max-w-2xl mx-auto font-light">
+        <p ref="subtitleRef" class="text-on-surface-variant mt-6 text-lg max-w-2xl mx-auto font-light">
           A complete solution to digitize and automate your stock, sales, suppliers, notifications and analytics.
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24 relative z-20">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-20">
         
         <div
           v-for="feature in features"
           :key="feature.title"
-          class="feature-item"
+          class="feature-item card p-8 border border-outline-variant hover:shadow-xl transition-shadow"
         >
-          <component
-            :is="feature.icon"
-            :size="30"
-            class="text-[#006879] mb-6"
-          />
+          <div class="flex items-center justify-center h-12 w-12 rounded-full bg-primary-container mb-6">
+            <span class="material-symbols-outlined text-on-primary-container">
+              {{ feature.icon }}
+            </span>
+          </div>
 
-          <h3 class="text-2xl font-light text-gray-900 mb-4">
+          <h3 class="text-xl font-semibold text-on-surface mb-3">
             {{ feature.title }}
           </h3>
 
-          <p class="text-gray-600 leading-relaxed">
+          <p class="text-on-surface-variant leading-relaxed text-sm">
             {{ feature.description }}
           </p>
         </div>
@@ -155,11 +146,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Les styles pour l'animation sont maintenant inclus directement dans le bloc SVG, mais vous pouvez les ajuster ici si nécessaire. */
-
-.feature-card {
-  will-change: transform, opacity;
-}
       
           .path-1{
             animation:pathAnim-1 4s;

@@ -9,6 +9,11 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: HomeView,
+  },{
+    path:'/features',
+    name:'features',
+    component: () => import('@/components/landing/FeaturesPAge.vue'),
+    meta: { showNavbarAndFooter: true },
   },
 
   {
