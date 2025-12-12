@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import { createHead } from '@unhead/vue/client'
+import { createHead } from '@unhead/vue'
 
 // Styles globaux
 import './assets/main.css'
