@@ -46,7 +46,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 
 // Assurez-vous d'importer les interfaces Product si elles sont dans un fichier séparé
 interface Category { id:string|number; name:string }

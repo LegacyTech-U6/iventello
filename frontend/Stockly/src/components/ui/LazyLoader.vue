@@ -30,7 +30,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 
 defineProps({
   skeletonCount: { type: Number, default: 6 },
