@@ -88,6 +88,9 @@ const authStore = useAuthStore();
 const showPassword = ref(false);
 const loginError = ref('');
 const isLoading = ref(false);
+useHead({
+  title: 'Login'
+})
 
 const loginData = ref({
   email: '',

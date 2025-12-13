@@ -138,6 +138,9 @@ import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import { Eye, EyeOff, Check } from "lucide-vue-next"
 import Iventello from "@/assets/iventello.png";
+useHead({
+  title: 'Register'
+})
 
 import image from "@/assets/image/IventelloPlatform.png"
 import ValidationButton from '@/components/ui/buttons/ValidationButton.vue';
