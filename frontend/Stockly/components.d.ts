@@ -12,14 +12,14 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ' CategoryCard ': typeof import('./src/components/ CategoryCard .vue')['default']
     ActionModal: typeof import('./src/components/ui/ActionModal.vue')['default']
-    'AddCategoryModal ': typeof import('./src/components/AddCategoryModal .vue')['default']
+    AddCategoryModal: typeof import('./src/components/AddCategoryModal.vue')['default']
     AlertCard: typeof import('./src/components/AlertCard.vue')['default']
     BaseButton: typeof import('./src/components/BaseButton.vue')['default']
     BillTo: typeof import('./src/components/invoices/BillTo.vue')['default']
     CancelIcon: typeof import('./src/components/icons/CancelIcon.vue')['default']
     CartItem: typeof import('./src/components/CartItem.vue')['default']
+    CategoryCard: typeof import('./src/components/CategoryCard.vue')['default']
     CharacTeristics: typeof import('./src/components/landing/CharacTeristics.vue')['default']
     ChartRevenue: typeof import('./src/components/statistics/ChartRevenue.vue')['default']
     ClientCard: typeof import('./src/components/clients/ClientCard.vue')['default']
@@ -118,14 +118,14 @@ declare module 'vue' {
 
 // For TSX support
 declare global {
-  const ' CategoryCard ': typeof import('./src/components/ CategoryCard .vue')['default']
   const ActionModal: typeof import('./src/components/ui/ActionModal.vue')['default']
-  const 'AddCategoryModal ': typeof import('./src/components/AddCategoryModal .vue')['default']
+  const AddCategoryModal: typeof import('./src/components/AddCategoryModal.vue')['default']
   const AlertCard: typeof import('./src/components/AlertCard.vue')['default']
   const BaseButton: typeof import('./src/components/BaseButton.vue')['default']
   const BillTo: typeof import('./src/components/invoices/BillTo.vue')['default']
   const CancelIcon: typeof import('./src/components/icons/CancelIcon.vue')['default']
   const CartItem: typeof import('./src/components/CartItem.vue')['default']
+  const CategoryCard: typeof import('./src/components/CategoryCard.vue')['default']
   const CharacTeristics: typeof import('./src/components/landing/CharacTeristics.vue')['default']
   const ChartRevenue: typeof import('./src/components/statistics/ChartRevenue.vue')['default']
   const ClientCard: typeof import('./src/components/clients/ClientCard.vue')['default']

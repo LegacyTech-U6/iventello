@@ -41,19 +41,29 @@ onMounted(() => {
   })
 
   // Counter animation
-  gsap.utils.toArray('.stat-value').forEach((stat: any) => {
-    gsap.from(stat, {
-      innerText: 0,
-      duration: 2,
+  gsap.utils.toArray('.stat-value').forEach((el: any, index) => {
+    const statData = stats[index];
+    const targetValue = parseInt(statData.value, 10);
+    const suffix = statData.value.replace(String(targetValue), '');
+
+    // Crée un objet pour animer sa propriété 'value'
+    let counter = { value: 0 };
+
+    gsap.to(counter, {
+      value: targetValue,
+      duration: 2.5,
       ease: 'power2.out',
-      snap: { innerText: 1 },
       scrollTrigger: {
-        trigger: stat,
+        trigger: el,
         start: 'top 90%',
         toggleActions: 'play none none reverse',
       },
-    })
-  })
+      onUpdate: () => {
+        // Met à jour le texte de l'élément à chaque "tick" de l'animation
+        el.textContent = Math.round(counter.value) + suffix;
+      },
+    });
+  });
 })
 </script>
 

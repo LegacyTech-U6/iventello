@@ -228,8 +228,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import CategoryCard from '../components/ CategoryCard .vue'
-import AddCategoryModal from '../components/AddCategoryModal .vue'
+import CategoryCard from '../components/CategoryCard.vue'
+import AddCategoryModal from '../components/AddCategoryModal.vue'
 import { useCategoryStore } from '@/stores/CategoryStore'
 import { toast } from 'vue-sonner'
 import { useRouter, useRoute } from 'vue-router'

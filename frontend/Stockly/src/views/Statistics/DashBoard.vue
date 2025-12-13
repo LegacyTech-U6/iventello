@@ -49,7 +49,6 @@
 import LazyLoader from '@/components/ui/LazyLoader.vue'
 import { ref, computed, onMounted } from 'vue'
 
-import StatsCards from '@/components/StartsCards.vue'
 import { useStatisticsStore } from '@/stores/statisticStore'
 import SalesPerformanceChart from '@/components/statistics/SalesPerformanceChart.vue'
 import RevenueCatgeory from '@/components/statistics/RevenueCatgeory.vue'

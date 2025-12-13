@@ -10,6 +10,7 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: './',
   plugins: [
     vue(),
     vueJsx(),
@@ -64,16 +65,7 @@ export default defineConfig({
   build: {
     assetsInlineLimit: 4096,
     rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('naive-ui')) return 'naive-ui'
-            if (id.includes('chart.js')) return 'charts'
-            if (id.includes('vue')) return 'vendor-vue'
-            return 'vendor'
-          }
-        }
-      }
+      output: {}
     }
   }
 })
