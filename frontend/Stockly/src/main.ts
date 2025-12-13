@@ -27,9 +27,9 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 
-// Components globaux
-app.component('FloatingButton', FloatingButton)
-app.component('Toaster', Toaster)
+// // Components globaux
+// app.component('FloatingButton', FloatingButton)
+// app.component('Toaster', Toaster)
 
 // Router
 app.use(router)
