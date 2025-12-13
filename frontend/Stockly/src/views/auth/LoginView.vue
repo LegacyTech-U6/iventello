@@ -78,6 +78,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { useHead } from '@unhead/vue'
 import { useAuthStore } from "@/stores/authStore";
 import Iventello from "@/assets/iventello.png";
 import IventelloPlatform from "@/assets/image/IventelloPlatform.png";

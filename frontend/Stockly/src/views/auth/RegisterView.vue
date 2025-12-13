@@ -134,6 +134,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useHead } from '@unhead/vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import { Eye, EyeOff, Check } from "lucide-vue-next"
