@@ -2,7 +2,7 @@
   <div class="flex h-screen bg-gray-50">
     <!-- Mobile Header -->
     <div class="fixed top-0 left-0 right-0 z-50 lg:hidden bg-white border-b border-gray-200 shadow-sm">
-      <div class="flex items-center justify-between px-4 py-3">
+      <div class="flex items-center justify-between px-4 py-1">
         <!-- Menu Button -->
         <button @click="sidebarOpen = !sidebarOpen" class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           aria-label="Toggle menu">
@@ -12,7 +12,7 @@
 
         <!-- Logo -->
         <div class="flex items-center gap-2">
-          <div class=" border-gray-200/50 p-5">
+          <div class=" border-gray-200/50 px-5">
             <img :src="Iventello" alt="Logo" class="w-42" />
           </div>
 

@@ -22,7 +22,8 @@
     </div>
 
     <div class="grid grid-cols-1 p-5 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-      
+      <GridCard title="Total Category" :value="totalCategories || 0" :icon="Users" bgColor="#006879" />
+
       <div
         class="bg-white p-6 rounded-xl border border-gray-200 shadow-md flex items-center justify-between transition-shadow duration-300 hover:shadow-xl"
       >
@@ -126,6 +127,7 @@ import { useRouter } from 'vue-router'
 import ActionModal from '@/components/ui/ActionModal.vue'
 import { useActionMessage } from '@/composable/useActionMessage'
 import { useGlobalModal } from '@/composable/useValidation'
+import GridCard from '@/components/ui/cards/GridCard.vue'
 
 // Importations Lucide (choisies pour simuler le style Material)
 import { 

@@ -95,6 +95,7 @@ exports.login = async (req, res) => {
     console.log("Payload login:", req.body);
 
     if (!email || !password) {
+      console.log("EMail ou mot de passe requis")
       return res.status(400).json({ message: "Email et mot de passe requis" });
     }
 
@@ -109,8 +110,10 @@ exports.login = async (req, res) => {
     );
 
     if (!results || results.length === 0) {
-      return res.status(400).json({ message: "Cet email n'a pas de compte Stockly" });
+      return res.status(400).json({ message: "Cet email n'a pas de compte Iventello" });
+      console.log("cet email na pas de compte Iventello")
     }
+    console.log("passed")
 
     const userRecord = results[0];
 
@@ -118,6 +121,7 @@ exports.login = async (req, res) => {
     const match = await bcrypt.compare(password, userRecord.password_hash);
     if (!match) {
       return res.status(400).json({ message: "Mot de passe incorrect" });
+      console.log("Mot de passe incorrect")
     }
 
     // 3️⃣ Récupérer les détails selon le type d'utilisateur
@@ -156,6 +160,7 @@ exports.login = async (req, res) => {
       token,
       user: userDetails,
     });
+    console.log(userDetails)
   } catch (err) {
     console.error("Erreur login:", err);
     res.status(500).json({ message: "Erreur serveur lors de la connexion" });
