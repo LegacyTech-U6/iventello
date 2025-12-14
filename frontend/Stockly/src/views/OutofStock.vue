@@ -1,154 +1,50 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-7xl mx-auto">
+  <div class="min-h-screen bg-background p-6">
+    <div class="max-w-8xl mx-auto">
       <!-- Header -->
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-surface p-6 rounded-xl elevation-1">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-900">Out of Stock</h1>
-          <p class="text-sm text-gray-500 mt-1">Manage inventory shortages</p>
+          <h1 class="text-2xl font-semibold text-on-surface">Out of Stock Products</h1>
+          <p class="text-sm text-on-surface-variant mt-1">Manage inventory shortages and potential lost revenue.</p>
         </div>
         <button
-          class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          class="btn-primary px-5 py-2.5 rounded-full text-sm flex items-center gap-2 elevation-1 mt-4 md:mt-0"
         >
-          + Restock Selected
+          <PackagePlus class="w-4 h-4" />
+          Restock Selected
         </button>
       </div>
 
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-lg border border-gray-200 p-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-              <svg
-                class="w-5 h-5 text-red-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                />
-              </svg>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Out of Stock</p>
-              <p class="text-2xl font-semibold text-gray-900">{{ outOfStockProducts?.length }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg border border-gray-200 p-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <svg
-                class="w-5 h-5 text-purple-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Lost Revenue</p>
-              <p class="text-2xl font-semibold text-gray-900">
-                ${{ formatNumber(totalLostRevenue) }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg border border-gray-200 p-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-              <svg
-                class="w-5 h-5 text-orange-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                />
-              </svg>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Avg Days Empty</p>
-              <p class="text-2xl font-semibold text-gray-900">{{ Math.round(averageDaysEmpty) }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg border border-gray-200 p-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <svg
-                class="w-5 h-5 text-blue-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">High Value</p>
-              <p class="text-2xl font-semibold text-gray-900">{{ highValueCount }}</p>
-            </div>
-          </div>
-        </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <GridCard title="Out of Stock" :value="outOfStockProducts?.length || 0" :icon="PackageX" bgColor="bg-error" />
+        <GridCard title="Lost Revenue" :value="'$' + formatNumber(totalLostRevenue)" :icon="DollarSign" bgColor="bg-secondary" />
+        <GridCard title="Avg Days Empty" :value="Math.round(averageDaysEmpty)" :icon="History" bgColor="bg-tertiary" />
+        <GridCard title="High Value Items" :value="highValueCount" :icon="Gem" bgColor="bg-primary" />
       </div>
 
       <!-- Search and Filters -->
-      <div class="bg-white rounded-lg border border-gray-200 p-4 mb-6">
-        <div class="flex flex-col md:flex-row gap-4">
-          <div class="flex-1 relative">
-            <svg
-              class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+      <div class="card p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="md:col-span-1 relative flex items-center w-full">
+            <Search class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
             <input
               v-model="searchQuery"
               type="text"
               placeholder="Search products by name or SKU..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              class="input-field w-full pl-12 pr-4 py-3 text-base rounded-xl"
             />
           </div>
           <select
             v-model="selectedCategory"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+            class="input-field w-full px-4 py-3 text-base rounded-xl"
           >
             <option value="all">All Categories</option>
             <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
           </select>
           <select
             v-model="sortBy"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+            class="input-field w-full px-4 py-3 text-base rounded-xl"
           >
             <option value="daysEmpty">Days Empty</option>
             <option value="lostRevenue">Lost Revenue</option>
@@ -158,67 +54,20 @@
       </div>
 
       <!-- Products Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div
+      <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <OutOfStockCard
           v-for="product in filteredProducts"
           :key="product.id"
-          class="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
-        >
-          <div class="flex justify-between items-start mb-3">
-            <div class="flex-1">
-              <h3 class="font-semibold text-gray-900 mb-1">{{ product.Prod_name }}</h3>
-              <span
-                class="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded"
-                >{{ product.sku }}</span
-              >
-            </div>
-            <span
-              v-if="product.isHighValue"
-              class="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded border border-amber-200"
-            >
-              HIGH VALUE
-            </span>
-          </div>
-
-          <div class="space-y-2 mb-4 text-sm">
-            <div class="flex justify-between">
-              <span class="text-gray-500">Category</span>
-              <span class="text-gray-900 font-medium">{{ product.category_name }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-500">Selling price</span>
-              <span class="text-gray-900 font-medium"
-                >${{ formatNumber(product.selling_price) }}</span
-              >
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-500">Supplier</span>
-              <span class="text-gray-900 font-medium">{{ product.supplier_name }}</span>
-            </div>
-          </div>
-
-          <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-            <p class="text-xs text-red-600 font-semibold mb-1">Cost price</p>
-            <p class="text-xl font-bold text-red-600">${{ formatNumber(product.cost_price) }}</p>
-          </div>
-
-          <button
-            @click="handleRestock(product)"
-            class="w-full px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            Restock Now
-          </button>
-        </div>
+          :product="product"
+          @restock="handleRestock"
+        />
       </div>
 
       <!-- Empty State -->
-      <div
-        v-if="finishedProducts?.length === 0"
-        class="bg-white rounded-lg border border-gray-200 p-12 text-center"
-      >
-        <div class="text-5xl mb-4">🎉</div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">All Stocked Up!</h3>
-        <p class="text-gray-500">No out of stock products found.</p>
+      <div v-if="filteredProducts.length === 0" class="card text-center p-16 mt-6">
+        <PartyPopper class="mx-auto mb-4 w-16 h-16 text-tertiary" />
+        <h3 class="card-title text-xl mb-2">All Stocked Up!</h3>
+        <p class="card-subtitle">No out-of-stock products found. Great inventory management!</p>
       </div>
     </div>
   </div>
@@ -238,6 +87,18 @@
 
 import { ref, computed, onMounted } from 'vue'
 import { OutOfStock } from '@/service/api'
+import GridCard from '@/components/ui/cards/GridCard.vue'
+import OutOfStockCard from '@/components/OutOfStockCard.vue'
+import {
+  PackagePlus,
+  PackageX,
+  DollarSign,
+  History,
+  Gem,
+  Search,
+  PartyPopper,
+  CheckCircle2
+} from 'lucide-vue-next'
 import { useRoute, useRouter } from 'vue-router'
 import { useActionMessage } from '@/composable/useActionMessage'
 
@@ -409,6 +270,9 @@ const filteredProducts = computed(() => {
  * @returns {string} Nombre formaté en devise
  */
 const formatNumber = (num) => {
+  if (typeof num !== 'number') {
+    return '0.00'
+  }
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,

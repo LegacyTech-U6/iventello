@@ -545,11 +545,8 @@ const submit = async () => {
       productData.Prod_image = form.image
     }
 
-    const result = await productStore.addProduct(productData)
+    await productStore.addProduct(productData)
 
-    if (!result.success) {
-      throw new Error(result.message || 'Failed to add product')
-    }
     showSuccess('Product added successfully!')
     resetForm()
     router.back()

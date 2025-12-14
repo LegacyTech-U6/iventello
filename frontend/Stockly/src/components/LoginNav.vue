@@ -111,6 +111,18 @@
                 {{ lowStockCount }}
               </span>
             </router-link>
+            <router-link :to="outOfStockRoute"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
+              :class="isActive(outOfStockRoute)" @click="closeSidebarOnMobile">
+              <span class="material-symbols-rounded">
+                sell
+              </span>
+              <span>Rupture de stock</span>
+              <span v-if="outOfStockCount > 0"
+                class="ml-auto bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                {{ outOfStockCount }}
+              </span>
+            </router-link>
           </div>
 
           <!-- Section Sales & Reports -->
@@ -188,7 +200,7 @@
         <div class="p-5">
 
           <ValidationButton :text="authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion'" size="large"
-            :asyncClick="logoutEntreprise" :icon="LogoutIcon"
+            :asyncClick="logoutEntreprise" :icon="LogOut"
             class="w-full mt-3 flex justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-3 rounded-2xl font-semibold shadow-md hover:shadow-lg transition-all" />
 
         </div>
@@ -303,6 +315,7 @@ const sidebarOpen = ref(false)
 const notificationOpen = ref(false)
 const isDesktop = ref(window.innerWidth >= 1024)
 const lowStockCount = ref(0) // À remplacer par une vraie valeur du store
+const outOfStockCount = ref(0)
 
 watch(sidebarOpen, (value) => {
   if (value) notificationOpen.value = false
@@ -328,6 +341,7 @@ const pageTitle = computed(() => {
     client: 'Clients',
     reports: 'Rapports',
     lowStock: 'Low Stock',
+    outOfStock: 'Out of Stock',
     AuditTrail: 'Audit Trail'
   }
   return titles[routeName] || 'Iventelo'
@@ -395,6 +409,12 @@ const lowStocksRoute = computed(() => {
     ? authStore.user.entrepriseUuid
     : currentUuid.value
   return `/${uuid}/lowStock`
+})
+const outOfStockRoute = computed(() => {
+  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
+    ? authStore.user.entrepriseUuid
+    : currentUuid.value
+  return `/${uuid}/outOfStock`
 })
 
 // User info

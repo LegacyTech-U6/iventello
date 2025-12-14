@@ -1,71 +1,49 @@
 <template>
-  <div class="h-full bg-gray-50">
-
+  <div class="h-full bg-background">
     <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-20">
-      <!-- Stats Grid - 2 cols mobile, 3 cols tablet, 3 cols desktop -->
-      <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-        <!-- Units Needed -->
-        <div class="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 lg:p-6">
-          <div class="flex items-start justify-between mb-3">
-            <div class="p-2 bg-blue-50 rounded-lg">
-              <Package class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-            </div>
-          </div>
-          <div>
-            <p class="text-xs sm:text-sm text-gray-600 font-medium mb-1">Units Needed</p>
-            <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ totalUnitsNeeded }}</p>
-          </div>
-        </div>
-
-        <!-- Reorder Cost -->
-        <div class="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 lg:p-6">
-          <div class="flex items-start justify-between mb-3">
-            <div class="p-2 bg-green-50 rounded-lg">
-              <DollarSign class="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-            </div>
-          </div>
-          <div>
-            <p class="text-xs sm:text-sm text-gray-600 font-medium mb-1">Est. Reorder Cost</p>
-            <p class="text-2xl sm:text-3xl font-bold text-gray-900">${{ formatCurrency(totalReorderCost) }}</p>
-          </div>
-        </div>
-
-        <!-- Urgent Restocks -->
-        <div class="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 lg:p-6 col-span-2 lg:col-span-1">
-          <div class="flex items-start justify-between mb-3">
-            <div class="p-2 bg-red-50 rounded-lg">
-              <AlertTriangle class="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
-            </div>
-          </div>
-          <div>
-            <p class="text-xs sm:text-sm text-gray-600 font-medium mb-1">Urgent Restocks</p>
-            <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ urgentRestockCount }}</p>
-          </div>
-        </div>
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <GridCard
+          title="Units Needed"
+          :value="totalUnitsNeeded"
+          :icon="Package"
+          bgColor="bg-primary"
+        />
+        <GridCard
+          title="Est. Reorder Cost"
+          :value="'$' + formatCurrency(totalReorderCost)"
+          :icon="DollarSign"
+          bgColor="bg-tertiary"
+        />
+        <GridCard
+          title="Urgent Restocks"
+          :value="urgentRestockCount"
+          :icon="AlertTriangle"
+          bgColor="bg-error"
+        />
       </div>
 
       <!-- Search and Filter -->
-      <div class="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 lg:p-6">
+      <div class="card p-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <!-- Search -->
           <div class="lg:col-span-2">
-            <div class="relative">
-              <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <div class="relative flex items-center w-full">
+              <Search class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search products by name, SKU, or supplier..."
                 v-model="searchQuery"
-                class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="input-field w-full pl-12 pr-4 py-3 text-base rounded-xl"
               />
             </div>
           </div>
 
           <!-- Stock Level Filter -->
           <div class="lg:col-span-1">
-            <label class="block text-xs font-medium text-gray-700 mb-2">Stock Level</label>
             <select
               v-model="stockLevelFilter"
-              class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              class="input-field w-full px-3 py-3 text-base rounded-xl"
             >
               <option value="all">All Low Stock</option>
               <option value="critical">Critical Only</option>
@@ -87,15 +65,11 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="bg-white rounded-xl border border-gray-200 p-8 sm:p-12 text-center">
-        <div class="flex justify-center mb-4">
-          <div class="p-3 sm:p-4 bg-green-50 rounded-full">
-            <CheckCircle2 class="w-12 h-12 sm:w-16 sm:h-16 text-green-600" />
-          </div>
-        </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">All Stock Levels Normal</h3>
-        <p class="text-sm text-gray-500">
-          All products are adequately stocked. Excellent inventory management!
+      <div v-else class="card text-center p-16 mt-6">
+        <CheckCircle2 class="mx-auto mb-4 w-16 h-16 text-tertiary" />
+        <h3 class="card-title text-xl mb-2">All Stock Levels Normal</h3>
+        <p class="card-subtitle">
+          Great job! All products are adequately stocked.
         </p>
       </div>
     </div>
@@ -123,6 +97,7 @@ import {
   CheckCircle2
 } from 'lucide-vue-next'
 import LowStockCard from '../components/LowStockCard.vue'
+import GridCard from '@/components/ui/cards/GridCard.vue'
 import { LowStock } from '@/service/api'
 import RestockModal from '@/components/RestockModal.vue'
 import { useRouter, useRoute } from 'vue-router'

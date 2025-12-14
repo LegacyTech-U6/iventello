@@ -1,80 +1,40 @@
 <template>
-  <div class=" max-w-8xl mx-auto bg-gray-50 h-full">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6  shadow-sm border border-gray-100">
+  <div class="max-w-8xl mx-auto bg-background h-full">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-surface p-6 rounded-xl elevation-1">
     
       
       <div class="flex gap-3 justify-end mt-4 md:mt-0 flex-shrink-0">
         <button
           @click="$router.back()"
-          class="bg-white text-gray-700 border border-gray-300 px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-100 hover:border-gray-400 transition flex items-center gap-2 shadow-sm"
+          class="btn-outline px-5 py-2.5 rounded-full text-sm flex items-center gap-2"
         >
           <ArrowLeft class="w-4 h-4" />
           Back to Products
         </button>
         <button
           @click="showAddCategory = true"
-          class="bg-indigo-600 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-2 shadow-md hover:shadow-lg"
+          class="btn-primary px-5 py-2.5 rounded-full text-sm flex items-center gap-2 elevation-1"
         >
           <Plus class="w-4 h-4" />
           Add Category
         </button>
       </div>
     </div>
-
+    
     <div class="grid grid-cols-1 p-5 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-      <GridCard title="Total Category" :value="totalCategories || 0" :icon="Users" bgColor="#006879" />
-
-      <div
-        class="bg-white p-6 rounded-xl border border-gray-200 shadow-md flex items-center justify-between transition-shadow duration-300 hover:shadow-xl"
-      >
-        <div class="flex-1 min-w-0">
-          <div class="text-sm text-gray-500 font-medium mb-1 uppercase tracking-wider">Total Categories</div>
-          <div class="text-4xl font-extrabold text-gray-900 mt-1">{{ totalCategories }}</div>
-        </div>
-        <div
-          class="w-14 h-14 rounded-full flex items-center justify-center bg-blue-500/10 text-blue-600"
-        >
-          <List class="w-7 h-7" />
-        </div>
-      </div>
-
-      <div
-        class="bg-white p-6 rounded-xl border border-gray-200 shadow-md flex items-center justify-between transition-shadow duration-300 hover:shadow-xl"
-      >
-        <div class="flex-1 min-w-0">
-          <div class="text-sm text-gray-500 font-medium mb-1 uppercase tracking-wider">Total Products</div>
-          <div class="text-4xl font-extrabold text-gray-900 mt-1">{{ totalProducts }}</div>
-        </div>
-        <div
-          class="w-14 h-14 rounded-full flex items-center justify-center bg-purple-500/10 text-purple-700"
-        >
-          <Package class="w-7 h-7" />
-        </div>
-      </div>
-
-      <div
-        class="bg-white p-6 rounded-xl border border-gray-200 shadow-md flex items-center justify-between transition-shadow duration-300 hover:shadow-xl"
-      >
-        <div class="flex-1 min-w-0">
-          <div class="text-sm text-gray-500 font-medium mb-1 uppercase tracking-wider">Avg Products per Cat.</div>
-          <div class="text-4xl font-extrabold text-gray-900 mt-1">{{ averageProducts }}</div>
-        </div>
-        <div
-          class="w-14 h-14 rounded-full flex items-center justify-center bg-green-500/10 text-green-600"
-        >
-          <TrendingUp class="w-7 h-7" />
-        </div>
-      </div>
+      <GridCard title="Total Categories" :value="totalCategories || 0" :icon="List" bgColor="bg-primary" />
+      <GridCard title="Total Products" :value="totalProducts" :icon="Package" bgColor="bg-secondary" />
+      <GridCard title="Avg Products/Cat." :value="averageProducts" :icon="TrendingUp" bgColor="bg-tertiary" />
     </div>
 
-    <div class="mb-6  bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+    <div class="mb-6 bg-surface p-6 rounded-xl elevation-1">
       <div class="relative max-w-full">
-        <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+        <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search categories by name or description..."
-          class="w-full pl-12 pr-4 py-3.5 border border-gray-200 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-sm"
+          class="input-field w-full pl-12 pr-4 py-3.5 text-base rounded-xl"
         />
       </div>
     </div>
@@ -90,13 +50,10 @@
       />
     </div>
 
-    <div
-      v-if="filteredCategories.length === 0"
-      class="text-center p-16 bg-white border border-gray-200 rounded-xl text-gray-400 shadow-lg mt-6"
-    >
-      <FolderX class="mx-auto mb-4 w-16 h-16 text-indigo-400" />
-      <h3 class="text-xl font-semibold text-gray-700 mb-2">No Categories Found</h3>
-      <p class="text-base">Your search did not match any existing categories.</p>
+    <div v-if="filteredCategories.length === 0" class="card text-center p-16 mt-6">
+      <FolderX class="mx-auto mb-4 w-16 h-16 text-primary" />
+      <h3 class="card-title text-xl mb-2">No Categories Found</h3>
+      <p class="card-subtitle">Your search did not match any existing categories.</p>
     </div>
 
     <AddCategoryModal
@@ -262,10 +219,4 @@ onMounted(async () => {
   await categoryStore.fetchCategory()
 })
 </script>
-
-<style scoped>
-/* Ajout d'un style de focus plus subtil et Material-like */
-input:focus {
-    box-shadow: 0 0 0 3px rgb(165 180 252 / 0.5); /* Indigo-300 shadow for focus */
-}
-</style>
+<style scoped></style>
