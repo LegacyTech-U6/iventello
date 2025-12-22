@@ -20,7 +20,7 @@ const generatePdf = async (req, res) => {
     }
 
     console.log('Appel au service PDF externe...');
-    const pdfResponse = await fetch('https://invoiceapi-lfca.onrender.com/pdf', {
+    const pdfResponse = await fetch('https://invoiceapi-lfca.onrender.com/pdf/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ html })
@@ -43,11 +43,11 @@ const generatePdf = async (req, res) => {
 
     console.log('=== Fin generatePdf ===');
   } catch (err) {
-    console.error('Erreur lors de la génération du PDF:', err);
-    res.status(500).json({
-      message: 'PDF generation failed',
-      error: err.message || 'Internal Server Error'
-    });
+    if (error.response && error.response.status === 502) {
+        console.error("❌ Le service de génération PDF est indisponible (502).");
+    } else {
+        console.error("❌ Erreur PDF :", error.message);
+    }
   }
 };
 
