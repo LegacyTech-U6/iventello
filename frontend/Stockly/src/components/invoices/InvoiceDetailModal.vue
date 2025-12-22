@@ -1,150 +1,216 @@
 <template>
-  <div style="width: 100%;">
+  <div style="" class="w-full">
     <div
+      class="fixed z-50 bg-black bg-opacity-50 flex justify-center items-start overflow-auto"
       style="
-        position: fixed;
-        z-index: 50;
         background-color: rgba(0, 0, 0, 0.85);
         backdrop-filter: blur(4px);
         inset: 0px;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        overflow: auto;
+        margin-bottom: -1px;
       "
     >
-      <div class="no-print" style="display: flex; position: absolute; justify-content: space-between; width: 100%; padding: 16px; z-index: 701;">
+      <div class="flex absolute justify-between w-full p-4" style="z-index: 701">
         <button
           @click="$emit('close')"
-          style="color: #6b7280; background-color: #9ca3af; padding: 16px; border-radius: 16px; border: none; cursor: pointer;"
+          class="text-gray-500 bg-gray-400 p-4 hover:text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" style="height: 20px; width: 20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
-        
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button @click="printInvoice" style="background-color: white; border: 1px solid #d1d5db; color: #374151; padding: 8px 12px; border-radius: 8px; font-weight: 500; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+        <div class="flex items-center gap-2">
+          <button
+            @click="printInvoice"
+            class="bg-white border border-gray-300 text-gray-700 px-3 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors text-sm"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+              />
+            </svg>
             Print
           </button>
-          <button @click="downloadPDF" style="background-color: #2563eb; color: white; padding: 8px 12px; border-radius: 8px; font-weight: 500; display: flex; align-items: center; gap: 8px; border: none; cursor: pointer; font-size: 14px;">
+          <button
+            @click="downloadPDF"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors text-sm"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
             PDF
           </button>
         </div>
       </div>
 
-      <div 
-        ref="invoiceContent" 
-        style="
-          background-color: white; 
-          border-radius: 4px; 
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); 
-          max-width: 768px; 
-          width: 100%; 
-          min-height: 100vh; 
-          padding-bottom: 40px; 
-          position: relative; 
-          margin: 16px;
-          color: black;
-          font-family: sans-serif;
-        "
-      >
-        <div style="padding: 32px;">
-          <div style="border-bottom: 2px solid black; padding-bottom: 24px; margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <div ref="invoiceContent" class="bg-white rounded shadow-xl max-w-3xl w-full h-screen pb-10 relative m-4">
+        <!-- Header -->
+
+        <!-- Invoice Content -->
+        <div class="p-8">
+          <!-- Classic Invoice Design -->
+          <div class="border-b-2 border-black pb-6 mb-4">
+            <div class="flex justify-between items-end">
               <div>
-                <h1 style="font-size: 30px; font-weight: bold; margin: 0;">INVOICE</h1>
-                <div style="font-size: 14px; color: #4b5563;">
+                <h1 class="text-3xl font-bold text-black">INVOICE</h1>
+                <div class="text-sm text-gray-600">
                   <CompanyInfo :entreprise="entreprise" />
                 </div>
               </div>
-              <div style="text-align: right; font-size: 14px;">
-                <div style="margin-bottom: 8px;">
-                  <span style="font-weight: 600; color: #374151;">Invoice #:</span>
-                  <span style="margin-left: 8px; font-weight: bold;">{{ invoice.id }}</span>
+              <div class="text-right">
+                <div class="mb-2">
+                  <span class="font-semibold text-gray-700">Invoice #:</span>
+                  <span class="ml-2 font-bold text-black">{{ invoice.id }}</span>
                 </div>
-                <div style="margin-bottom: 8px;">
-                  <span style="font-weight: 600; color: #374151;">Date:</span>
-                  <span style="margin-left: 8px;">{{ formatDate(invoice.createdAt) }}</span>
+                <div class="mb-2">
+                  <span class="font-semibold text-gray-700">Date:</span>
+                  <span class="ml-2 text-black">{{ formatDate(invoice.createdAt) }}</span>
                 </div>
                 <div>
-                  <span style="font-weight: 600; color: #374151;">Due Date:</span>
-                  <span style="margin-left: 8px;">{{ formatDate(invoice.date_echeance) }}</span>
+                  <span class="font-semibold text-gray-700">Due Date:</span>
+                  <span class="ml-2 text-black">{{ formatDate(invoice.date_echeance) }}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div style="margin-bottom: 24px;">
-            <h3 style="font-bold: bold; font-size: 18px; margin-bottom: 12px; border-bottom: 1px solid #d1d5db; padding-bottom: 8px;">BILL TO</h3>
-            <div style="font-size: 14px;">
-              <div style="font-weight: 600;">{{ invoice.client?.client_name || 'Client Name' }}</div>
-              <div style="color: #4b5563;">{{ invoice.client?.client_adresse || 'Address not specified' }}</div>
-              <div style="color: #4b5563;" v-if="invoice.client?.email">Email: {{ invoice.client.email }}</div>
-              <div style="color: #4b5563;" v-if="invoice.client?.client_telephone">Phone: {{ invoice.client.telephone }}</div>
+          <!-- Bill To -->
+          <div class="mb-6">
+            <h3 class="font-bold text-black text-lg mb-3 border-b border-gray-300 pb-2">BILL TO</h3>
+            <div class="text-sm">
+              <div class="font-semibold text-black">
+                {{ invoice.client.client_name || 'Client Name' }}
+              </div>
+              <div class="text-gray-600">
+                {{ invoice.client.client_adresse || 'Address not specified' }}
+              </div>
+              <div class="text-gray-600" v-if="invoice.client.email">
+                Email: {{ invoice.client.email }}
+              </div>
+              <div class="text-gray-600" v-if="invoice.client.client_telephone">
+                Phone: {{ invoice.client.telephone }}
+              </div>
             </div>
           </div>
 
-          <div style="margin-bottom: 8px;">
-            <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db; font-size: 14px;">
+          <!-- Items Table -->
+          <div class="mb-2">
+            <table class="w-full border-collapse border border-gray-300 text-sm">
               <thead>
-                <tr style="background-color: #f3f4f6;">
-                  <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left;">#</th>
-                  <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left;">Description</th>
-                  <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Qty</th>
-                  <th style="border: 1px solid #d1d5db; padding: 8px; text-align: right;">Unit Price</th>
-                  <th style="border: 1px solid #d1d5db; padding: 8px; text-align: right;">Amount</th>
+                <tr class="bg-gray-100">
+                  <th class="border border-gray-300 px-3 py-2 text-left font-bold">#</th>
+                  <th class="border border-gray-300 px-3 py-2 text-left font-bold">Description</th>
+                  <th class="border border-gray-300 px-3 py-2 text-center font-bold">Qty</th>
+                  <th class="border border-gray-300 px-3 py-2 text-right font-bold">Unit Price</th>
+                  <th class="border border-gray-300 px-3 py-2 text-right font-bold">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(item, index) in invoice.items" :key="item.id">
-                  <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">{{ index + 1 }}</td>
-                  <td style="border: 1px solid #d1d5db; padding: 8px;">
-                    <div style="font-weight: 500;">{{ item.product?.Prod_name }}</div>
-                    <div style="font-size: 12px; color: #4b5563;" v-if="item.description">{{ item.description }}</div>
+                  <td class="border border-gray-300 px-3 py-2 text-center">{{ index + 1 }}</td>
+                  <td class="border border-gray-300 px-3 py-2">
+                    <div class="font-medium">{{ item.product.Prod_name }}</div>
+                    <div class="text-xs text-gray-600" v-if="item.description">
+                      {{ item.description }}
+                    </div>
                   </td>
-                  <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">{{ item.quantity }}</td>
-                  <td style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-family: monospace;">{{ format(item.unit_price) }}</td>
-                  <td style="border: 1px solid #d1d5db; padding: 8px; text-align: right; font-family: monospace; font-weight: 600;">{{ format(item.total_item) }}</td>
+                  <td class="border border-gray-300 px-3 py-2 text-center">{{ item.quantity }}</td>
+                  <td class="border border-gray-300 px-3 py-2 text-right font-mono">
+                    {{ format(item.unit_price) }}
+                  </td>
+                  <td class="border border-gray-300 px-3 py-2 text-right font-mono font-semibold">
+                    {{ format(item.total_item) }}
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div style="display: flex; justify-content: flex-end;">
-            <div style="width: 288px; border: 1px solid #d1d5db; font-size: 14px;">
-              <div style="display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #d1d5db;">
-                <span style="font-weight: 600;">Subtotal:</span>
-                <span style="font-family: monospace;">{{ format(invoice.total_hors_reduction) }}</span>
+          <!-- Summary -->
+          <div class="flex justify-end">
+            <div class="w-72 border border-gray-300 text-sm">
+              <div class="flex justify-between px-3 py-2 border-b border-gray-300">
+                <span class="font-semibold">Subtotal:</span>
+                <span class="font-mono">{{ format(invoice.total_hors_reduction) }}</span>
               </div>
-              <div style="display: flex; justify-content: space-between; padding: 8px; background-color: #f3f4f6; font-weight: bold;">
+              <!-- <div v-if="invoice.reduction > 0" class="flex justify-between px-3 py-2 border-b border-gray-300">
+              <span class="font-semibold">Discount ({{ invoice.reduction }}%):</span>
+              <span class="font-mono text-red-600">- {{ formatPrice(calculateDiscount()) }}</span>
+            </div>
+            <div class="flex justify-between px-3 py-2 border-b border-gray-300">
+              <span class="font-semibold">Tax ({{ invoice.tva }}%):</span>
+              <span class="font-mono">{{ formatPrice(calculateTax()) }}</span>
+            </div> -->
+              <div class="flex justify-between px-3 py-2 bg-gray-100 font-bold">
                 <span>TOTAL:</span>
-                <span style="font-family: monospace;">{{ format(invoice.total) }}</span>
+                <span class="font-mono">{{ format(invoice.total) }}</span>
               </div>
             </div>
           </div>
 
-          <div style="margin-top: 12px; border-top: 1px solid #d1d5db; padding-top: 12px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; font-size: 14px;">
+          <!-- Status and Payment Info -->
+          <div class="mt-3 border-t border-gray-300">
+            <div class="grid grid-cols-2 gap-6 text-sm">
               <div>
-                <h4 style="font-weight: bold; margin-bottom: 8px;">STATUS</h4>
-                <span :style="statusStyle(invoice.status)">
+                <h4 class="font-bold text-black mb-2">STATUS</h4>
+                <span
+                  :class="[
+                    'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium',
+                    invoice.status === 'payée'
+                      ? 'bg-green-100 text-green-800'
+                      : invoice.status === 'en_attente'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-red-100 text-red-800',
+                  ]"
+                >
                   {{ formatStatus(invoice.status) }}
                 </span>
               </div>
               <div>
-                <h4 style="font-weight: bold; margin-bottom: 8px;">PAYMENT METHOD</h4>
-                <p style="color: #4b5563; margin: 0;">{{ invoice.mode_paiement || 'Not specified' }}</p>
+                <h4 class="font-bold text-black mb-2">PAYMENT METHOD</h4>
+                <p class="text-gray-600">{{ invoice.mode_paiement || 'Not specified' }}</p>
               </div>
             </div>
-            <div v-if="invoice.notes" style="margin-top: 16px;">
-              <h4 style="font-weight: bold; margin-bottom: 8px;">NOTES</h4>
-              <p style="color: #4b5563; font-size: 14px; margin: 0;">{{ invoice.notes }}</p>
+            <!-- Notes Section -->
+            <div v-if="invoice.notes" class="mt-4">
+              <h4 class="font-bold text-black mb-2">NOTES</h4>
+              <p class="text-gray-600 text-sm">{{ invoice.notes }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div></div>
   </div>
 </template>
 
