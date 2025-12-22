@@ -300,19 +300,41 @@ function formatStatus(status) {
 }
 
 function printInvoice() {
-  const printContent = invoiceContent.value.innerHTML
-  const originalContent = document.body.innerHTML
+  const printElement = invoiceContent.value
+  if (!printElement) return
 
-  // Remplace tout le body temporairement par le contenu de la facture
-  document.body.innerHTML = printContent
-  downloadPDF()
-  // Lance l’impression
-  window.print()
+  // Create a hidden iframe to avoid modifying the main page
+  const iframe = document.createElement('iframe')
+  iframe.style.display = 'none'
+  document.body.appendChild(iframe)
 
-  // Restaure le contenu original
-  document.body.innerHTML = originalContent
+  const doc = iframe.contentWindow.document
 
-  
+  // Copy all styles from the <head> to preserve the invoice's appearance
+  const headContent = document.head.innerHTML
+
+  doc.open()
+  doc.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Print Invoice</title>
+        ${headContent}
+      </head>
+      <body>
+        ${printElement.innerHTML}
+      </body>
+    </html>
+  `)
+  doc.close()
+
+  // Wait for the content to be loaded in the iframe before printing
+  setTimeout(() => {
+    iframe.contentWindow.focus()
+    iframe.contentWindow.print()
+    // Remove the iframe after printing
+    document.body.removeChild(iframe)
+  }, 500)
 }
 
 
