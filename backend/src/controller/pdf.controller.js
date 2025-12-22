@@ -20,7 +20,7 @@ const generatePdf = async (req, res) => {
     }
 
     console.log('Appel au service PDF externe...');
-    const pdfResponse = await fetch('https://invoiceapi-lfca.onrender.com/pdf/', {
+    const pdfResponse = await fetch('https://invoiceapi-lfca.onrender.com/pdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ html })
