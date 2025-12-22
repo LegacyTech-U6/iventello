@@ -138,6 +138,23 @@ export async function addProductStock(productId, quantityAdd) {
   return data
 }
 
+///////////////////////////////////
+// Invoice PDF
+///////////////////////////////////
+
+export async function generateInvoicePdf(html) {
+  const response = await API.post(
+    '/pdf/from-python',
+    { html },
+    {
+      responseType: 'blob', // 🔴 OBLIGATOIRE pour PDF
+    }
+  )
+
+  return response.data
+}
+
+
 ///////////////////////////////////////
 // Invoice calls
 ///////////////////////////////////////

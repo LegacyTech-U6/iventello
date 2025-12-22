@@ -218,8 +218,9 @@
 import { ref } from 'vue'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import CompanyInfo from './CompanyInfo.vue'
+import { usePdfStore } from '@/stores/pdfStore'
 import { useCurrency } from '@/composable/useCurrency'
-
+const pdfStore = usePdfStore() 
 const {format} = useCurrency()
 const invoiceContent = ref(null)
 const invoiceStore = useInvoiceStore()
@@ -304,7 +305,7 @@ function printInvoice() {
 
   // Remplace tout le body temporairement par le contenu de la facture
   document.body.innerHTML = printContent
-
+  downloadPDF()
   // Lance l’impression
   window.print()
 
@@ -315,13 +316,19 @@ function printInvoice() {
 }
 
 
+// Fonction de téléchargement du PDF
 async function downloadPDF() {
   try {
-    await invoiceStore.createInvoice(invoice.value)
-  } catch (error) {
-    console.error('Error downloading PDF:', error)
+    await pdfStore.downloadInvoicePdf(props.invoice, props.entreprise)
+  } catch (err) {
+    console.error('PDF download failed:', err)
   }
 }
+  // try {
+  //   await invoiceStore.createInvoice(invoice.value)
+  // } catch (error) {
+  //   console.error('Error downloading PDF:', error)
+  // }
 </script>
 
 <style scoped>

@@ -92,10 +92,11 @@ if (!mailResult.success) {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Payload login:", req.body);
+    console.log("Payload login:", req.body);  // Log du payload
 
+    // Vérifier si l'email et le mot de passe sont présents
     if (!email || !password) {
-      console.log("EMail ou mot de passe requis")
+      console.log("Email ou mot de passe requis");
       return res.status(400).json({ message: "Email et mot de passe requis" });
     }
 
@@ -109,28 +110,36 @@ exports.login = async (req, res) => {
       { replacements: { email } }
     );
 
-    if (!results || results.length === 0) {
-      return res.status(400).json({ message: "Cet email n'a pas de compte Iventello" });
-      console.log("cet email na pas de compte Iventello")
-    }
-    console.log("passed")
+    console.log("Résultat de la requête SQL:", results);  // Log des résultats de la requête SQL
 
+    // Si aucun utilisateur n'est trouvé
+    if (!results || results.length === 0) {
+      console.log("Cet email n'a pas de compte Iventello");
+      return res.status(400).json({ message: "Cet email n'a pas de compte Iventello" });
+    }
+
+    // On récupère l'utilisateur trouvé
     const userRecord = results[0];
+    console.log("Utilisateur trouvé:", userRecord);  // Log de l'utilisateur trouvé
 
     // 2️⃣ Vérifier le mot de passe
     const match = await bcrypt.compare(password, userRecord.password_hash);
+    console.log("Mot de passe correct ?", match);  // Log du résultat de la comparaison de mot de passe
+
     if (!match) {
+      console.log("Mot de passe incorrect");
       return res.status(400).json({ message: "Mot de passe incorrect" });
-      console.log("Mot de passe incorrect")
     }
 
-    // 3️⃣ Récupérer les détails selon le type d'utilisateur
+    // 3️⃣ Récupérer les détails de l'utilisateur selon son type
     let userDetails;
     if (userRecord.type === "admin") {
+      console.log("Utilisateur de type admin");  // Log pour vérifier le type d'utilisateur
       userDetails = await db.User.findByPk(userRecord.id, {
         attributes: ["id", "username", "email"],
       });
     } else if (userRecord.type === "worker") {
+      console.log("Utilisateur de type worker");  // Log pour vérifier le type d'utilisateur
       userDetails = await db.Worker.findByPk(userRecord.id, {
         attributes: [
           "id",
@@ -148,21 +157,25 @@ exports.login = async (req, res) => {
       });
     }
 
-    // 4️⃣ Générer le token
+    // 4️⃣ Générer le token JWT
     const token = jwt.sign(
       { id: userRecord.id, email: userRecord.email, type: userRecord.type },
       JWT_SECRET,
       { expiresIn: "1h" }
     );
 
+    console.log("Token généré:", token);  // Log du token généré
+
+    // Réponse avec succès et le token généré
     res.status(200).json({
       message: "Connexion réussie",
       token,
       user: userDetails,
     });
-    console.log(userDetails)
+    console.log("Détails de l'utilisateur:", userDetails);  // Log des détails de l'utilisateur
+
   } catch (err) {
-    console.error("Erreur login:", err);
+    console.error("Erreur dans le processus de login:", err);  // Log détaillé de l'erreur
     res.status(500).json({ message: "Erreur serveur lors de la connexion" });
   }
 };

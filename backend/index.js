@@ -25,6 +25,7 @@ const rolesRoutes = require("./src/routes/roles.routes");
 const activityRoutes = require("./src/routes/activity.routes");
 const cleanupInactiveUsers = require("./src/utils/cleanupInactiveUsers");
 const notificationRoutes = require("./src/routes/notification.routes");
+const pdfRoute = require("./src/routes/pdf.routes");
 const DemoDataGenerator = require("./src/utils/demo-data-generator");
 const { startCurrencyCron, getRates } = require("./src/utils/currency.service");
 // Database
@@ -127,5 +128,6 @@ app.use("/api/entreprises", entreprise);
 app.use("/api/workers", workers);
 app.use("/api/roles", rolesRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/pdf", pdfRoute);
 
 module.exports = app;

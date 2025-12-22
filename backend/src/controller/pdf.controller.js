@@ -1,25 +1,57 @@
-// controller/pythonPdf.js
-import axios from "axios";
+// Utilisation de 'require' pour importer node-fetch (CommonJS)
+const fetch = require('node-fetch');
 
-export async function createPDFFromFlask(req, res) {
+/**
+ * @description Génère un PDF à partir du HTML fourni en appelant un service externe.
+ * Cette fonction est conçue pour être utilisée comme handler Express ou Cloud Function.
+ * @param {object} req - Objet de requête (doit contenir req.body.html)
+ * @param {object} res - Objet de réponse
+ */
+const generatePdf = async (req, res) => {
+  console.log('=== Début generatePdf ===');
+
   try {
-    const {html,id} = req.body;
-    if (!html) return res.status(400).json({ error: "HTML manquant" });
+    const { html } = req.body;
+    console.log('HTML reçu pour le PDF :', html?.substring(0, 200), '...'); // Log première partie du HTML
 
-    const response = await axios.post("https://factgen-1.onrender.com/generate-pdf", {
-      html: html,
-    }, {
-      responseType: "arraybuffer",
-    });
-    const filename = `facture_${id}.pdf`;
-    res.set({
-      "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename=${filename}.pdf`,
+    if (!html) {
+      console.warn('Aucun HTML fourni dans la requête');
+      return res.status(400).json({ message: 'No HTML provided in request body' });
+    }
+
+    console.log('Appel au service PDF externe...');
+    const pdfResponse = await fetch('https://invoiceapi-lfca.onrender.com/pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ html })
     });
 
-    return res.send(response.data);
-  } catch (error) {
-    console.error("❌ Erreur PDF Flask:", error.message);
-    res.status(500).json({ error: "Erreur PDF Flask", details: error.message });
+    console.log('Réponse du service PDF reçue, status:', pdfResponse.status);
+
+    if (!pdfResponse.ok) {
+      const text = await pdfResponse.text(); // Lire le corps pour debug
+      console.error('Service PDF a échoué, corps de la réponse :', text);
+      throw new Error(`PDF service failed with status: ${pdfResponse.status}`);
+    }
+
+    const buffer = await pdfResponse.arrayBuffer();
+    console.log('PDF généré, taille du buffer :', buffer.byteLength);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    console.log('Envoi du PDF au client...');
+    res.send(Buffer.from(buffer));
+
+    console.log('=== Fin generatePdf ===');
+  } catch (err) {
+    console.error('Erreur lors de la génération du PDF:', err);
+    res.status(500).json({
+      message: 'PDF generation failed',
+      error: err.message || 'Internal Server Error'
+    });
   }
-}
+};
+
+// Export
+module.exports = {
+  generatePdf
+};

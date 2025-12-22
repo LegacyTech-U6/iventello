@@ -67,10 +67,24 @@ exports.getEntrepriseByUuid = async (req, res) => {
 // ===============================
 exports.createEntreprise = async (req, res) => {
   try {
+    
+    console.log("=== Début createEntreprise ===");
+
+    // 1️⃣ Vérifier l'utilisateur
+    console.log("req.user:", req.user);
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Utilisateur non authentifié" });
+    }
     const user_id = req.user.id;
 
+    // 2️⃣ Vérifier le body reçu
+    console.log("req.body:", req.body);
+
+    // 3️⃣ Vérifier le fichier uploadé
     let logoFileName = null;
     if (req.file) {
+      console.log("Fichier reçu:", req.file.originalname);
+
       const fileName = Date.now() + "-" + req.file.originalname;
 
       const { error } = await supabase.storage
@@ -81,28 +95,41 @@ exports.createEntreprise = async (req, res) => {
           contentType: req.file.mimetype,
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur upload Supabase:", error);
+        throw error;
+      }
 
       logoFileName = fileName;
+    } else {
+      console.log("Pas de fichier uploadé");
     }
 
+    // 4️⃣ Création en DB
     const entreprise = await Entreprise.create({
       ...req.body,
       user_id,
       logo_url: logoFileName,
     });
 
-    // Générer l'URL publique avant d'envoyer la réponse
+    // 5️⃣ Générer l'URL publique du logo
     const entJSON = entreprise.toJSON();
     if (logoFileName) {
       entJSON.logo_url = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${logoFileName}`;
     }
 
+    console.log("Entreprise créée avec succès:", entJSON);
+
+    // 6️⃣ Réponse
     res.status(201).json(entJSON);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Erreur createEntreprise:", err);
+    res.status(500).json({ message: err.message || "fetch failed" });
+  } finally {
+    console.log("=== Fin createEntreprise ===");
   }
 };
+
 
 // ===============================
 // 🔹 Mettre à jour une entreprise par UUID

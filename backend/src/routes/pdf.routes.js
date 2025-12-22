@@ -1,9 +1,9 @@
 // routes/pythonpdfRoute.js
 const  express = require("express");
-const  { createPDFFromFlask } = require ("../controller/pdf.controller"); // <-- vérifier extension .js
+const  { generatePdf } = require ("../controller/pdf.controller"); // <-- vérifier extension .js
 
 const router = express.Router();
 
-router.post("/from-python", createPDFFromFlask);
+router.post("/from-python", generatePdf);
 
-export default router;
+module.exports = router;
