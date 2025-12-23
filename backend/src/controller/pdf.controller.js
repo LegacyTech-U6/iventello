@@ -26,8 +26,6 @@ const generatePdf = async (req, res) => {
       body: JSON.stringify({ html })
     });
 
-    console.log('Réponse du service PDF reçue, status:', pdfResponse.status);
-
     if (!pdfResponse.ok) {
       const text = await pdfResponse.text(); // Lire le corps pour debug
       console.error('Service PDF a échoué, corps de la réponse :', text);
