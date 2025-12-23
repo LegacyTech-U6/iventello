@@ -42,7 +42,7 @@ const generatePdf = async (req, res) => {
     res.send(Buffer.from(buffer));
 
     console.log('=== Fin generatePdf ===');
-  } catch (err) {
+  } catch (error) {
     if (error.response && error.response.status === 502) {
         console.error("❌ Le service de génération PDF est indisponible (502).");
     } else {
