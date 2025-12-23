@@ -27,7 +27,7 @@ export const useClientStore = defineStore('client', {
       this.error = null
       try {
         const data = await getClient()
-        this.clients = data.data
+        this.clients = data.data || data
         console.log(this.clients)
       } catch (err) {
         this.error = err.response?.data?.message || err.message || 'Failed to fetch clients'

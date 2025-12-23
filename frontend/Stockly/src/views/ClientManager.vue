@@ -23,7 +23,7 @@ refresh
             color="#334A50"
             :asyncClick="handleAddClient"
             text="Add Customer"
-            icon="Plus"
+            :icon="Plus"
             />
         </div>
       </div>
@@ -167,7 +167,6 @@ import FromModal from '../components/clients/FromModal.vue'
 import ClientCard from '../components/clients/ClientCard.vue'
 import Noclient from '@/assets/icon svg/Noclient.vue'
 import  ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
-
 const { show } = useGlobalModal()
 const { showSuccess } = useActionMessage()
 const clientStore = useClientStore()

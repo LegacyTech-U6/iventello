@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import HomeView from '../views/HomeView.vue'
+import { isElectron } from '@/utils/isElectron'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -200,24 +201,42 @@ const router = createRouter({
   routes,
 })
 
+
+
+// ...
+
 router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore()
 
-  // Si page reload et token existe → récupérer user
-  if (!auth.user && auth.token) {
+  // ⚡ Bypass login pour Electron : on considère l'utilisateur connecté
+  if (isElectron() && !auth.user) {
+    auth.user = { type: 'electron', name: 'LocalUser' } // un user factice
+    // si tu as besoin d'une entreprise active
+     const defaultUuid = '12345' // Met l'UUID par défaut de l'entreprise
+    if (to.path === '/' || to.path === '/login') {
+      return next(`/${defaultUuid}/dashboard`)
+    }
+    return next()
+    const entrepriseStore = useEntrepriseStore()
+    // if (!entrepriseStore.activeEntreprise) {
+    //   entrepriseStore.setActiveEntreprise({ id: 1, name: 'Entreprise Locale' })
+    // }
+  }
+
+  // Si page reload et token existe → récupérer user (web)
+  if (!auth.user && auth.token && !isElectron()) {
     await auth.getAccount()
   }
 
   // Routes nécessitant authentification
-  if (to.meta.requiresAuth && !auth.user) {
+  if (to.meta.requiresAuth && !auth.user && !isElectron()) {
     return next('/login')
   }
 
-  // Vérification des permissions
+  // Vérification des permissions (web seulement)
   const requiredPermission = to.meta.permission as string
-  if (requiredPermission && !auth.can('canViewDashboard') ) {
+  if (requiredPermission && !isElectron() && !auth.can(requiredPermission)) {
     console.warn(`❌ Accès refusé à ${to.fullPath}, permission manquante: ${requiredPermission}`)
-    // Redirection selon le rôle
     if (auth.user?.type === 'admin') next('/ad/admin')
     else if (auth.user?.type === 'worker' && auth.user?.entreprise?.uuid) {
       next(`/${auth.user.entreprise.uuid}/dashboard`)
@@ -225,14 +244,15 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
-  // Login page redirige si déjà connecté
-  if (to.path === '/login' && auth.user) {
+  // Login page redirige si déjà connecté (web)
+  if (to.path === '/login' && auth.user && !isElectron()) {
     next('/dashboard')
     return
   }
 
   next()
 })
+
 
 router.afterEach((to, from) => {
   // Si on revient sur la page /admin, on désactive l’entreprise active

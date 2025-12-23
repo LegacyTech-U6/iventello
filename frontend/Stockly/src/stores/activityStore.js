@@ -24,7 +24,7 @@ export const useActivityStore = defineStore('Activity', {
         console.log(this.activities)
         console.log('====================================')
       } catch (error) {
-        console.error = error
+        console.error(error)
       }
     },
     async fetchDailySalesReport() {
@@ -35,7 +35,7 @@ export const useActivityStore = defineStore('Activity', {
         console.log('====================================')
         return data
       } catch (error) {
-        console.error = error
+        console.error(error)
       }
     },
     async fetchDailyPurchaseReport(date) {
@@ -43,7 +43,7 @@ export const useActivityStore = defineStore('Activity', {
         const data = await getDailyPurchaseReport(date)
         return data
       } catch (error) {
-        console.error = error
+        console.error(error)
       }
     },
     async fetchSalesReports() {

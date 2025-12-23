@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { createHead } from '@unhead/vue/client'
+import { isElectron } from '@/utils/isElectron'
 
 // Styles globaux
 import './assets/main.css'
@@ -15,6 +16,12 @@ import router from './router'
 // UI components
 import { Toaster } from 'vue-sonner'
 import FloatingButton from '@/components/ui/FloatingActionButton.vue'
+
+if (isElectron()) {
+  console.log('✅ App tourne en mode Electron / local')
+} else {
+  console.log('🌐 App tourne sur le web')
+}
 
 const app = createApp(App)
 
