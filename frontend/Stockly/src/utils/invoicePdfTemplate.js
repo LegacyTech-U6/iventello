@@ -1,132 +1,41 @@
-export function buildInvoicePdfHTML(invoice, entreprise) {
-  return `
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <style>
-    @page {
-      size: A4;
-      margin: 40px 50px 80px 50px;
-    }
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 12px;
-      color: #111;
-    }
+export const exportToPDF = async (elementId, fileName = 'document.pdf') => {
+  const input = document.getElementById(elementId);
+  
+  if (!input) {
+    console.error("L'élément HTML n'a pas été trouvé");
+    return;
+  }
 
-    h1 {
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
+  try {
+    // 1. Capture du HTML en image haute résolution
+    const canvas = await html2canvas(input, {
+      scale: 2, // Augmente la qualité du texte
+      useCORS: true, // Pour charger les images externes si besoin
+      logging: false
+    });
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 30px;
-      border-bottom: 2px solid #000;
-      padding-bottom: 10px;
-    }
+    const imgData = canvas.toDataURL('image/png');
 
-    .company {
-      font-size: 11px;
-      text-align: right;
-      line-height: 1.4;
-    }
+    // 2. Configuration du format PDF (A4)
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-
-    th {
-      background: #f3f4f6;
-      text-align: left;
-    }
-
-    .right {
-      text-align: right;
-    }
-
-    .summary {
-      margin-top: 30px;
-      width: 250px;
-      float: right;
-      border: 1px solid #ccc;
-    }
-
-    .summary div {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .summary div:last-child {
-      background: #f3f4f6;
-      font-weight: bold;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="header">
-    <div>
-      <h1>INVOICE</h1>
-      <strong>${entreprise.nom}</strong><br>
-      ${entreprise.adresse || ''}<br>
-      ${entreprise.email || ''}
-    </div>
-
-    <div class="company">
-      Invoice #: <strong>${invoice.id}</strong><br>
-      Date: ${new Date(invoice.createdAt).toLocaleDateString()}<br>
-      Due: ${new Date(invoice.date_echeance).toLocaleDateString()}
-    </div>
-  </div>
-
-  <strong>Bill To:</strong><br>
-  ${invoice.client.client_name}<br>
-  ${invoice.client.client_adresse || ''}<br>
-  ${invoice.client.email || ''}
-
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Description</th>
-        <th class="right">Qty</th>
-        <th class="right">Unit</th>
-        <th class="right">Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${invoice.items.map((item, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${item.product.Prod_name}</td>
-          <td class="right">${item.quantity}</td>
-          <td class="right">${item.unit_price}</td>
-          <td class="right">${item.total_item}</td>
-        </tr>
-      `).join('')}
-    </tbody>
-  </table>
-
-  <div class="summary">
-    <div><span>Subtotal</span><span>${invoice.total_hors_reduction}</span></div>
-    <div><span>TOTAL</span><span>${invoice.total}</span></div>
-  </div>
-
-</body>
-</html>
-`
-}
+    // 3. Ajout de l'image au PDF
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    
+    // 4. Téléchargement
+    pdf.save(fileName);
+  } catch (error) {
+    console.error("Erreur lors de la génération du PDF :", error);
+  }
+};

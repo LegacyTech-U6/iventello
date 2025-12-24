@@ -220,6 +220,7 @@ import { useInvoiceStore } from '@/stores/FactureStore'
 import CompanyInfo from './CompanyInfo.vue'
 import { usePdfStore } from '@/stores/pdfStore'
 import { useCurrency } from '@/composable/useCurrency'
+import { exportToPDF } from '@/utils/invoicePdfTemplate'
 const pdfStore = usePdfStore() 
 const {format} = useCurrency()
 const invoiceContent = ref(null)
@@ -341,7 +342,11 @@ function printInvoice() {
 // Fonction de téléchargement du PDF
 async function downloadPDF() {
   try {
-    await pdfStore.downloadInvoicePdf(props.invoice, props.entreprise)
+    const fileName = `facture_${props.invoice.id || 'export'}.pdf`;
+  
+  // On passe l'ID 'invoice-card' que l'on va rajouter dans le HTML plus bas
+  await exportToPDF('invoice-card', fileName);
+    // await pdfStore.downloadInvoicePdf(props.invoice, props.entreprise)
   } catch (err) {
     console.error('PDF download failed:', err)
   }
