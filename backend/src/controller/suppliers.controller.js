@@ -12,8 +12,8 @@ exports.getAllSuppliers = async (req, res) => {
     const query = await queryParser.parse(req);
 
     // Filtrer par entreprise
-    if (req.user && req.entrepriseId) {
-      query.where = { ...query.where, entreprise_id: req.user.entrepriseId };
+    if (req.entrepriseId) {
+      query.where = { ...query.where, entreprise_id: req.entrepriseId };
     }
 
     const data = await Supplier.findAll({
@@ -38,7 +38,7 @@ exports.getSupplierById = async (req, res) => {
   try {
     const { id } = req.params;
     const supplier = await Supplier.findOne({
-      where: { id, entreprise_id: req.user.entrepriseId },
+      where: { id, entreprise_id: req.entrepriseId },
     });
 
     if (!supplier) return res.status(404).json({ message: 'Fournisseur non trouvé' });
@@ -68,7 +68,7 @@ exports.createSupplier = async (req, res) => {
 exports.updateSupplier = async (req, res) => {
   try {
     const { id } = req.params;
-    const entrepriseId = req.user.entrepriseId;
+    const entrepriseId = req.entrepriseId;
 
     const [updated] = await Supplier.update(req.body, {
       where: { id, entreprise_id: entrepriseId },
@@ -87,7 +87,7 @@ exports.updateSupplier = async (req, res) => {
 exports.deleteSupplier = async (req, res) => {
   try {
     const { id } = req.params;
-    const entrepriseId = req.user.entrepriseId;
+    const entrepriseId = req.entrepriseId;
 
     const deleted = await Supplier.destroy({
       where: { id, entreprise_id: entrepriseId },

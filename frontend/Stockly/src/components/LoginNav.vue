@@ -99,6 +99,15 @@
               <span>Catégories</span>
             </router-link>
 
+            <router-link :to="suppliersRoute"
+              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
+              :class="isActive(suppliersRoute)" @click="closeSidebarOnMobile">
+              <span class="material-symbols-rounded">
+                local_shipping
+              </span>
+              <span>Fournisseurs</span>
+            </router-link>
+
             <router-link :to="lowStocksRoute"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(lowStocksRoute)" @click="closeSidebarOnMobile">
@@ -190,7 +199,7 @@
             <router-link v-else to="/"
               class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
               :class="isActive(ActivityRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-outlined"> trolley </span>
+              <span class="material-symbols-rounded"> trolley </span>
               <span>purchase</span>
             </router-link>
 
@@ -233,11 +242,11 @@
             </button>
 
             <!-- Icône Settings -->
-            <button class="relative">
+            <router-link :to="settingsRoute" class="relative">
               <span class="material-symbols-rounded text-[#004E5B] text-2xl">
                 settings
               </span>
-            </button>
+            </router-link>
 
 
             <div class="relative">
@@ -342,7 +351,9 @@ const pageTitle = computed(() => {
     reports: 'Rapports',
     lowStock: 'Low Stock',
     outOfStock: 'Out of Stock',
-    AuditTrail: 'Audit Trail'
+    AuditTrail: 'Audit Trail',
+    Suppliers: 'Fournisseurs',
+    Settings: 'Paramètres'
   }
   return titles[routeName] || 'Iventelo'
 })
@@ -390,6 +401,13 @@ const categoriesRoute = computed(() => {
   return `/${uuid}/categories`
 })
 
+const suppliersRoute = computed(() => {
+  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
+    ? authStore.user.entrepriseUuid
+    : currentUuid.value
+  return `/${uuid}/suppliers`
+})
+
 const ActivityRoute = computed(() => {
   const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
     ? authStore.user.entrepriseUuid
@@ -415,6 +433,13 @@ const outOfStockRoute = computed(() => {
     ? authStore.user.entrepriseUuid
     : currentUuid.value
   return `/${uuid}/outOfStock`
+})
+
+const settingsRoute = computed(() => {
+  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
+    ? authStore.user.entrepriseUuid
+    : currentUuid.value
+  return `/${uuid}/settings`
 })
 
 // User info

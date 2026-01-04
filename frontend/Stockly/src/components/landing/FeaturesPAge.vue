@@ -87,6 +87,42 @@ const coreFeatures = [
   }
 ]
 
+// --- Excel Features Data ---
+const excelFeatures = [
+  {
+    icon: 'upload_file',
+    title: 'Simplified Import',
+    description:
+      'Integrate new products or update existing stock in seconds. Drag & drop your file and let Iventello handle automatic creation.',
+    imageTag: 'excel-import',
+    placeholder: 'Interface Drag & Drop Import'
+  },
+  {
+    icon: 'table_view',
+    title: 'Smart Template',
+    description:
+      'Download a dynamic Excel template that includes your categories and suppliers. Avoid formatting errors and ensure data consistency.',
+    imageTag: 'excel-template',
+    placeholder: 'Excel Template Preview'
+  },
+  {
+    icon: 'fact_check',
+    title: 'Automatic Validation',
+    description:
+      'Preview data before final import. The system detects anomalies (negative prices, missing fields) to ensure a clean database.',
+    imageTag: 'excel-validation',
+    placeholder: 'Validation & Error Table'
+  },
+  {
+    icon: 'download',
+    title: 'Export & Reporting',
+    description:
+      'Export your full or filtered inventory in one click for accounting or physical inventory. Your data remains portable.',
+    imageTag: 'excel-preview',
+    placeholder: 'Excel Export Button'
+  }
+]
+
 // --- Key Advantages ---
 const advantages = [
   {
@@ -186,6 +222,49 @@ const advantages = [
                 <span>{{ item }}</span>
               </li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Excel Features Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-surface border-t border-outline-variant">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-base font-semibold leading-7 text-primary uppercase tracking-wide">Productivity & Time Saving</h2>
+          <p class="mt-2 text-3xl font-bold tracking-tight text-on-surface sm:text-4xl">
+            Advanced Excel Management
+          </p>
+          <p class="mt-4 text-lg text-on-surface-variant max-w-2xl mx-auto">
+            Transform your inventory management. Import, export, and update data in bulk with total reliability, eliminating human error.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div
+            v-for="(feature, index) in excelFeatures"
+            :key="feature.title"
+            class="flex flex-col gap-6 animate-fadeInUp"
+            :style="{ animationDelay: `${index * 100}ms` }"
+          >
+            <div class="flex gap-4">
+              <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-lg bg-primary-container text-on-primary-container">
+                <span class="material-symbols-outlined">{{ feature.icon }}</span>
+              </div>
+              <div>
+                <h3 class="text-xl font-semibold text-on-surface">{{ feature.title }}</h3>
+                <p class="mt-2 text-on-surface-variant leading-relaxed">
+                  {{ feature.description }}
+                </p>
+              </div>
+            </div>
+            
+            <!-- Image Placeholder -->
+            <div class="ml-16 border-2 border-dashed border-outline-variant rounded-lg bg-background p-8 flex flex-col items-center justify-center h-48 text-on-surface-variant text-sm italic">
+               <!-- IMAGE: {{ feature.imageTag }} -->
+               <span class="material-symbols-outlined text-3xl mb-2 opacity-50">image</span>
+               {{ feature.placeholder }}
+            </div>
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@
       <div class="flex items-center gap-3">
         <div class="w-10 h-10  rounded-lg flex items-center justify-center">
           <!-- icon -->
-          <span class="material-icons">
+          <span class="material-symbols-rounded">
             shopping_cart
           </span>
 

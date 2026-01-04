@@ -12,7 +12,7 @@
       <h2 class="text-3xl font-bold text-indigo-900 mb-3">Témoignages</h2>
       <p class="text-gray-600 max-w-2xl mx-auto">
         Découvrez ce que nos utilisateurs pensent de
-        <span class="font-semibold text-indigo-700">Stockly</span>.
+        <span class="font-semibold text-indigo-700">Iventello</span>.
       </p>
     </div>
 

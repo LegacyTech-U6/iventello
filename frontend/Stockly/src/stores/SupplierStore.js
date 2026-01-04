@@ -23,9 +23,9 @@ export const useSupplierStore = defineStore('supplier', {
       this.loading = true
       this.submitError = null
       try {
-        const data = await getSuppliers()
-        this.suppliers = data
-        console.log(data)
+        const res = await getSuppliers()
+        this.suppliers = res.data || []
+        console.log(res)
       } catch (error) {
         console.error('Error fetching suppliers:', error)
         this.submitError = error

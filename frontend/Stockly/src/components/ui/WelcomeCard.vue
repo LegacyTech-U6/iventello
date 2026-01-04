@@ -7,7 +7,7 @@
             <h2 class="text-3xl font-bold mb-3">
                 Welcome back, {{ user }}
                 <!-- Utilisation -->
-                <span class="material-icons">
+                <span class="material-symbols-rounded">
                     waving_hand
                 </span>
             </h2>

@@ -10,9 +10,10 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: HomeView,
-  },{
-    path:'/features',
-    name:'features',
+  },
+  {
+    path: '/features',
+    name: 'features',
     component: () => import('@/components/landing/FeaturesPAge.vue'),
     meta: { showNavbarAndFooter: true },
   },
@@ -161,6 +162,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/CategoryView.vue'),
         meta: { permission: 'canManageStock' },
       },
+      // Dans votre tableau de routes (routes array)
+      {
+        path: '/:entrepriseUuid/suppliers', // ou '/suppliers' selon votre structure
+        name: 'Suppliers',
+        component: () => import('@/views/Supplierview.vue'),
+        meta: { requiresAuth: true },
+      },
+
       {
         path: 'outOfStock',
         name: 'outOfStock',
@@ -172,6 +181,12 @@ const routes: RouteRecordRaw[] = [
         name: 'lowStock',
         component: () => import('@/views/LowStock.vue'),
         meta: { permission: 'canManageStock' },
+      },
+      {
+        name: 'settings',
+        path: 'settings',
+        component: () => import('@/views/Settings.vue'),
+        meta: { permission: 'canAccessSettings' },
       },
       {
         path: 'detail/:id',
@@ -201,8 +216,6 @@ const router = createRouter({
   routes,
 })
 
-
-
 // ...
 
 router.beforeEach(async (to, from, next) => {
@@ -212,7 +225,7 @@ router.beforeEach(async (to, from, next) => {
   if (isElectron() && !auth.user) {
     auth.user = { type: 'electron', name: 'LocalUser' } // un user factice
     // si tu as besoin d'une entreprise active
-     const defaultUuid = '12345' // Met l'UUID par défaut de l'entreprise
+    const defaultUuid = '12345' // Met l'UUID par défaut de l'entreprise
     if (to.path === '/' || to.path === '/login') {
       return next(`/${defaultUuid}/dashboard`)
     }
@@ -252,7 +265,6 @@ router.beforeEach(async (to, from, next) => {
 
   next()
 })
-
 
 router.afterEach((to, from) => {
   // Si on revient sur la page /admin, on désactive l’entreprise active

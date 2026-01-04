@@ -8,7 +8,7 @@
     :class="selectedStatus === null ? 'bg-green-50' : 'bg-gray-100'"
     @click="selectedStatus = null"
   >
-    <span class="material-icons text-green-500 text-xl">receipt_long</span>
+    <span class="material-symbols-rounded text-green-500 text-xl">receipt_long</span>
     <span class="text-sm font-medium text-gray-700">All Invoice</span>
     <span
       class="absolute top-0 right-0 -translate-x-1/4 -translate-y-1/4 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-500 text-white"
@@ -23,7 +23,7 @@
     :class="selectedStatus === 'payée' ? 'bg-blue-50' : 'bg-gray-100'"
     @click="selectedStatus = 'payée'"
   >
-    <span class="material-icons text-blue-500 text-xl">check_circle</span>
+    <span class="material-symbols-rounded text-blue-500 text-xl">check_circle</span>
     <span class="text-sm font-medium text-gray-700">Paid</span>
     <span
       class="absolute top-0 right-0 -translate-x-1/4 -translate-y-1/4 px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-500 text-white"
@@ -38,7 +38,7 @@
     :class="selectedStatus === 'en_attente' ? 'bg-cyan-50' : 'bg-gray-100'"
     @click="selectedStatus = 'en_attente'"
   >
-    <span class="material-icons text-cyan-500 text-xl">hourglass_top</span>
+    <span class="material-symbols-rounded text-cyan-500 text-xl">hourglass_top</span>
     <span class="text-sm font-medium text-gray-700">Pending</span>
     <span
       class="absolute top-0 right-0 -translate-x-1/4 -translate-y-1/4 px-2 py-0.5 text-xs font-semibold rounded-full bg-cyan-400 text-white"
@@ -53,7 +53,7 @@
     :class="selectedStatus === 'overdue' ? 'bg-red-50' : 'bg-gray-100'"
     @click="selectedStatus = 'overdue'"
   >
-    <span class="material-icons text-red-500 text-xl">error</span>
+    <span class="material-symbols-rounded text-red-500 text-xl">error</span>
     <span class="text-sm font-medium text-gray-700">Overdue</span>
     <span
       class="absolute top-0 right-0 -translate-x-1/4 -translate-y-1/4 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white"
