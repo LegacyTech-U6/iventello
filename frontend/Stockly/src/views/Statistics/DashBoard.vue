@@ -56,7 +56,7 @@ import TopSellingProducts from '@/components/statistics/TopSellingProducts.vue'
 import ChartRevenue from '@/components/statistics/ChartRevenue.vue'
 import SalesChart from '@/components/ui/charts/SalesChart.vue'
 import GridCard from '@/components/ui/cards/GridCard.vue'
-import { useProductStore } from '@/stores/productStore'
+import { useProductStore } from '@/stores/productOfflineStore'
 import {
   Package,
   DollarSign,

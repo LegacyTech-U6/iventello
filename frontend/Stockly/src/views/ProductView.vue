@@ -208,7 +208,7 @@
 import { useRouter } from 'vue-router'
 import { Users, UserCheck, UserX, UserPlus } from 'lucide-vue-next'
 import { ref, computed, onMounted } from 'vue'
-import { useProductStore } from '@/stores/productStore'
+import { useProductStore } from '@/stores/productOfflineStore'
 import ProductListItem from '@/components/Products/ProductListItem.vue'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import GridCard from '@/components/ui/cards/GridCard.vue'

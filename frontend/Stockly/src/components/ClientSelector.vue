@@ -73,7 +73,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useClientStore } from '@/stores/clientStore'
+import { useClientStore } from '@/stores/clientOfflineStore'
 import { UserPlusIcon } from 'lucide-vue-next'
 const clientStore = useClientStore()
 const searchQuery = ref('')

@@ -407,7 +407,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getOneProduct as fetchProductById } from '@/service/api'
-import { useProductStore } from '@/stores/productStore'
+import { useProductStore } from '@/stores/productOfflineStore'
 import { useActionMessage } from '@/composable/useActionMessage'
 import { useGlobalModal } from '@/composable/useValidation'
 

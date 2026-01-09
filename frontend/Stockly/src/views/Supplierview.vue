@@ -155,7 +155,7 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import { useSupplierStore } from '@/stores/SupplierStore';
+import { useSupplierStore } from '@/stores/supplierOfflineStore';
 
 const supplierStore = useSupplierStore();
 

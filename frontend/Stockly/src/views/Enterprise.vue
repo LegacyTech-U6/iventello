@@ -42,7 +42,7 @@
 <script setup>
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import { computed, ref, onMounted } from 'vue'
-import { useProductStore } from '@/stores/productStore'
+import { useProductStore } from '@/stores/productOfflineStore'
 import { useAuthStore } from '@/stores/authStore'
 import NotificationsPanel from '@/components/main/NotificationsPanel.vue'
 import LowStockAlertsPanel from '@/components/statistics/LowStockAlertsPanel.vue'

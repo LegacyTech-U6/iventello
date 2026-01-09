@@ -78,7 +78,7 @@ import { ref, computed, onMounted } from 'vue'
 // Remplacez les chemins d'accès API et composables par vos chemins réels
 import CategoryCard from '../components/CategoryCard.vue' 
 import AddCategoryModal from '../components/AddCategoryModal.vue'
-import { useCategoryStore } from '@/stores/CategoryStore' 
+import { useCategoryStore } from '@/stores/categoryOfflineStore' 
 import { toast } from 'vue-sonner' // Si vous utilisez vue-sonner pour les notifications
 import { useRouter } from 'vue-router'
 import ActionModal from '@/components/ui/ActionModal.vue'

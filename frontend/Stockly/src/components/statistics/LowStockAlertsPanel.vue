@@ -71,7 +71,7 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { useStatisticsStore } from '@/stores/statisticStore'
-import { useProductStore } from '@/stores/productStore'
+import { useProductStore } from '@/stores/productOfflineStore'
 
 const productStore = useProductStore()
 

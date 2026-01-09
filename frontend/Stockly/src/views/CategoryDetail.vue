@@ -230,7 +230,7 @@
 import { ref, computed, onMounted } from 'vue'
 import CategoryCard from '../components/CategoryCard.vue'
 import AddCategoryModal from '../components/AddCategoryModal.vue'
-import { useCategoryStore } from '@/stores/CategoryStore'
+import { useCategoryStore } from '@/stores/categoryOfflineStore'
 import { toast } from 'vue-sonner'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'

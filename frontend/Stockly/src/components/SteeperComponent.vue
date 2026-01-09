@@ -441,9 +441,9 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useProductStore } from '@/stores/productStore'
-import { useCategoryStore } from '@/stores/CategoryStore'
-import { useSupplierStore } from '@/stores/SupplierStore'
+import { useProductStore } from '@/stores/productOfflineStore'
+import { useCategoryStore } from '@/stores/categoryOfflineStore'
+import { useSupplierStore } from '@/stores/supplierOfflineStore'
 import ImageUploader from './main/ImageUploader.vue'
 import { useActionMessage } from '@/composable/useActionMessage'
 import { useRouter } from 'vue-router'

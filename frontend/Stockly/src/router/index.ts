@@ -78,8 +78,8 @@ const routes: RouteRecordRaw[] = [
         meta: { showNavbarAndFooter: false, permission: 'canManageUsers' },
       },
       {
-        path: 'settings',
-        name: 'settings',
+        path: 'adminsettings',
+        name: 'adminsettings',
         component: () => import('@/views/settings/AdminSetting.vue'),
         meta: { permission: 'canAccessSettings' },
       },

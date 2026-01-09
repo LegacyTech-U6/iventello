@@ -63,8 +63,8 @@ import PaymentTerms from './PaymentTerms.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useActionMessage } from '@/composable/useActionMessage'
 
-import { useInvoiceStore } from '@/stores/FactureStore'
-import { useClientStore } from '@/stores/clientStore'
+import { useInvoiceStore } from '@/stores/invoiceOfflineStore'
+import { useClientStore } from '@/stores/clientOfflineStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 const { showSuccess, showError } = useActionMessage()
 import { useGlobalModal } from '@/composable/useValidation'

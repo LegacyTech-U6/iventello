@@ -150,7 +150,7 @@ const navLinks = [
   { to: '/ad/dashboard', icon: 'dashboard', label: 'Dashboard' },
   { to: '/ad/workers', icon: 'group', label: 'Workers' },
   { to: '/ad/admin', icon: 'business', label: 'Companies' },
-  { to: '/ad/settings', icon: 'settings', label: 'Settings' },
+  { to: '/ad/adminsettings', icon: 'settings', label: 'Settings' },
 ]
 
 const isActive = (path) => {

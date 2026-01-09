@@ -216,7 +216,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useInvoiceStore } from '@/stores/FactureStore'
+import { useInvoiceStore } from '@/stores/invoiceOfflineStore'
 import CompanyInfo from './CompanyInfo.vue'
 import { usePdfStore } from '@/stores/pdfStore'
 import { useCurrency } from '@/composable/useCurrency'
