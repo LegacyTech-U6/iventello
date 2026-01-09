@@ -7,6 +7,7 @@ import {
   OutOfStock,
   LowStock,
   addProductStock,
+  downloadProductExcel,
 } from '@/service/api'
 
 export const useProductStore = defineStore('product', {
@@ -137,7 +138,7 @@ export const useProductStore = defineStore('product', {
       this.loading = true
       try {
         const data = await LowStock()
-        this.lowProducts = data.data
+        this.lowProducts = data
         this.error = null
         console.log('✅ Low products loaded:', data)
       } catch (err) {
@@ -158,6 +159,27 @@ export const useProductStore = defineStore('product', {
         this.error = null
       } catch (err) {
         this.error = err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async exportProducts() {
+      this.loading = true
+      try {
+        const blob = await downloadProductExcel()
+        // Créer un lien de téléchargement temporaire
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', `produits_iventello_${new Date().toISOString().split('T')[0]}.xlsx`)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        window.URL.revokeObjectURL(url)
+      } catch (err) {
+        this.error = err.message || "Erreur lors de l'export Excel"
+        console.error('Export failed', err)
       } finally {
         this.loading = false
       }

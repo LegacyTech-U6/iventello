@@ -130,11 +130,28 @@ export async function OutOfStock() {
 
 export async function LowStock() {
   const { data } = await API.get('/products/low-stock')
+  console.log(data.data)
   return data
 }
 
 export async function addProductStock(productId, quantityAdd) {
   const { data } = await API.post('/products/add', { productId, quantityAdd })
+  return data
+}
+
+export async function downloadProductExcel() {
+  const response = await API.get('/excel/products/template', {
+    responseType: 'blob', // Important pour le téléchargement de fichier
+  })
+  return response.data
+}
+
+export async function importProducts(formData) {
+  const { data } = await API.post('/excel/products/import', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
   return data
 }
 

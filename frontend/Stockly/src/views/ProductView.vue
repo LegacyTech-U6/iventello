@@ -10,22 +10,7 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <!-- Quick Links -->
-            <router-link to="/OutOfStock"
-              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#93000A] bg-red-50 hover:bg-red-100 rounded-md transition-colors">
-              <span class="material-symbols-rounded">
-                warning
-              </span>
-              Out of Stock
-            </router-link>
-
-            <router-link to="/lowStock"
-              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-md transition-colors">
-              <span class="material-symbols-rounded">
-                trending_down
-              </span>
-              Low Stock
-            </router-link>
+           
 
             <!-- View Mode Toggle -->
             <div class="flex items-center border border-gray-200 rounded-md">
@@ -47,6 +32,25 @@
                 </svg>
               </button>
             </div>
+
+            <!-- Export Excel Button -->
+            <button @click="productStore.exportProducts()" :disabled="productStore.loading"
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors flex items-center gap-2">
+              <span v-if="productStore.loading" class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              <span v-else class="material-symbols-rounded text-lg">
+                file_download
+              </span>
+              Export Excel
+            </button>
+
+            <!-- Import Excel Button -->
+            <button @click="isImportModalOpen = true"
+              class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-md transition-colors flex items-center gap-2">
+              <span class="material-symbols-rounded text-lg">
+                file_upload
+              </span>
+              Import Excel
+            </button>
 
             <!-- Add Product Button -->
             <button @click="handleAddProduct"
@@ -177,6 +181,19 @@
       </div>
     </div>
     <ValidationModal />
+
+    <!-- Import Modal -->
+    <div v-if="isImportModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+          <h3 class="text-lg font-bold text-gray-800">Importer des produits</h3>
+          <button @click="isImportModalOpen = false" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-6">
+          <ExcelProductUpload @close="isImportModalOpen = false" @imported="handleImportSuccess" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -196,6 +213,7 @@ import ProductListItem from '@/components/Products/ProductListItem.vue'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import GridCard from '@/components/ui/cards/GridCard.vue'
 import ValidationModal from '@/components/ui/ValidationModal.vue'
+import ExcelProductUpload from '@/components/Products/ExcelProductUpload.vue'
 
 // ========================================
 // INITIALISATION DES STORES ET ROUTER
@@ -231,6 +249,9 @@ const viewMode = ref('list')
 
 /** État du chargement des données */
 const loading = ref(false)
+
+/** État de la modale d'import */
+const isImportModalOpen = ref(false)
 
 // ========================================
 // PROPRIÉTÉS CALCULÉES (computed)
@@ -342,6 +363,16 @@ const handleViewProduct = (product) => {
     name: 'product-detail',
     params: { id: product.id },
   })
+}
+
+/**
+ * Callback après un import réussi
+ * Rafraîchit la liste des produits
+ */
+const handleImportSuccess = async () => {
+  loading.value = true
+  await productStore.fetchProducts()
+  loading.value = false
 }
 
 // ========================================
