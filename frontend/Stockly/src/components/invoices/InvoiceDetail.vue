@@ -290,13 +290,13 @@ function printInvoice() {
   window.print()
 }
 
-async function downloadPDF() {
-  try {
-    await invoiceStore.createInvoice(invoice.value)
-  } catch (error) {
-    console.error('Error downloading PDF:', error)
-  }
-}
+// async function downloadPDF() {
+//   try {
+//     await invoiceStore.createInvoice(invoice.value)
+//   } catch (error) {
+//     console.error('Error downloading PDF:', error)
+//   }
+// }
 </script>
 
 <style scoped>

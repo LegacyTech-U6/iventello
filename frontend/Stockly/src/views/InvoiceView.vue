@@ -165,11 +165,12 @@ import { NButton, NTag, NInput, NSelect } from 'naive-ui'
 import { NSpin, NEmpty } from 'naive-ui'
 import { useCurrency } from '@/composable/useCurrency'
 import { Plus, Search, Filter, MoreVertical, ChevronRight, Minus, Trash2 } from 'lucide-vue-next'
-import { useInvoiceStore } from '@/stores/invoiceOfflineStore'
+import { useInvoiceStore } from '@/stores/FactureStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import InvoiceDetailModal from '@/components/invoices/InvoiceDetailModal.vue'
 import ActionModal from '@/components/ui/ActionModal.vue'
 import InvoicePart from '@/assets/icon svg/invoicePart.vue'
+import { exportToPDF } from '@/utils/invoicePdfTemplate'
 
 
 const {format} = useCurrency()

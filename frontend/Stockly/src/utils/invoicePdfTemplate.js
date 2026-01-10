@@ -1,41 +1,39 @@
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import html2pdf from 'html2pdf.js';
 
-export const exportToPDF = async (elementId, fileName = 'document.pdf') => {
-  const input = document.getElementById(elementId);
-  
-  if (!input) {
-    console.error("L'élément HTML n'a pas été trouvé");
+/**
+ * Génère un PDF à partir d'un élément HTML
+ * @param {string} elementId - L'ID de l'élément HTML à convertir
+ * @param {string} fileName - Le nom du fichier de sortie
+ */
+export const exportToPDF = async (elementId, fileName = 'facture.pdf') => {
+  const element = document.getElementById(elementId);
+
+  if (!element) {
+    console.error(`L'élément avec l'id #${elementId} est introuvable.`);
     return;
   }
 
+  const options = {
+    margin: [10, 10, 10, 10], // Marges [haut, gauche, bas, droite] en mm
+    filename: fileName,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2, // Augmente la résolution (2 = Retina/HD)
+      useCORS: true, // Permet de charger des images externes
+      letterRendering: true,
+      logging: false 
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait' 
+    }
+  };
+
   try {
-    // 1. Capture du HTML en image haute résolution
-    const canvas = await html2canvas(input, {
-      scale: 2, // Augmente la qualité du texte
-      useCORS: true, // Pour charger les images externes si besoin
-      logging: false
-    });
-
-    const imgData = canvas.toDataURL('image/png');
-
-    // 2. Configuration du format PDF (A4)
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-    // 3. Ajout de l'image au PDF
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    
-    // 4. Téléchargement
-    pdf.save(fileName);
+    await html2pdf().set(options).from(element).save();
   } catch (error) {
-    console.error("Erreur lors de la génération du PDF :", error);
+    console.error("Erreur lors de la génération du PDF:", error);
+    throw error;
   }
 };

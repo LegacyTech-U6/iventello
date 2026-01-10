@@ -73,7 +73,8 @@
         </div>
       </div>
 
-      <div ref="invoiceContent" class="bg-white rounded shadow-xl max-w-3xl w-full h-screen pb-10 relative m-4">
+     <div id="invoice-card" ref="invoiceContent" class="bg-white rounded p-8 max-w-3xl w-full pdf-container">
+   
         <!-- Header -->
 
         <!-- Invoice Content -->
@@ -340,15 +341,14 @@ function printInvoice() {
 
 
 // Fonction de téléchargement du PDF
+// Dans InvoiceDetailModal.vue
 async function downloadPDF() {
   try {
     const fileName = `facture_${props.invoice.id || 'export'}.pdf`;
-  
-  // On passe l'ID 'invoice-card' que l'on va rajouter dans le HTML plus bas
-  await exportToPDF('invoice-card', fileName);
-    // await pdfStore.downloadInvoicePdf(props.invoice, props.entreprise)
+    // On appelle notre nouvel outil
+    await exportToPDF('invoice-card', fileName);
   } catch (err) {
-    console.error('PDF download failed:', err)
+    console.error('PDF download failed:', err);
   }
 }
   // try {
@@ -376,4 +376,32 @@ async function downloadPDF() {
     display: none !important;
   }
 }
+
+/* Styles spécifiques pour le rendu PDF */
+.pdf-container {
+  font-family: 'Arial', sans-serif; /* Police standard pour éviter les bugs */
+  color: #000 !important;
+  background-color: #fff !important;
+  width: 210mm; /* Largeur forcée A4 */
+  min-height: 297mm;
+}
+
+/* On force l'affichage des bordures si Tailwind est ignoré */
+.pdf-container table {
+  width: 100%;
+  border-collapse: collapse !important;
+}
+
+.pdf-container th, .pdf-container td {
+  border: 1px solid #d1d5db !important; /* Couleur gray-300 */
+  padding: 8px !important;
+}
+
+/* Cacher les éléments non désirés sur le PDF */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
 </style>
