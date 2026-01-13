@@ -2,125 +2,118 @@
   <div
     :class="[
       displayMode === 'grid'
-        ? 'bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 hover:border-gray-200 overflow-hidden cursor-pointer'
-        : 'hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 px-6 py-4 flex items-center gap-4'
+        ? 'group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-blue-200 overflow-hidden cursor-pointer'
+        : 'group hover:bg-blue-50/50 transition-colors border-b border-gray-100 last:border-b-0 px-4 py-3 flex items-center gap-3 sm:gap-4 cursor-pointer'
     ]"
+    @click="handleView"
   >
-    <!-- GRID VIEW -->
     <template v-if="displayMode === 'grid'">
-      <div class="relative aspect-square bg-linear-to-br from-gray-50 to-gray-100">
-        <img v-if="product.Prod_image" :src="product.Prod_image" :alt="product.Prod_name" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
-        <div v-else class="w-full h-full flex items-center justify-center">
-          <svg class="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
+      <div class="relative aspect-[4/3] bg-gray-50 overflow-hidden">
+        <img 
+          v-if="product.Prod_image" 
+          :src="product.Prod_image" 
+          :alt="product.Prod_name" 
+          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+        />
+        <div v-else class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+          <Package :size="32" stroke-width="1.5" />
         </div>
 
-        <div class="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-          <button @click="handleView" class="px-4 py-2 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 flex items-center gap-2">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            View
-          </button>
+        <div class="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div class="scale-90 group-hover:scale-100 transition-transform px-4 py-2 bg-white/90 backdrop-blur text-blue-600 font-bold rounded-xl shadow-lg flex items-center gap-2">
+            <Eye :size="18" />
+            Voir détails
+          </div>
         </div>
 
-        <div class="absolute top-3 right-3 px-3 py-1.5 text-xs font-semibold rounded-full shadow backdrop-blur-sm" :class="stockBadgeClass">
+        <div class="absolute top-2 left-2 px-2 py-1 text-[10px] font-bold rounded-lg shadow-sm backdrop-blur-md z-10" :class="stockBadgeClass">
           {{ stockStatus }}
         </div>
       </div>
 
       <div class="p-4 space-y-3">
-        <h3 class="text-lg font-bold text-gray-900 hover:text-blue-600 transition-colors line-clamp-2">{{ product.Prod_name }}</h3>
-
-        <div class="text-sm text-gray-600 space-y-1">
-          <p><strong>Code:</strong> {{ product.code_bar }}</p>
-          <p><strong>Category:</strong> {{ product.category.name }}</p>
-          <p><strong>Qty:</strong> {{ product.quantity }} units</p>
-        </div>
-
-        <!-- Stock Progress Bar -->
-        <div class="mt-3">
-          <div class="flex justify-between text-xs text-gray-500 mb-1">
-            <span>{{ product.quantity }} / {{ product.max_stock_level }}</span>
-            <span>{{ Math.round(quantityRatio * 100) }}%</span>
-          </div>
-          <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-full transition-all duration-500" :class="quantityBarColor" :style="{ width: `${Math.round(quantityRatio * 100)}%` }"></div>
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-          <div>
-            <small class="text-gray-500">Selling Price</small>
-            <div class="text-lg font-bold text-gray-900">{{ format(product.selling_price) }}</div>
-          </div>
-          <div>
-            <small class="text-gray-500">Cost</small>
-            <div class="text-sm font-medium text-gray-600">{{ format(product.cost_price) }}</div>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <!-- LIST VIEW -->
-    <template v-else>
-      <!-- Product Name (flex-1) -->
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold text-gray-900 truncate hover:text-blue-600 transition-colors">
+        <h3 class="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 min-h-[2.5rem]">
           {{ product.Prod_name }}
-        </p>
-      </div>
+        </h3>
 
-      <!-- Category (hidden on mobile) -->
-      <div class="w-32 hidden sm:block">
-        <p class="text-sm text-gray-600 truncate">{{ product.category.name }}</p>
-      </div>
+        <div class="grid grid-cols-2 gap-2 py-2 border-y border-gray-50">
+          <div>
+            <p class="text-[10px] text-gray-400 uppercase tracking-tighter">Stock</p>
+            <p class="text-xs font-bold text-gray-700">{{ product.quantity }} unités</p>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] text-gray-400 uppercase tracking-tighter">Prix</p>
+            <p class="text-xs font-bold text-blue-600">{{ format(product.selling_price) }}</p>
+          </div>
+        </div>
 
-      <!-- Barcode (hidden on mobile/tablet) -->
-      <div class="w-32 hidden md:block">
-        <p class="text-xs font-mono text-gray-500 truncate">{{ product.code_bar }}</p>
-      </div>
-
-      <!-- Stock Quantity (hidden on mobile) -->
-      <div class="w-24 hidden sm:block">
-        <div class="text-center">
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full inline-block" :class="stockBadgeClass">
-            {{ product.quantity }}
-          </span>
+        <div class="space-y-1">
+          <div class="flex justify-between text-[10px] font-medium text-gray-500">
+            <span>{{ Math.round(quantityRatio * 100) }}% du max</span>
+            <span :class="quantityBarColor.replace('bg-', 'text-')">{{ product.quantity }}</span>
+          </div>
+          <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full transition-all duration-700" :class="quantityBarColor" :style="{ width: `${quantityRatio * 100}%` }"></div>
+          </div>
         </div>
       </div>
-
-      <!-- Cost Price (hidden on mobile/tablet) -->
-      <div class="w-28 hidden lg:block">
-        <p class="text-sm text-gray-600 text-right">{{ format(product.cost_price) }}</p>
-      </div>
-
-      <!-- Selling Price (always visible) -->
-      <div class="w-32">
-        <p class="text-sm font-bold text-gray-900 text-right">{{ format(product.selling_price) }}</p>
-      </div>
-
-      <!-- Action Button -->
-      <div class="w-12 flex justify-end">
-        <button
-          class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-          @click="handleView"
-          title="View product details"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </button>
-      </div>
     </template>
+
+    <template v-else>
+  <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-100">
+    <img v-if="product.Prod_image" :src="product.Prod_image" class="w-full h-full object-cover" />
+    <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+      <Package :size="16" />
+    </div>
+  </div>
+
+  <div class="flex-1 min-w-0">
+    <p class="text-xs sm:text-sm font-bold text-gray-900 truncate group-hover:text-blue-600">
+      {{ product.Prod_name }}
+    </p>
+    <p class="text-[10px] text-gray-400 sm:hidden">
+      {{ product.category?.name || 'Sans catégorie' }}
+    </p>
+  </div>
+
+  <div class="w-32 hidden sm:block">
+    <span class="px-2 py-1 bg-gray-50 text-gray-600 rounded-md text-[10px] font-medium truncate inline-block max-w-full border border-gray-100">
+      {{ product.category?.name || 'N/A' }}
+    </span>
+  </div>
+
+  <div class="w-32 hidden md:block text-gray-400">
+    <p class="text-[10px] font-mono truncate tracking-tighter">{{ product.code_bar }}</p>
+  </div>
+
+  <div class="w-16 sm:w-24 text-center">
+    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full inline-block" :class="stockBadgeClass">
+      {{ product.quantity }}
+    </span>
+  </div>
+
+  <div class="w-24 sm:w-32 text-right hidden sm:block">
+    <p class="text-xs sm:text-sm font-medium text-gray-500">{{ format(product.cost_price) }}</p>
+  </div>
+
+  <div class="w-24 sm:w-32 text-right">
+    <p class="text-xs sm:text-sm font-bold text-gray-900">{{ format(product.selling_price) }}</p>
+  </div>
+
+  <div class="w-8 sm:w-12 flex justify-end">
+    <div class="p-2 text-gray-300 group-hover:text-blue-500 group-hover:bg-blue-50 rounded-xl transition-all">
+      <ChevronRight :size="18" />
+    </div>
+  </div>
+</template>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Eye, Package, ChevronRight } from 'lucide-vue-next'
 import { useCurrency } from '@/composable/useCurrency'
+
 const { format } = useCurrency()
 
 interface Product {
@@ -131,54 +124,44 @@ interface Product {
   max_stock_level?: number
   cost_price: number
   selling_price: number
-  category: { id: number; name: string }
-  Prod_Description: string
+  category?: { id: number; name: string }
   code_bar: string
-  date_of_arrival: string
-  supplier: string
   Prod_image?: string
-  updatedAt?: string
 }
 
 const props = defineProps<{ product: Product; displayMode?: 'grid' | 'list' }>()
 const emit = defineEmits<{ view: [product: Product] }>()
 
-const quantityNum = computed(() => props.product.quantity)
+// Calculs réactifs
 const quantityRatio = computed(() => {
   const min = props.product.min_stock_level ?? 0
-  const max = props.product.max_stock_level ?? 1000
-  return Math.min(Math.max((quantityNum.value - min) / (max - min), 0), 1)
+  const max = props.product.max_stock_level ?? (props.product.quantity > 100 ? props.product.quantity : 100)
+  const qty = props.product.quantity
+  return Math.min(Math.max((qty - min) / (max - min), 0), 1) || 0
 })
 
 const stockStatus = computed(() => {
-  const qty = quantityNum.value
-  if (qty === 0) return 'Rupture'
-  if (qty <= 10) return 'Stock faible'
+  const qty = props.product.quantity
+  if (qty <= 0) return 'Rupture'
+  if (qty <= 10) return 'Faible'
   return 'En stock'
 })
 
 const stockBadgeClass = computed(() => {
-  const qty = quantityNum.value
-  if (qty === 0) return 'bg-red-100 text-red-700 border border-red-200'
-  if (qty <= 10) return 'bg-yellow-100 text-yellow-700 border border-yellow-200'
-  return 'bg-green-100 text-green-700 border border-green-200'
+  const qty = props.product.quantity
+  if (qty <= 0) return 'bg-red-50 text-red-600 border border-red-100'
+  if (qty <= 10) return 'bg-orange-50 text-orange-600 border border-orange-100'
+  return 'bg-green-50 text-green-600 border border-green-100'
 })
 
 const quantityBarColor = computed(() => {
   const ratio = quantityRatio.value
-  if (ratio < 0.3) return 'bg-red-400'
-  if (ratio < 0.7) return 'bg-yellow-400'
+  if (ratio < 0.2) return 'bg-red-500'
+  if (ratio < 0.5) return 'bg-orange-500'
   return 'bg-green-500'
 })
 
-const handleView = () => emit('view', props.product)
-</script>
-
-<style scoped>
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+const handleView = () => {
+  emit('view', props.product)
 }
-</style>
+</script>

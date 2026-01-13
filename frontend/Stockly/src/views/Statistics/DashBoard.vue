@@ -27,19 +27,14 @@
       </div>
 
       <div>
-        <div class="grid grid-cols-4 gap-4 p-4">
-          <div class="col-span-3 bg-white rounded-xl border-2 border-gray-300 p-10">
+        <div class="grid lg:grid-cols-4 gap-4 p-4">
+          <div class="col-span-4 bg-white rounded-xl border-2 border-gray-300 p-10">
             <!-- <SalesPerformanceChart /> -->
             <SalesChart />
           </div>
-          <div class="p-5 bg-white rounded-xl border-2 border-gray-300">
-            <RevenueCatgeory />
-          </div>
+          
         </div>
-        <!-- Sales Chart -->
-
         <TopSellingProducts />
-        <ChartRevenue />
       </div>
     </div>
   </div>
@@ -53,7 +48,6 @@ import { useStatisticsStore } from '@/stores/statisticStore'
 import SalesPerformanceChart from '@/components/statistics/SalesPerformanceChart.vue'
 import RevenueCatgeory from '@/components/statistics/RevenueCatgeory.vue'
 import TopSellingProducts from '@/components/statistics/TopSellingProducts.vue'
-import ChartRevenue from '@/components/statistics/ChartRevenue.vue'
 import SalesChart from '@/components/ui/charts/SalesChart.vue'
 import GridCard from '@/components/ui/cards/GridCard.vue'
 import { useProductStore } from '@/stores/productStore'

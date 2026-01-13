@@ -1,6 +1,6 @@
 <template>
     <div
-        class="relative bg-[#0C333B] text-white rounded-2xl p-6 flex items-start justify-between overflow-visible shadow-md">
+        class=" bg-[#0C333B] text-white rounded-2xl p-6 flex items-start justify-between overflow-visible shadow-md">
 
         <!-- TEXT -->
         <div class="flex-1">

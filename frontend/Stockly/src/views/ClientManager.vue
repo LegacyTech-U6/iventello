@@ -41,15 +41,7 @@ refresh
             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
           />
         </div>
-        <select
-          v-model="statusFilter"
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm md:w-auto"
-        >
-          <option :value="null">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="pending">Pending</option>
-        </select>
+        
       </div>
     </div>
 
@@ -173,7 +165,6 @@ const { showSuccess } = useActionMessage()
 const clientStore = useClientStore()
 
 const search = ref('')
-const statusFilter = ref(null)
 const showModal = ref(false)
 const showDeleteModal = ref(false)
 const isEditMode = ref(false)
@@ -196,9 +187,7 @@ const filteredClients = computed(() => {
     )
   }
 
-  if (statusFilter.value) {
-    clients = clients.filter((c) => c.status === statusFilter.value)
-  }
+  
 
   return clients
 })

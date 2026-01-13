@@ -7,15 +7,31 @@ import HomeView from '../views/HomeView.vue'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView,
-  },{
-    path:'/features',
-    name:'features',
-    component: () => import('@/components/landing/FeaturesPAge.vue'),
-    meta: { showNavbarAndFooter: true },
+    component: () => import('@/views/layout/DefaultLayout.vue'), // Layout avec NavBar + Footer
+    children: [
+      {
+        path: '',
+        name: 'home',
+        component: HomeView,
+      },
+      {
+        path: 'features',
+        name: 'features',
+        component: () => import('@/components/landing/FeaturesPAge.vue'),
+        meta: { showNavbarAndFooter: true },
+      },
+      {
+        path: 'verify/:token',
+        name: 'VerifyEmail',
+        component: () => import('@/views/auth/VerifyEmail.vue'),
+      },
+      {
+        path: 'activation',
+        name: 'activation',
+        component: () => import('@/views/auth/ActivationSent.vue'),
+      },
+    ],
   },
-
   {
     path: '/register',
     name: 'register',
@@ -27,16 +43,6 @@ const routes: RouteRecordRaw[] = [
     name: 'login',
     component: () => import('../views/auth/LoginView.vue'),
     meta: { showNavbarAndFooter: false },
-  },
-  {
-    path: '/verify/:token',
-    name: 'VerifyEmail',
-    component: () => import('@/views/auth/VerifyEmail.vue'),
-  },
-  {
-    path: '/activation',
-    name: 'activation',
-    component: () => import('@/views/auth/ActivationSent.vue'),
   },
 
   // ===================== ADMIN =====================
@@ -215,7 +221,7 @@ router.beforeEach(async (to, from, next) => {
 
   // Vérification des permissions
   const requiredPermission = to.meta.permission as string
-  if (requiredPermission && !auth.can('canViewDashboard') ) {
+  if (requiredPermission && !auth.can('canViewDashboard')) {
     console.warn(`❌ Accès refusé à ${to.fullPath}, permission manquante: ${requiredPermission}`)
     // Redirection selon le rôle
     if (auth.user?.type === 'admin') next('/ad/admin')

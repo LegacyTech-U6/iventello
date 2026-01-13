@@ -34,7 +34,7 @@
               Reset
             </button>
             <button
-              @click="$router.push('/product')"
+              @click="$router.push(getPath('products'))"
               class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
@@ -446,21 +446,24 @@ import { useCategoryStore } from '@/stores/CategoryStore'
 import { useSupplierStore } from '@/stores/SupplierStore'
 import ImageUploader from './main/ImageUploader.vue'
 import { useActionMessage } from '@/composable/useActionMessage'
-import { useRouter } from 'vue-router'
+import { useRouter,useRoute } from 'vue-router'
+import { useEntrepriseStore } from '@/stores/entrepriseStore'
 const productStore = useProductStore()
 const { showSuccess, showError } = useActionMessage()
 const categoryStore = useCategoryStore()
 const supplierStore = useSupplierStore()
 const router = useRouter()
+const route = useRoute()
 const loading = computed(() => productStore.loading)
 const isEditMode = ref(false)
-
+const entrepriseStore = useEntrepriseStore()
 const sections = reactive({
   info: true,
   pricing: true,
   images: true,
 })
-
+const currentUuid = computed(() => route.params.uuid || authStore.user?.entrepriseUuid)
+const getPath = (suffix) => `/${currentUuid.value}/${suffix}`
 const errors = reactive({})
 const submitError = ref('')
 const categories = computed(() => categoryStore.categories)

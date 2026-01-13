@@ -1,16 +1,9 @@
 <template>
   <div class="max-w-8xl mx-auto bg-background h-full">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-surface p-6 rounded-xl elevation-1">
+    
     
       
-      <div class="flex gap-3 justify-end mt-4 md:mt-0 flex-shrink-0">
-        <button
-          @click="$router.back()"
-          class="btn-outline px-5 py-2.5 rounded-full text-sm flex items-center gap-2"
-        >
-          <ArrowLeft class="w-4 h-4" />
-          Back to Products
-        </button>
+      <div class="flex gap-3 px-5 justify-end mt-4 md:mt-0 shrink-0">
         <button
           @click="showAddCategory = true"
           class="btn-primary px-5 py-2.5 rounded-full text-sm flex items-center gap-2 elevation-1"
@@ -19,7 +12,7 @@
           Add Category
         </button>
       </div>
-    </div>
+    
     
     <div class="grid grid-cols-1 p-5 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
       <GridCard title="Total Categories" :value="totalCategories || 0" :icon="List" bgColor="bg-primary" />

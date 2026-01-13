@@ -96,43 +96,12 @@
         </router-link>
       </div>
     </section>
-
-    <!-- Linked Accounts -->
-    <section class="w-full max-w-4xl bg-white rounded-lg shadow p-8">
-      <h2 class="text-lg font-semibold text-gray-700 mb-6">Linked Accounts</h2>
-
-      <div class="space-y-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <GoogleIcon class="w-5 h-5" />
-            <div>
-              <p class="text-sm font-medium text-gray-700">Google</p>
-              <p class="text-sm text-gray-500">{{ profileForm.email }}</p>
-            </div>
-          </div>
-          <button class="text-blue-600 text-sm font-semibold hover:underline">Unlink</button>
-        </div>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <AppleIcon class="w-5 h-5" />
-            <div>
-              <p class="text-sm font-medium text-gray-700">Apple ID</p>
-              <p class="text-sm text-gray-400">Not Connected</p>
-            </div>
-          </div>
-          <button class="text-blue-600 text-sm font-semibold hover:underline">Link</button>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
-import GoogleIcon from '@/assets/icon svg/GoogleIcon.vue'
-import AppleIcon from '@/assets/icon svg/AppleIcon.vue'
 const authStore = useAuthStore()
 
 const profileForm = ref({

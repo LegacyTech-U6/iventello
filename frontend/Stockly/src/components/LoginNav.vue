@@ -1,308 +1,165 @@
 <template>
   <div class="flex h-screen bg-gray-50">
-    <!-- Mobile Header -->
-    <div class="fixed top-0 left-0 right-0 z-50 lg:hidden bg-white border-b border-gray-200 shadow-sm">
-      <div class="flex items-center justify-between px-4 py-1">
-        <!-- Menu Button -->
-        <button @click="sidebarOpen = !sidebarOpen" class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Toggle menu">
-          <Menu v-if="!sidebarOpen" class="w-6 h-6 text-gray-700" />
-          <X v-else class="w-6 h-6 text-gray-700" />
+    
+    <div class="fixed top-0 left-0 right-0 z-50 lg:hidden bg-white border-b border-gray-100 shadow-sm">
+      <div class="flex items-center justify-between px-4 h-16">
+        <button @click="sidebarOpen = !sidebarOpen" class="p-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <Menu v-if="!sidebarOpen" :size="24" />
+          <X v-else :size="24" />
         </button>
-
-        <!-- Logo -->
         <div class="flex items-center gap-2">
-          <div class=" border-gray-200/50 px-5">
-            <img :src="Iventello" alt="Logo" class="w-42" />
-          </div>
-
+          <img :src="Iventello" alt="Logo" class="h-8 w-auto" />
         </div>
-
-        <!-- Notification Button -->
-        <button @click="toggleNotificationPanel" class="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Notifications">
-          <span class="material-symbols-rounded">
-            notifications
-          </span>
-          <span v-if="unreadCount > 0"
-            class="absolute top-1 right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-xs font-semibold rounded-full flex items-center justify-center px-1">
-            {{ unreadCount > 9 ? '9+' : unreadCount }}
-          </span>
+        <button @click="toggleNotificationPanel" class="relative p-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <Bell :size="24" />
+          <span v-if="unreadCount > 0" class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
         </button>
       </div>
     </div>
 
-    <!-- Overlay for mobile -->
     <Transition name="fade">
-      <div v-if="sidebarOpen && !isDesktop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-        @click="sidebarOpen = false"></div>
+      <div v-if="sidebarOpen && !isDesktop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" @click="sidebarOpen = false"></div>
     </Transition>
 
-
-    <!-- Sidebar -->
-    <Transition name="slide">
-      <aside v-if="sidebarOpen || isDesktop" class="fixed lg:static top-0 left-0 h-screen bg-white border-r border-gray-200 
-           z-50 flex flex-col shadow-xl lg:shadow-none w-72" @click.stop>
-
-        <!-- Desktop Logo -->
-        <div class="hidden lg:block px-6 py-5  ">
-          <div class=" border-gray-200/50 p-5">
-            <img :src="Iventello" alt="Logo" class="w-42" />
-          </div>
-
+    <aside 
+      class="fixed lg:static top-0 left-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out shadow-xl lg:shadow-none bg-emerald-700 text-white"
+      :class="[
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0', // Gestion Mobile
+        isExpanded ? 'w-64' : 'w-20' // Gestion Desktop (Large vs Fin)
+      ]"
+    >
+      
+      <div class="h-20 flex items-center justify-center border-b border-emerald-600/50 mx-2 relative">
+        <div class="hidden lg:flex font-bold text-2xl italic tracking-tighter transition-all duration-300 overflow-hidden whitespace-nowrap">
+          <span v-if="isExpanded">Iventello</span>
+          <span v-else>I<span class="text-emerald-300">v</span></span>
         </div>
+        <img :src="Iventello" alt="Logo" class="lg:hidden h-8 w-auto brightness-0 invert" />
+      </div>
 
-        <!-- Mobile spacer -->
-        <div class="lg:hidden h-16"></div>
-
-        <!-- Navigation Menu -->
-        <nav class="px-3 py-4 space-y-1 flex-1 overflow-y-auto custom-scrollbar">
-          <!-- Section Main -->
-          <div class="mb-6" v-if="authStore.can('canViewDashboard')">
-            <div class="px-3 mb-2">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Principal
-              </span>
-            </div>
-
-            <router-link :to="dashboardRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(dashboardRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                dashboard
-              </span>
-              <span>Tableau de bord</span>
-            </router-link>
+      <nav class="flex-1 overflow-y-auto overflow-x-visible custom-scrollbar py-4 px-3 space-y-2">
+        
+        <template v-for="group in groupedMenu" :key="group.id">
+          <div v-if="isExpanded || !isDesktop" class="px-3 mt-6 mb-2 text-xs font-bold text-emerald-200/60 uppercase tracking-widest transition-opacity duration-300 delay-100">
+            {{ group.label }}
           </div>
+          <div v-else class="my-4 border-t border-emerald-600/50 mx-2"></div>
 
-          <!-- Section Inventory -->
-          <div class="mb-6" v-if="authStore.can('canManageStock')">
-            <div class="px-3 mb-2">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Inventaire
+          <div v-for="item in group.items" :key="item.path">
+            <router-link 
+              v-if="!item.permission || authStore.can(item.permission)"
+              :to="item.path"
+              @click="closeSidebarOnMobile"
+              class="group relative flex items-center rounded-xl transition-all duration-200"
+              :class="[
+                isActive(item.path) ? 'bg-white text-emerald-800 shadow-md' : 'text-emerald-50 hover:bg-emerald-600 hover:text-white',
+                isExpanded ? 'px-4 py-3 gap-3' : 'justify-center py-3 px-2'
+              ]"
+            >
+              <component :is="item.icon" :size="22" stroke-width="2" class="flex-shrink-0" />
+
+              <span v-if="isExpanded" class="font-medium text-sm whitespace-nowrap overflow-hidden transition-all">
+                {{ item.label }}
               </span>
-            </div>
 
-            <router-link :to="productsRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(productsRoute)" @click="closeSidebarOnMobile">
-              <Package :size="20" class="flex-shrink-0" />
-              <span>Produits</span>
-            </router-link>
-
-            <router-link :to="categoriesRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(categoriesRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                category
+              <span v-if="item.count > 0" 
+                    class="bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-emerald-700 group-hover:border-emerald-600"
+                    :class="isExpanded ? 'ml-auto px-2 py-0.5' : 'absolute top-1 right-1 w-4 h-4'">
+                {{ item.count > 9 ? '9+' : item.count }}
               </span>
-              <span>Catégories</span>
-            </router-link>
 
-            <router-link :to="lowStocksRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(lowStocksRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                trending_down
-              </span>
-              <span>Stock faible</span>
-              <span v-if="lowStockCount > 0"
-                class="ml-auto bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                {{ lowStockCount }}
-              </span>
-            </router-link>
-            <router-link :to="outOfStockRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(outOfStockRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                sell
-              </span>
-              <span>Rupture de stock</span>
-              <span v-if="outOfStockCount > 0"
-                class="ml-auto bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                {{ outOfStockCount }}
-              </span>
-            </router-link>
-          </div>
-
-          <!-- Section Sales & Reports -->
-          <div class="mb-6">
-            <div class="px-3 mb-2">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Ventes & Rapports
-              </span>
-            </div>
-
-            <router-link v-if="authStore.can('canMakeSales')" :to="salesRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(salesRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                point_of_sale
-              </span>
-              <span>Ventes</span>
-            </router-link>
-
-            <router-link v-if="authStore.can('canViewInvoices')" :to="invoicesRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(invoicesRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                receipt_long
-              </span>
-              <span>Factures</span>
-            </router-link>
-
-            <router-link v-if="authStore.can('canMakeSales')" :to="clientsRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(clientsRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                group
-              </span>
-              <span>Clients</span>
-            </router-link>
-
-            <router-link v-if="authStore.can('canViewDashboard')" :to="reportsRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(reportsRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                analytics
-              </span>
-              <span>Rapports</span>
-            </router-link>
-
-            <router-link v-if="authStore.can('canAccessSettings')" :to="ActivityRoute"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(ActivityRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-rounded">
-                timeline
-              </span>
-              <span>Audit Trail</span>
-            </router-link>
-            <!-- Version désactivée -->
-            <div v-if="isDisabled"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group disabled-link">
-              <span class="material-symbols-rounded">
-                trolley
-              </span>
-              <span>purchase</span>
-            </div>
-
-            <!-- Version active -->
-            <router-link v-else to="/"
-              class="flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-all group"
-              :class="isActive(ActivityRoute)" @click="closeSidebarOnMobile">
-              <span class="material-symbols-outlined"> trolley </span>
-              <span>purchase</span>
-            </router-link>
-
-
-          </div>
-        </nav>
-        <div class="p-5">
-
-          <ValidationButton :text="authStore.user?.type === 'admin' ? 'Retour à l\'admin' : 'Déconnexion'" size="large"
-            :asyncClick="logoutEntreprise" :icon="LogOut"
-            class="w-full mt-3 flex justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-3 rounded-2xl font-semibold shadow-md hover:shadow-lg transition-all" />
-
-        </div>
-
-
-
-      </aside>
-    </Transition>
-
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- Desktop Header -->
-      <header class="hidden lg:flex items-center justify-between px-6 py-1 bg-white border-b border-gray-200">
-        <div>
-          <h2 class="text-xl font-semibold text-gray-900">{{ pageTitle }}</h2>
-
-        </div>
-        <div class="mt-auto flex">
-          <div class="flex items-center gap-6 p-4">
-
-            <!-- Icône Notifications -->
-            <button @click="toggleNotificationPanel" class="relative">
-              <span class="material-symbols-rounded text-[#004E5B] text-2xl">
-                notifications
-              </span>
-              <span v-if="unreadCount > 0"
-                class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-                {{ unreadCount > 9 ? '9+' : unreadCount }}
-              </span>
-            </button>
-
-            <!-- Icône Settings -->
-            <button class="relative">
-              <span class="material-symbols-rounded text-[#004E5B] text-2xl">
-                settings
-              </span>
-            </button>
-
-
-            <div class="relative">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center">
-                <span class="material-symbols-rounded md-48 text-2xl">
-                  account_circle
-                </span>
+              <div v-if="!isExpanded && isDesktop"
+                   class="absolute left-full ml-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
+                {{ item.label }}
+                <div class="absolute top-1/2 right-full -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
               </div>
-            </div>
-
-            <!-- Informations utilisateur -->
-            <div class="flex flex-col">
-              <span class="text-gray-900 font-medium text-sm">
-                {{ authStore.user?.username || 'Utilisateur' }} {{ authStore.user?.Last_name || '' }}
-              </span>
-              <span class="text-gray-400 text-xs">
-                {{ formattedDate }}
-              </span>
-            </div>
-
+            </router-link>
           </div>
+        </template>
+      </nav>
 
+      <div class="p-3 border-t border-emerald-600/50 bg-emerald-800/30">
+        
+        <button @click="toggleSidebarSize" 
+                class="hidden lg:flex w-full items-center justify-center p-2 rounded-lg hover:bg-emerald-600/50 text-emerald-200 transition-colors mb-2 group"
+                :title="isExpanded ? 'Réduire le menu' : 'Agrandir le menu'">
+          <PanelLeftClose v-if="isExpanded" :size="20" />
+          <PanelLeftOpen v-else :size="20" />
+        </button>
+
+        <div class="flex flex-col gap-1">
+           <router-link v-if="authStore.can('canAccessSettings')" :to="ActivityRoute"
+             class="group relative flex items-center rounded-lg hover:bg-emerald-600/50 text-emerald-100 transition-colors"
+             :class="isExpanded ? 'px-3 py-2 gap-3' : 'justify-center py-2'">
+            <Settings :size="20" />
+            <span v-if="isExpanded" class="text-sm">Paramètres</span>
+             <div v-if="!isExpanded" class="absolute left-full ml-4 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 z-50 whitespace-nowrap">Paramètres</div>
+          </router-link>
+
+          <button @click="logoutEntreprise" 
+                  class="group relative flex items-center rounded-lg hover:bg-red-500/20 hover:text-red-100 text-emerald-200 transition-colors"
+                  :class="isExpanded ? 'px-3 py-2 gap-3' : 'justify-center py-2'">
+            <LogOut :size="20" />
+            <span v-if="isExpanded" class="text-sm">Déconnexion</span>
+             <div v-if="!isExpanded" class="absolute left-full ml-4 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 z-50 whitespace-nowrap">Déconnexion</div>
+          </button>
         </div>
+      </div>
 
+    </aside>
+
+    <div class="flex-1 flex flex-col h-screen overflow-hidden relative transition-all duration-300">
+      
+      <header class="hidden lg:flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">{{ pageTitle }}</h1>
+          <p class="text-sm text-gray-400 mt-1 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> {{ formattedDate }}
+          </p>
+        </div>
+        <div class="flex items-center gap-6">
+          <button @click="toggleNotificationPanel" class="relative group p-2 rounded-full hover:bg-gray-100">
+            <Bell :size="22" class="text-gray-600 group-hover:text-emerald-600" />
+            <span v-if="unreadCount > 0" class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white"></span>
+          </button>
+          <div class="flex items-center gap-3 pl-6 border-l border-gray-100">
+            <div class="text-right">
+              <p class="text-sm font-semibold text-gray-800">{{ userName }}</p>
+              <p class="text-xs text-gray-500">{{ userRoleDisplay }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+              {{ userInitials }}
+            </div>
+          </div>
+        </div>
       </header>
 
-      <!-- Page Content -->
-      <main class="flex-1 overflow-y-auto bg-gray-50 pt-16 lg:pt-0">
-        <div class="">
+      <main class="flex-1 overflow-y-auto bg-gray-50/50 p-4 lg:p-8 pt-20 lg:pt-8 custom-scrollbar">
+        <div class="max-w-8xl mx-auto">
           <slot></slot>
         </div>
       </main>
     </div>
 
-    <!-- Notification Panel -->
     <NotificationPanel v-model:notificationOpen="notificationOpen" @close="notificationOpen = false" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, h,watch } from 'vue'
-import { useEntrepriseStore } from '@/stores/entrepriseStore'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Users,
-  FileText,
-  LogOut,
-  Menu,
-  FolderTree,
-  X,
-  Activity,
-  TrendingDown,
-  BarChart3,
-  Bell,
-} from 'lucide-vue-next'
-import { useAuthStore } from '@/stores/authStore.js'
+import { useEntrepriseStore } from '@/stores/entrepriseStore'
+import { useAuthStore } from '@/stores/authStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import NotificationPanel from '@/components/ui/NotificationPanel.vue'
 import Iventello from '@/assets/iventello.png'
-import ValidationButton from './ui/buttons/ValidationButton.vue'
 
-const isDisabled = true; // ou ta condition logique
+// Lucide Icons
+import {
+  LayoutDashboard, Package, Shapes, TrendingDown, Tag, ShoppingCart, FileText,
+  Users, BarChart3, Menu, X, Bell, Settings, LogOut,
+  PanelLeftClose, PanelLeftOpen // Nouveaux icônes pour le toggle
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()
@@ -310,256 +167,85 @@ const entrepriseStore = useEntrepriseStore()
 const authStore = useAuthStore()
 const notificationStore = useNotificationStore()
 
-// State
-const sidebarOpen = ref(false)
+// STATE
+const sidebarOpen = ref(false) // Pour Mobile
+const isExpanded = ref(false)  // Pour Desktop (Stretch state)
 const notificationOpen = ref(false)
 const isDesktop = ref(window.innerWidth >= 1024)
-const lowStockCount = ref(0) // À remplacer par une vraie valeur du store
+const formattedDate = ref(new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }))
+
+// Mock Data
+const lowStockCount = ref(0)
 const outOfStockCount = ref(0)
-
-watch(sidebarOpen, (value) => {
-  if (value) notificationOpen.value = false
-})
-
-watch(notificationOpen, (value) => {
-  if (value) sidebarOpen.value = false
-})
-
-// Computed
 const unreadCount = computed(() => notificationStore.unreadCount)
-const activeEntreprise = computed(() => entrepriseStore.activeEntreprise)
-const currentUuid = computed(() => route.params.uuid)
 
+// Helper Route & Menu Logic
+const currentUuid = computed(() => route.params.uuid || authStore.user?.entrepriseUuid)
+const getPath = (suffix) => `/${currentUuid.value}/${suffix}`
+
+const menuStructure = computed(() => [
+  {
+    id: 'main', label: 'Principal',
+    items: [{ label: 'Tableau de bord', icon: LayoutDashboard, path: getPath('dashboard'), permission: 'canViewDashboard' }]
+  },
+  {
+    id: 'inventory', label: 'Inventaire',
+    items: [
+      { label: 'Produits', icon: Package, path: getPath('products'), permission: 'canManageStock' },
+      { label: 'Catégories', icon: Shapes, path: getPath('categories'), permission: 'canManageStock' },
+      { label: 'Stock faible', icon: TrendingDown, path: getPath('lowStock'), permission: 'canManageStock', count: lowStockCount.value },
+      { label: 'Rupture', icon: Tag, path: getPath('outOfStock'), permission: 'canManageStock', count: outOfStockCount.value }
+    ]
+  },
+  {
+    id: 'commercial', label: 'Ventes & Rapports',
+    items: [
+      { label: 'Ventes', icon: ShoppingCart, path: getPath('sales'), permission: 'canMakeSales' },
+      { label: 'Factures', icon: FileText, path: getPath('invoices'), permission: 'canViewInvoices' },
+      { label: 'Clients', icon: Users, path: getPath('clients'), permission: 'canMakeSales' },
+      { label: 'Rapports', icon: BarChart3, path: getPath('reports'), permission: 'canViewDashboard' }
+    ]
+  }
+])
+const groupedMenu = computed(() => menuStructure.value)
+const ActivityRoute = computed(() => getPath('AuditTrail'))
+
+// Computed Properties
 const pageTitle = computed(() => {
-  const routeName = route.name
-  const titles = {
-    dashboard: 'Tableau de bord',
-    product: 'Product inventory',
-    categories: 'Category management',
-    sales: 'Point of sale',
-    invoices: 'Invoices',
-    client: 'Clients',
-    reports: 'Rapports',
-    lowStock: 'Low Stock',
-    outOfStock: 'Out of Stock',
-    AuditTrail: 'Audit Trail'
-  }
-  return titles[routeName] || 'Iventelo'
+  const titles = { dashboard: 'Tableau de bord', products: 'Produits', categories: 'Catégories', sales: 'Ventes', invoices: 'Factures', clients: 'Clients', reports: 'Rapports', lowStock: 'Stock Faible', outOfStock: 'Rupture de Stock', AuditTrail: 'Journal' }
+  const key = route.path.split('/').pop()
+  return titles[key] || 'Iventello'
 })
 
-// Dynamic routes
-const dashboardRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/dashboard`
-})
+const userName = computed(() => `${authStore.user?.username || ''} ${authStore.user?.Last_name || ''}`.trim() || 'Utilisateur')
+const userInitials = computed(() => ((authStore.user?.username?.[0] || '') + (authStore.user?.Last_name?.[0] || '')).toUpperCase() || 'U')
+const userRoleDisplay = computed(() => authStore.isAdmin ? 'Admin' : (authStore.user?.roleName || 'Staff'))
 
-const salesRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/sales`
-})
+// Functions
+const isActive = (path) => route.path === path
+const toggleNotificationPanel = () => { notificationOpen.value = !notificationOpen.value; if (notificationOpen.value) notificationStore.fetchNotifications() }
+const closeSidebarOnMobile = () => { if (!isDesktop.value) sidebarOpen.value = false }
+const toggleSidebarSize = () => { isExpanded.value = !isExpanded.value } // Action du bouton stretch
+const logoutEntreprise = () => { entrepriseStore.clearActiveEntreprise(); authStore.user?.type === 'admin' ? authStore.logout('backToAdmin') : authStore.logout() }
 
-const productsRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/products`
-})
+watch(sidebarOpen, (v) => v && (notificationOpen.value = false))
+const handleResize = () => { isDesktop.value = window.innerWidth >= 1024; if (isDesktop.value) sidebarOpen.value = false }
 
-const clientsRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/clients`
-})
-
-const invoicesRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/invoices`
-})
-
-const categoriesRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/categories`
-})
-
-const ActivityRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/AuditTrail`
-})
-
-const reportsRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/reports`
-})
-
-const lowStocksRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/lowStock`
-})
-const outOfStockRoute = computed(() => {
-  const uuid = authStore.isWorker && authStore.user?.entrepriseUuid
-    ? authStore.user.entrepriseUuid
-    : currentUuid.value
-  return `/${uuid}/outOfStock`
-})
-
-// User info
-const userRoleDisplay = computed(() => {
-  if (authStore.isAdmin) return 'Administrateur'
-  if (authStore.user?.role?.name === 'StockManager') return 'Gestionnaire de Stock'
-  if (authStore.user?.role?.name === 'SalesPoint') return 'Point de Vente'
-  return authStore.user?.roleName || 'Utilisateur'
-})
-
-const userName = computed(() => {
-  if (authStore.user) {
-    return `${authStore.user.username || ''} ${authStore.user.Last_name || ''}`.trim() || 'Utilisateur'
-  }
-  return 'Utilisateur'
-})
-
-const userEmail = computed(() => {
-  return authStore.user?.email || 'email@example.com'
-})
-
-const userInitials = computed(() => {
-  if (authStore.user) {
-    const first = authStore.user.username?.[0] || ''
-    const last = authStore.user.Last_name?.[0] || ''
-    return `${first}${last}`.toUpperCase() || 'U'
-  }
-  return 'U'
-})
-
-const isActive = (path) => {
-  return route.path === path
-    ? 'bg-[#4B6268] text-[#FFFFFF] font-light'
-    : 'text-gray-700 hover:bg-gray-100'
-}
-
-
-const toggleNotificationPanel = () => {
-  notificationOpen.value = !notificationOpen.value
-  if (notificationOpen.value) {
-    notificationStore.fetchNotifications()
-  }
-}
-const formattedDate = ref('')
-
-const updateDate = () => {
-  const today = new Date()
-  const options = { day: 'numeric', month: 'long', year: 'numeric' }
-  formattedDate.value = today.toLocaleDateString('fr-FR', options)
-}
-
-// Appel initial
-updateDate()
-
-const closeSidebarOnMobile = () => {
-  if (!isDesktop.value) sidebarOpen.value = false
-}
-
-
-const logoutEntreprise = () => {
-  entrepriseStore.clearActiveEntreprise()
-  const userType = authStore.user?.type
-  if (userType === 'admin') {
-    authStore.logout('backToAdmin')
-  } else {
-    authStore.logout()
-  }
-}
-
-const handleResize = () => {
-  isDesktop.value = window.innerWidth >= 1024
-  if (isDesktop.value) {
-    sidebarOpen.value = false
-  }
-}
-
-// Lifecycle
 onMounted(async () => {
   window.addEventListener('resize', handleResize)
-  if (authStore.token && !authStore.user) {
-    await authStore.getAccount()
-  }
+  if (authStore.token && !authStore.user) await authStore.getAccount()
 })
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
-})
+onUnmounted(() => window.removeEventListener('resize', handleResize))
 </script>
 
 <style scoped>
-/* Fade */
-.fade-enter-active,
-.fade-leave-active { transition: opacity .25s ease; }
-.fade-enter-from,
-.fade-leave-to { opacity: 0; }
+/* Animations */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 
-/* Slide */
-.slide-enter-active,
-.slide-leave-active { transition: transform .25s ease; }
-.slide-enter-from,
-.slide-leave-to { transform: translateX(-100%); }
-
-
-
-
-/* Custom scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #d1d5db;
-}
-
-/* Mobile adjustments */
-@media (max-width: 1023px) {
-  aside {
-    padding-top: env(safe-area-inset-top);
-  }
-}
-
-.disabled-link {
-  pointer-events: none;
-  /* désactive le clic */
-  opacity: 0.4;
-  /* effet désactivé */
-  position: relative;
-}
-
-/* Trait dotted en haut */
-.disabled-link::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  border-top: 2px dotted #999;
-}
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+main.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
 </style>

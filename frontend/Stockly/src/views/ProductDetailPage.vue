@@ -1,256 +1,201 @@
 <template>
-  <div class="h-full max-w-7xl mx-auto flex flex-col overflow-hidden text-sm">
-    <div class="sticky px-5 top-0 z-20 shrink-0">
-      <div class="max-w-6xl mx-auto py-3">
+  <div class="h-full max-w-8xl mx-auto flex flex-col overflow-hidden text-sm bg-gray-50/30">
+    <div class="sticky px-5 top-0 z-20 shrink-0 bg-white border-b border-gray-100">
+      <div class="max-w-8xl mx-auto py-3">
         <div class="flex items-center justify-between flex-wrap gap-3">
           <div class="flex-1 min-w-0 flex items-center gap-5">
             <button @click="isEditing ? cancelEdit() : goBack()"
-              class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-all group p-2 -ml-2 rounded-full hover:bg-indigo-50/50">
-              <span class="material-symbols-rounded transition-transform group-hover:-translate-x-0.5" style="font-size: 20px;">chevron_left</span>
+              class="flex items-center justify-center text-gray-400 hover:text-indigo-600 transition-all p-2 -ml-2 rounded-full hover:bg-indigo-50">
+              <ChevronLeft :size="20" />
             </button>
 
-            <div class="max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl">
+            <div class="max-w-xs sm:max-w-md">
               <h1 class="text-base capitalize font-bold text-gray-900 truncate">
-                {{ product?.Prod_name || 'Product Details' }}
+                {{ product?.Prod_name || 'Détails du produit' }}
               </h1>
-              <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">
+              <p class="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
                 <span class="font-medium">SKU: {{ product?.code_bar || 'N/A' }}</span>
                 <span class="text-gray-300">•</span>
-                <span class="text-indigo-600 font-medium">{{ product?.category.name || 'No Category' }}</span>
+                <span class="text-indigo-600 font-medium">{{ product?.category.name || 'Sans catégorie' }}</span>
               </p>
             </div>
           </div>
 
           <div class="flex gap-2 items-center">
-            <validation-button v-if="!isEditing" text="Edit Product" :loading="saving" :disabled="saving"
-              color="primary" size="medium" :icon="EditIcon" @click="handleEdit" />
-
-            <validation-button v-else text="Save Changes" :loading="saving" :disabled="saving" color="success"
-              size="medium" :icon="SaveIcon" @click="handleSaveEdit" />
-
-            <validation-button v-if="isEditing" text="Cancel" color="default" size="medium" :icon="CancelIcon"
-              @click="cancelEdit" />
+            <template v-if="!isEditing">
+              <validation-button text="Modifier" :loading="saving" color="primary" size="medium" :icon="Pencil" @click="handleEdit" />
+            </template>
+            <template v-else>
+              <validation-button text="Enregistrer" :loading="saving" color="success" size="medium" :icon="Save" @click="handleSaveEdit" />
+              <validation-button text="Annuler" color="default" size="medium" :icon="X" @click="cancelEdit" />
+            </template>
           </div>
         </div>
       </div>
     </div>
 
     <div class="flex-1 overflow-y-auto">
-      <div class="mx-auto px-5 py-5">
-        <div v-if="loading" class="bg-white rounded-xl shadow p-7">
-          <div class="flex flex-col items-center justify-center">
-            <span class="material-symbols-rounded animate-spin mb-4" style="font-size: 48px; color: #818cf8;">refresh</span>
-            <p class="text-gray-500 font-medium">Loading product details...</p>
-          </div>
+      <div class="mx-auto px-5 py-5 max-w-8xl">
+        <div v-if="loading" class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+          <Loader2 class="animate-spin mx-auto text-indigo-500 mb-4" :size="40" />
+          <p class="text-gray-500 font-medium">Chargement des données...</p>
         </div>
 
-        <div v-else-if="!product" class="bg-white rounded-xl shadow p-7">
-          <div class="text-center">
-            <div class="w-20 h-20 bg-indigo-50 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <span class="material-symbols-rounded" style="font-size: 24px; color: #4f46e5;">inventory_2</span>
-            </div>
-            <h3 class="text-base font-bold text-gray-900 mb-2">Product Not Found</h3>
-            <p class="text-sm text-gray-500 mb-4">The product ID seems invalid or the data is unavailable.</p>
-            <button @click="goBack"
-              class="px-4 py-2 bg-gray-800 text-white font-normal rounded hover:bg-gray-700 transition-all shadow inline-flex items-center gap-2 text-sm">
-              <span class="material-symbols-rounded" style="font-size: 16px;">arrow_back</span>
-              Go Back to Products
-            </button>
-          </div>
+        <div v-else-if="!product" class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+          <PackageX class="mx-auto text-gray-300 mb-4" :size="60" />
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Produit introuvable</h3>
+          <button @click="goBack" class="mt-4 px-4 py-2 bg-gray-900 text-white rounded-lg flex items-center gap-2 mx-auto text-sm">
+            <ArrowLeft :size="16" /> Retour à l'inventaire
+          </button>
         </div>
 
-        <div v-else class="space-y-5">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-white rounded shadow border border-gray-100 p-3 flex items-center justify-between text-sm">
+        <div v-else class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
               <div>
-                <span class="text-sm font-medium text-gray-500 block mb-1">Stock Quantity</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Stock Actuel</span>
                 <div v-if="isEditing">
-                  <input v-model.number="editForm.quantity" type="number" min="0"
-                    class="w-full text-sm font-bold px-2 py-1 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 text-right" />
+                  <input v-model.number="editForm.quantity" type="number" class="w-20 font-bold border-b border-indigo-300 focus:outline-none focus:border-indigo-600" />
                 </div>
-                <span v-else class="text-sm font-bold text-gray-900">{{ product.quantity }}</span>
+                <span v-else class="text-lg font-bold text-gray-900">{{ product.quantity }}</span>
               </div>
-              <span class="material-symbols-rounded" style="font-size: 20px; color: #4f46e5;">inventory_2</span>
+              <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600"><Package :size="20" /></div>
             </div>
 
-            <div class="bg-white rounded shadow border border-gray-100 p-3 flex items-center justify-between text-sm">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
               <div>
-                <span class="text-sm font-medium text-gray-500 block mb-1">Min. Stock Level</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Alerte Stock</span>
                 <div v-if="isEditing">
-                  <input v-model.number="editForm.min_stock_level" type="number" min="0"
-                    class="w-full text-sm font-bold px-2 py-1 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 text-right" />
+                  <input v-model.number="editForm.min_stock_level" type="number" class="w-20 font-bold border-b border-red-300 focus:outline-none" />
                 </div>
-                <span v-else class="text-sm font-bold text-red-600">{{ product.min_stock_level }}</span>
+                <span v-else class="text-lg font-bold text-red-600">{{ product.min_stock_level }}</span>
               </div>
-              <span class="material-symbols-rounded" style="font-size: 20px; color: #ef4444;">warning</span>
+              <div class="p-2 bg-red-50 rounded-lg text-red-600"><AlertTriangle :size="20" /></div>
             </div>
 
-            <div class="bg-white rounded shadow border border-gray-100 p-3 flex items-center justify-between text-sm">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
               <div>
-                <span class="text-sm font-medium text-gray-500 block mb-1">Selling Price</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Prix de Vente</span>
                 <div v-if="isEditing">
-                  <input v-model.number="editForm.selling_price" type="number" min="0" step="0.01"
-                    class="w-full text-sm font-bold px-2 py-1 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 text-right" />
+                  <input v-model.number="editForm.selling_price" type="number" step="0.01" class="w-24 font-bold border-b border-green-300 focus:outline-none" />
                 </div>
-                <span v-else class="text-sm font-bold text-green-600">{{ format(product.selling_price) }}</span>
+                <span v-else class="text-lg font-bold text-green-600">{{ format(product.selling_price) }}</span>
               </div>
-              <span class="material-symbols-rounded" style="font-size: 20px; color: #10b981;">sell</span>
+              <div class="p-2 bg-green-50 rounded-lg text-green-600"><Tag :size="20" /></div>
             </div>
 
-            <div class="bg-white rounded shadow border border-gray-100 p-3 flex items-center justify-between text-sm">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
               <div>
-                <span class="text-sm font-medium text-gray-500 block mb-1">Cost Price</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Prix d'Achat</span>
                 <div v-if="isEditing">
-                  <input v-model.number="editForm.cost_price" type="number" min="0" step="0.01"
-                    class="w-full text-sm font-bold px-2 py-1 border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500 text-right" />
+                  <input v-model.number="editForm.cost_price" type="number" step="0.01" class="w-24 font-bold border-b border-amber-300 focus:outline-none" />
                 </div>
-                <p v-else class="text-sm font-bold text-gray-900">{{ format(product.cost_price) }}</p>
+                <span v-else class="text-lg font-bold text-gray-900">{{ format(product.cost_price) }}</span>
               </div>
-              <span class="material-symbols-rounded" style="font-size: 20px; color: #f59e0b;">trending_down</span>
+              <div class="p-2 bg-amber-50 rounded-lg text-amber-600"><TrendingDown :size="20" /></div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div class="lg:col-span-1 space-y-4">
-              <div class="bg-white rounded shadow border border-gray-100 p-3 sticky top-3 text-sm">
-                <div
-                  class="aspect-square rounded-lg mb-3 flex items-center justify-center overflow-hidden group border border-gray-200 bg-gray-50">
-                  <div v-if="editForm.Prod_image || product.Prod_image" class="relative w-full h-full">
-                    <img :src="isEditing ? editForm.Prod_image : product.Prod_image" :alt="product.Prod_name"
-                      class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" />
-                  </div>
-                  <div v-else class="text-center p-5">
-                    <span class="material-symbols-rounded mx-auto mb-2" style="font-size: 24px; color: #d1d5db;">image_not_supported</span>
-                    <p class="text-sm text-gray-400">No image available</p>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1">
+              <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-20">
+                <div class="aspect-square rounded-xl mb-4 flex items-center justify-center overflow-hidden border border-gray-100 bg-gray-50 group">
+                  <img :src="isEditing ? editForm.Prod_image : product.Prod_image" 
+                       class="w-full h-full object-contain p-4 transition-transform group-hover:scale-105" />
+                </div>
+
+                <div v-if="isEditing" class="space-y-3">
+                  <label class="block text-xs font-bold text-gray-500 uppercase">URL de l'image</label>
+                  <div class="relative">
+                    <input v-model="editForm.Prod_image" type="url" class="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://..." />
+                    <Link :size="14" class="absolute left-2.5 top-2.5 text-gray-400" />
                   </div>
                 </div>
 
-                <div v-if="isEditing" class="mb-3">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                  <input v-model="editForm.Prod_image" type="url"
-                    class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                    placeholder="https://example.com/image.jpg" />
-                </div>
-
-                <div class="flex gap-2 border-t border-gray-100 pt-3">
-                  <div
-                    class="w-1/4 aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-indigo-500 p-1">
-                    <img :src="editForm.Prod_image || product.Prod_image" alt="Thumbnail"
-                      class="w-full h-full object-cover rounded-md" v-if="editForm.Prod_image || product.Prod_image" />
-                    <span v-else class="text-sm text-gray-500">Main</span>
+                <div class="grid grid-cols-4 gap-2 mt-4">
+                  <div class="aspect-square bg-indigo-50 rounded-lg border-2 border-indigo-500 p-1">
+                    <img :src="product.Prod_image" class="w-full h-full object-cover rounded-md" />
                   </div>
-                  <div v-for="i in 3" :key="i"
-                    class="w-1/4 aspect-square bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200 hover:border-indigo-300 transition-all">
-                    <span class="material-symbols-rounded" style="font-size: 20px; color: #9ca3af;">photo_camera</span>
+                  <div v-for="i in 3" :key="i" class="aspect-square bg-gray-50 rounded-lg border border-dashed border-gray-200 flex items-center justify-center text-gray-300">
+                    <Camera :size="18" />
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="lg:col-span-2 space-y-4">
-              <div class="bg-white rounded shadow border border-gray-100 p-4">
-                <h2 class="text-base font-bold text-gray-900 mb-3 border-b border-gray-100 pb-2 flex items-center justify-start gap-2">
-                  <span class="material-symbols-rounded" style="font-size: 20px; color: #4f46e5;">list_alt</span>
-                  <span>General Information</span>
+            <div class="lg:col-span-2 space-y-6">
+              <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-sm font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <FileText class="text-indigo-500" :size="18" /> Information Générale
                 </h2>
 
-                <div v-if="isEditing" class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                    <input v-model="editForm.Prod_name" type="text"
-                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                      placeholder="e.g. Samsung Galaxy S23" />
+                <div v-if="isEditing" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Nom du Produit</label>
+                    <input v-model="editForm.Prod_name" type="text" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                   </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">SKU / Barcode</label>
-                    <input v-model="editForm.code_bar" type="text"
-                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                  <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Code Barre / SKU</label>
+                    <input v-model="editForm.code_bar" type="text" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                   </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Category ID (Temp)</label>
-                    <input v-model="editForm.category.id" type="text"
-                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                      placeholder="Should be a select field in production" />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Supplier Name</label>
-                    <input v-model="editForm.supplier_name" type="text"
-                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
-                  </div>
-                  <div class="col-span-1 sm:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea v-model="editForm.Prod_Description" rows="3"
-                      class="w-full px-3 py-1.5 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none text-sm"
-                      placeholder="Enter a detailed description of the product..."></textarea>
+                  <div class="sm:col-span-2 space-y-1">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Description</label>
+                    <textarea v-model="editForm.Prod_Description" rows="4" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
                   </div>
                 </div>
 
-                <div v-else class="divide-y divide-gray-100 text-sm">
-                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">Description</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                      {{ product.Prod_Description || 'No detailed description provided.' }}
-                    </dd>
+                <div v-else class="space-y-4">
+                  <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-50">
+                    <span class="text-gray-500 font-medium">Description</span>
+                    <p class="col-span-2 text-gray-900 leading-relaxed">{{ product.Prod_Description }}</p>
                   </div>
-                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">Category</dt>
-                    <dd class="mt-1 text-sm text-indigo-600 font-semibold sm:col-span-2 sm:mt-0">
-                      {{ product.category.name }}
-                    </dd>
+                  <div class="grid grid-cols-3 gap-4 py-3 border-b border-gray-50">
+                    <span class="text-gray-500 font-medium">Fournisseur</span>
+                    <p class="col-span-2 text-gray-900">{{ product.supplier_name }}</p>
                   </div>
-                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">Supplier</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                      {{ product.supplier_name || 'N/A' }}
-                    </dd>
-                  </div>
-                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">Date Arrived</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                      {{ formatDate(product.date_of_arrival) }}
-                    </dd>
+                  <div class="grid grid-cols-3 gap-4 py-3">
+                    <span class="text-gray-500 font-medium">Arrivage</span>
+                    <p class="col-span-2 text-gray-900">{{ formatDate(product.date_of_arrival) }}</p>
                   </div>
                 </div>
               </div>
 
-              <div class="bg-white rounded shadow border border-gray-100 p-4">
-                <h2 class="text-base font-bold text-gray-900 mb-3 border-b border-gray-100 pb-2 flex items-center gap-2">
-                  <span class="material-symbols-rounded" style="font-size: 20px; color: #4f46e5;">pie_chart</span>
-                  Financial Snapshot
-                </h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div class="bg-gray-50 p-3 rounded">
-                    <dt class="text-sm font-medium text-gray-500 mb-1">Total Stock Value (Cost)</dt>
-                    <dd class="text-sm font-bold text-gray-900">{{ format(total) }}</dd>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-indigo-600 rounded-xl p-5 text-white shadow-lg shadow-indigo-200">
+                  <div class="flex items-center gap-3 mb-4 text-indigo-100 uppercase tracking-widest text-[10px] font-bold">
+                    <PieChart :size="16" /> Valorisation du stock
                   </div>
-                  <div class="bg-gray-50 p-3 rounded">
-                    <dt class="text-sm font-medium text-gray-500 mb-1">Potential Revenue (Sell)</dt>
-                    <dd class="text-sm font-bold text-green-700">{{ format(totalSellingValue) }}</dd>
+                  <div class="space-y-4">
+                    <div>
+                      <span class="text-xs opacity-80 block">Valeur à l'achat</span>
+                      <p class="text-xl font-bold">{{ format(total) }}</p>
+                    </div>
+                    <div>
+                      <span class="text-xs opacity-80 block">CA Potentiel</span>
+                      <p class="text-xl font-bold text-green-300">{{ format(totalSellingValue) }}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="flex space-x-4">
-                <div class="p-4 bg-white rounded shadow border border-gray-100 text-sm flex-1">
-                  <h2 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <span class="material-symbols-rounded" style="font-size: 20px; color: #4f46e5;">qr_code</span>
-                    QR / Barcode Management
-                  </h2>
-                  <button
-                    class="w-full py-2 border-2 border-dashed border-gray-300 rounded text-gray-600 hover:border-indigo-400 hover:text-indigo-600 transition-all flex items-center justify-center gap-2 font-normal text-sm">
-                    <span class="material-symbols-rounded" style="font-size: 16px;">add</span>
-                    Add New Barcode
+
+                <div class="grid grid-rows-2 gap-4">
+                  <button @click="handleRestock" class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-indigo-500 hover:shadow-sm transition-all group">
+                    <div class="flex items-center gap-3">
+                      <span class="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <Truck :size="18" />
+                      </span>
+                      <span class="font-bold text-gray-700 text-xs">Réapprovisionner</span>
+                    </div>
+                    <ChevronRight :size="16" class="text-gray-300" />
                   </button>
-                </div>
 
-                <div class="p-4 bg-white rounded shadow border border-gray-100 space-y-2 text-sm flex-1">
-                  <h2 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <span class="material-symbols-rounded" style="font-size: 20px; color: #4f46e5;">bolt</span>
-                    Quick Actions
-                  </h2>
-                  <button @click="handleRestock"
-                    class="w-full py-2 px-3 bg-indigo-50 border border-indigo-300 text-indigo-700 font-normal rounded hover:bg-indigo-100 transition-all flex items-center justify-center gap-2 text-sm">
-                    <span class="material-symbols-rounded" style="font-size: 16px;">local_shipping</span>
-                    Perform Restock
+                  <button class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-indigo-500 hover:shadow-sm transition-all group">
+                    <div class="flex items-center gap-3">
+                      <span class="p-2 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <QrCode :size="18" />
+                      </span>
+                      <span class="font-bold text-gray-700 text-xs">Imprimer Étiquettes</span>
+                    </div>
+                    <ChevronRight :size="16" class="text-gray-300" />
                   </button>
                 </div>
               </div>
@@ -262,229 +207,117 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-// Remplacez les chemins d'accès API et composables par vos chemins réels
+import { 
+  ChevronLeft, ChevronRight, Pencil, Save, X, Loader2, Package, 
+  PackageX, AlertTriangle, Tag, TrendingDown, Camera, Link, 
+  FileText, PieChart, Truck, QrCode, ArrowLeft 
+} from 'lucide-vue-next'
 import { getOneProduct as fetchProductById } from '@/service/api'
 import { useActionMessage } from '@/composable/useActionMessage'
 import { useCurrency } from '@/composable/useCurrency'
-import EditIcon from '@/components/icons/EditIcon.vue'
-import SaveIcon from '@/components/icons/SaveIcon.vue'
-import CancelIcon from '@/components/icons/CancelIcon.vue'
-const { format } = useCurrency()
+import { useGlobalModal } from '@/composable/useValidation'
 import ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
 
-
-
-
-
-
-import { useGlobalModal } from '@/composable/useValidation' // Assurez-vous que ce composable existe
-import { Icon } from 'lucide-vue-next'
+const { format } = useCurrency()
+const router = useRouter()
+const route = useRoute()
 const { show } = useGlobalModal()
-const { showSuccess, showError } = useActionMessage() // Assurez-vous que ce composable existe
+const { showSuccess, showError } = useActionMessage()
 
-interface Category {
-  id: string | number
-  name: string
-}
+// Interfaces
+interface Category { id: string | number; name: string }
 interface Product {
   id?: string | number
   Prod_name: string
-  quantity: string | number
-  cost_price: string | number
-  selling_price: string | number
+  quantity: number
+  cost_price: number
+  selling_price: number
   category: Category
   Prod_Description: string
   code_bar: string | number
   date_of_arrival: string
-  supplier_name: string | number
+  supplier_name: string
   Prod_image?: string
-  min_stock_level?: number | string
-  max_stock_level?: number | string
+  min_stock_level: number
 }
 
-const router = useRouter()
-const route = useRoute()
-const total = computed(() => {
-  if (!product || !product.value) return 0
-  const qty = typeof product.value.quantity === 'string'
-    ? parseInt(product.value.quantity)
-    : (product.value.quantity || 0)
-  const cost = parseFloat(product.value.cost_price?.toString() || '0')
-  return qty * cost
-})
+// State
 const product = ref<Product | null>(null)
 const loading = ref(true)
 const isEditing = ref(false)
 const saving = ref(false)
+const editForm = ref<Product>({} as Product)
 
-const editForm = ref<Product>({
-  id: '',
-  Prod_name: '',
-  quantity: 0,
-  cost_price: 0,
-  selling_price: 0,
-  category: { id: '', name: '' },
-  Prod_Description: '',
-  code_bar: '',
-  date_of_arrival: '',
-  supplier_name: '',
-  Prod_image: '',
-  min_stock_level: 0,
-  max_stock_level: 0
-})
+// Computed
+const total = computed(() => (product.value?.quantity || 0) * (product.value?.cost_price || 0))
+const totalSellingValue = computed(() => (product.value?.quantity || 0) * (product.value?.selling_price || 0))
 
-
+// Logic
 onMounted(async () => {
-  if (route.params.id) {
-    try {
-      loading.value = true
-      // NOTE: J'ai conservé votre logique de chargement et de simulation de données manquantes
-      const response = await fetchProductById(route.params.id)
+  const id = route.params.id as string
+  if (!id) return loading.value = false
 
-      let fetchedProduct: Product | null = null;
-
-      if (response && response.data) {
-        fetchedProduct = Array.isArray(response.data) ? response.data[0] : response.data;
-      } else if (Array.isArray(response)) {
-        fetchedProduct = response[0];
-      } else if (response) {
-        fetchedProduct = response as Product;
+  try {
+    const response = await fetchProductById(id)
+    const data = response?.data?.[0] || response?.data || response
+    
+    if (data) {
+      product.value = {
+        ...data,
+        quantity: parseInt(data.quantity) || 0,
+        cost_price: parseFloat(data.cost_price) || 0,
+        selling_price: parseFloat(data.selling_price) || 0,
+        min_stock_level: parseInt(data.min_stock_level) || 0,
+        Prod_image: data.Prod_image || `https://picsum.photos/400/400?random=${data.id}`,
+        Prod_Description: data.Prod_Description || 'Aucune description disponible.'
       }
-
-      if (fetchedProduct) {
-        // Nettoyage/Standardisation des données (important pour les inputs number)
-        fetchedProduct.quantity = fetchedProduct.quantity ? parseInt(fetchedProduct.quantity.toString()) : 0;
-        fetchedProduct.cost_price = fetchedProduct.cost_price ? parseFloat(fetchedProduct.cost_price.toString()) : 0;
-        fetchedProduct.selling_price = fetchedProduct.selling_price ? parseFloat(fetchedProduct.selling_price.toString()) : 0;
-        fetchedProduct.min_stock_level = fetchedProduct.min_stock_level ? parseInt(fetchedProduct.min_stock_level.toString()) : 0;
-
-        // Simulation/Placeholder pour l'UI
-        if (!fetchedProduct.Prod_image) {
-          fetchedProduct.Prod_image = "https://picsum.photos/400/400?random=" + fetchedProduct.id;
-        }
-        if (!fetchedProduct.Prod_Description) {
-          fetchedProduct.Prod_Description = "This is a detailed description of the product, including its features, benefits, and specifications.";
-        }
-        if (!fetchedProduct.category) {
-          fetchedProduct.category = { id: 1, name: 'General' };
-        }
-        if (!fetchedProduct.date_of_arrival) {
-          fetchedProduct.date_of_arrival = new Date().toISOString(); // Simuler une date d'arrivée
-        }
-        if (!fetchedProduct.supplier_name) {
-          fetchedProduct.supplier_name = 'Unspecified Supplier';
-        }
-
-        product.value = fetchedProduct;
-      } else {
-        // @ts-ignore
-        show('Product not found', 'error')
-      }
-
-    } catch (error) {
-      // @ts-ignore
-      show('Error fetching product details', 'error')
-      console.error('Error fetching product:', error)
-    } finally {
-      loading.value = false
     }
-  } else {
+  } catch (error) {
+    show('Erreur lors de la récupération', 'error')
+  } finally {
     loading.value = false
   }
 })
 
-const goBack = () => {
-  router.back()
-}
-
-const quantityNum = computed(() => {
-  if (!product.value) return 0
-  return typeof product.value.quantity === 'string'
-    ? parseInt(product.value.quantity)
-    : product.value.quantity
-})
-
-const totalSellingValue = computed(() => {
-  if (!product.value) return 0
-  const qty = quantityNum.value
-  const selling = parseFloat(product.value.selling_price?.toString() || '0')
-  return qty * selling
-})
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-}
+const goBack = () => router.back()
+const formatDate = (date: string) => date ? new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A'
 
 const handleEdit = () => {
-  if (!product.value) return
-
-  // Populate edit form with current product data, ensuring correct types for inputs
-  editForm.value = {
-    ...product.value,
-    quantity:
-      typeof product.value.quantity === 'string'
-        ? parseInt(product.value.quantity)
-        : product.value.quantity || 0,
-    cost_price:
-      typeof product.value.cost_price === 'string'
-        ? parseFloat(product.value.cost_price)
-        : product.value.cost_price || 0,
-    selling_price:
-      typeof product.value.selling_price === 'string'
-        ? parseFloat(product.value.selling_price)
-        : product.value.selling_price || 0,
-    min_stock_level: product.value.min_stock_level || 0,
-  }
-
-  isEditing.value = true
-}
-
-const cancelEdit = () => {
-  isEditing.value = false
-  // Reset edit form to original product data
   if (product.value) {
-    editForm.value = { ...product.value }
+    editForm.value = JSON.parse(JSON.stringify(product.value))
+    isEditing.value = true
   }
 }
+
+const cancelEdit = () => isEditing.value = false
 
 const handleSaveEdit = async () => {
   try {
     saving.value = true
-
-    // Simuler un appel API réussi
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Ici vous appelleriez votre update API
-
-    // Update local product data
-    product.value = { ...editForm.value }
-
-    // @ts-ignore
-    showSuccess('Product updated successfully')
+    await new Promise(resolve => setTimeout(resolve, 800)) // Simu API
+    product.value = JSON.parse(JSON.stringify(editForm.value))
+    showSuccess('Produit mis à jour')
     isEditing.value = false
   } catch (error) {
-    // @ts-ignore
-    showError('Failed to update product')
-    console.error('Error updating product:', error)
+    showError('Erreur de mise à jour')
   } finally {
     saving.value = false
   }
 }
 
 const handleRestock = () => {
-  if (!product.value) return console.error('❌ No product loaded')
-
-  // Redirection simulée (ajustez le nom de la route si nécessaire)
-  router.push({
-    name: 'restock',
-    params: { reStockId: product.value.id },
-  })
+  router.push({ name: 'restock', params: { reStockId: product.value?.id }})
 }
-
-
 </script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>

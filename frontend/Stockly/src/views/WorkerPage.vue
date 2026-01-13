@@ -1,4 +1,4 @@
-<!-- 
+<!--
   WorkerPage.vue
   ===============
   Gestionnaire des employés
@@ -10,7 +10,7 @@
 -->
 <template>
   <div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-8xl mx-auto">
+    <div class="max-w-7xl mx-auto">
       <!-- En-tête avec titre et actions -->
       <div class="mb-6 flex items-center justify-between">
         <div>
@@ -19,26 +19,14 @@
         </div>
         <!-- Boutons d'action: Vue, Export, Ajouter -->
         <div class="flex items-center gap-3">
-        
-        
-          <!-- Bouton rafraîchir -->
-          <button class="p-2 hover:bg-gray-100 rounded-lg transition">
-            <RefreshCw class="w-5 h-5 text-gray-600" />
-          </button>
-          <!-- Bouton trier -->
-          
+
+
           <!-- Bouton ajouter employé -->
             <ValidationButton
-            
+
             text="Add Employer" width="100%"   color="#0C333B" variant="flat" :size="large" :asyncClick="create"
-            :loading="isLoading" />
-          <button
-            @click="showModal = true"
-            class="bg-orange-500 text-white px-5 py-2.5 rounded-lg hover:bg-orange-600 transition flex items-center gap-2 text-sm font-medium shadow-sm"
-          >
-            <Plus class="w-4 h-4" />
-            Add Employee
-          </button>
+            :loading="isLoading" :icon="Plus" />
+
         </div>
       </div>
 
@@ -94,7 +82,7 @@
           <option value="">Select department</option>
           <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
         </select>
-      
+
       </div>
 
       <!-- Workers Grid -->
@@ -143,7 +131,7 @@
 <script setup>
 /**
  * WorkerPage.vue - Page de Gestion des Employés
- * 
+ *
  * Responsabilités principales:
  * - Affiche la liste complète des employés avec filtres
  * - Permet ajouter, modifier, supprimer des employés
@@ -151,7 +139,7 @@
  * - Recherche par nom/email/poste
  * - Filtre par département (entreprise) et désignation
  * - Export PDF et CSV (UI prête)
- * 
+ *
  * Architecture:
  * - Utilise workerStore pour gestion des états employés
  * - Utilise roleStore et entrepriseStore pour données contextuelles
@@ -195,6 +183,7 @@ import ActionModal from '@/components/ui/ActionModal.vue'
 import WorkersCard from '@/components/workers/WorkersCard.vue'
 import WorkerModals from '@/components/workers/WorkerModals.vue'
 import GridCard from '@/components/ui/cards/GridCard.vue'
+import ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
 
 // ========================================
 // COMPOSABLES & STORES
@@ -247,12 +236,12 @@ const workerToDelete = ref(null)
 
 /**
  * Initialisation au montage du composant
- * 
+ *
  * Actions:
  * 1. Récupère la liste complète des employés depuis le store
  * 2. Charge la liste des rôles disponibles
  * 3. Charge la liste des entreprises (pour filtrer par département)
- * 
+ *
  * @async
  */
 onMounted(async () => {
@@ -267,13 +256,13 @@ onMounted(async () => {
 
 /**
  * Génère les statistiques affichées dans les cartes
- * 
+ *
  * Calculs:
  * - Total: nombre total d'employés dans le store
  * - Actifs: employés avec status = 'active'
  * - Inactifs: employés avec status = 'inactive'
  * - Nouveaux: employés embauchés depuis 30 jours
- * 
+ *
  * @returns {Object} Objet avec propriétés {total, active, inactive, newJoiners}
  */
 const stats = computed(() => {
@@ -293,10 +282,10 @@ const create = () => {
 
 /**
  * Extrait la liste unique des départements
- * 
+ *
  * Utilisé pour remplir le select de filtre département
  * Basé sur le champ 'entreprise_name' de chaque employé
- * 
+ *
  * @returns {Array<string>} Liste unique des noms d'entreprises
  */
 const departments = computed(() => {
@@ -305,10 +294,10 @@ const departments = computed(() => {
 
 /**
  * Extrait la liste unique des postes/désignations
- * 
+ *
  * Utilisé pour remplir le select de filtre désignation
  * Basé sur le champ 'position' de chaque employé
- * 
+ *
  * @returns {Array<string>} Liste unique des postes
  */
 const positions = computed(() => {
@@ -317,15 +306,15 @@ const positions = computed(() => {
 
 /**
  * Filtre les employés selon critères actifs
- * 
+ *
  * Applique 3 niveaux de filtrage en cascade:
  * 1. Recherche texte: cherche dans name, email, position
  * 2. Filtre département: par entreprise sélectionnée
  * 3. Filtre désignation: par poste sélectionné
- * 
+ *
  * Exemple avec searchTerm='jean' et filterDepartment='IT':
  * - Affiche employés dont le nom contient 'jean' ET entreprise = 'IT'
- * 
+ *
  * @returns {Array<Object>} Liste filtrée des employés
  */
 const filteredWorkers = computed(() => {
@@ -361,12 +350,12 @@ const filteredWorkers = computed(() => {
 
 /**
  * Prépare l'édition d'un employé
- * 
+ *
  * Actions:
  * 1. Active le mode édition
  * 2. Copie les données de l'employé sélectionné
  * 3. Ouvre le modal de modification
- * 
+ *
  * @param {Object} worker - Objet employé à éditer
  */
 const handleEditWorker = (worker) => {
@@ -377,14 +366,14 @@ const handleEditWorker = (worker) => {
 
 /**
  * Sauvegarde employé (création ou mise à jour)
- * 
+ *
  * Flux:
  * 1. Vérifie si on est en édition ou création
  * 2. Si édition: appelle store.updateWorker()
  * 3. Si création: appelle store.addWorker()
  * 4. Affiche message succès/erreur
  * 5. Ferme le modal
- * 
+ *
  * @async
  * @param {Object} formData - Données du formulaire employé
  * @throws {Error} Si la sauvegarde échoue (affiche message erreur)
@@ -419,11 +408,11 @@ const handleSubmit = async (formData) => {
 
 /**
  * Ouvre le modal de confirmation avant suppression
- * 
+ *
  * Actions:
  * 1. Stocke l'ID de l'employé à supprimer
  * 2. Affiche le modal de confirmation
- * 
+ *
  * @param {number} workerId - ID de l'employé à supprimer
  */
 const handleDeleteWorker = (workerId) => {
@@ -433,13 +422,13 @@ const handleDeleteWorker = (workerId) => {
 
 /**
  * Confirme et exécute la suppression d'un employé
- * 
+ *
  * Flux:
  * 1. Appelle store.removeWorker() avec l'ID stocké
  * 2. Si succès: affiche message confirmation
  * 3. Si erreur: affiche message d'erreur
  * 4. Dans tous les cas: ferme le modal et réinitialise
- * 
+ *
  * @async
  * @throws {Error} Affiche message erreur en cas d'échec API
  */
@@ -466,7 +455,7 @@ const confirmDelete = async () => {
 
 /**
  * Ferme le modal et réinitialise l'état du formulaire
- * 
+ *
  * Actions:
  * 1. Masque le modal
  * 2. Désactive le mode édition

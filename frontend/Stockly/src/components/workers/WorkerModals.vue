@@ -47,7 +47,7 @@
                 </label>
                 <input v-model="formWorker.name" type="text" placeholder="Enter full name"
                   class="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none text-sm"
-                  required 
+                  required
                   :class="{ 'border-red-500': errors.name }"/>
                   <p v-if="errors.name" class="text-red-600 text-xs mt-1 ">{{ errors.name }}</p>
 
@@ -172,10 +172,7 @@
           </button>
           <ValidationButton text="create" :asyncClick="handleSubmit" loading-text="creating..." size="large"
             :loading="isSubmitting" />
-          <button type="submit" :disabled="isSubmitting"
-            class="px-6 py-2.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm">
-            {{ isSubmitting ? 'Saving...' : isEditing ? 'Update' : 'Add Employee' }}
-          </button>
+
         </div>
       </form>
     </div>
@@ -240,7 +237,7 @@ const validate = () => {
   if (!formWorker.value.entreprise_id) errors.entreprise = 'required'
   if (!formWorker.value.password_hash) errors.password_hash = 'password needed'
   if(!formWorker.value.role_id) errors.role = "required"
-  if (formWorker.value.password_hash !== formWorker.value.confirmPassword) errors.match = 'password do not match'
+  if (formWorker.value.password_hash !== confirmPassword.value) errors.match = 'password do not match'
   return Object.keys(errors).length === 0
 }
 // Define resetForm before using it in watch
@@ -287,6 +284,7 @@ const handleSubmit = async () => {
 
   isSubmitting.value = true
   await emit('submit', { ...formWorker.value })
+  emit('close')
   isSubmitting.value = false
 }
 
