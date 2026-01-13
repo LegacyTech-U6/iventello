@@ -73,7 +73,7 @@
         </div>
       </div>
 
-     <div id="invoice-card" ref="invoiceContent" class="bg-white rounded p-8 max-w-3xl w-full pdf-container">
+     <div id="invoice-card"  ref="invoiceContent" class="bg-white rounded p-8 max-w-3xl w-full pdf-container">
    
         <!-- Header -->
 
@@ -219,10 +219,8 @@
 import { ref } from 'vue'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import CompanyInfo from './CompanyInfo.vue'
-import { usePdfStore } from '@/stores/pdfStore'
 import { useCurrency } from '@/composable/useCurrency'
 import { exportToPDF } from '@/utils/invoicePdfTemplate'
-const pdfStore = usePdfStore() 
 const {format} = useCurrency()
 const invoiceContent = ref(null)
 const invoiceStore = useInvoiceStore()
@@ -344,18 +342,34 @@ function printInvoice() {
 // Dans InvoiceDetailModal.vue
 async function downloadPDF() {
   try {
-    const fileName = `facture_${props.invoice.id || 'export'}.pdf`;
-    // On appelle notre nouvel outil
-    await exportToPDF('invoice-card', fileName);
-  } catch (err) {
-    console.error('PDF download failed:', err);
+    const element = invoiceContent.value
+    if (!element) {
+      throw new Error('Invoice content not found')
+    }
+
+    // HTML COMPLET à envoyer au backend
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          ${document.head.innerHTML}
+        </head>
+        <body>
+          ${element.outerHTML}
+        </body>
+      </html>
+    `
+
+    await invoiceStore.createInvoice({
+      html
+    })
+
+  } catch (error) {
+    console.error('Error downloading PDF:', error)
   }
 }
-  // try {
-  //   await invoiceStore.createInvoice(invoice.value)
-  // } catch (error) {
-  //   console.error('Error downloading PDF:', error)
-  // }
+
 </script>
 
 <style scoped>

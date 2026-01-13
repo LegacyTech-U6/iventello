@@ -27,6 +27,10 @@ const cleanupInactiveUsers = require("./src/utils/cleanupInactiveUsers");
 const notificationRoutes = require("./src/routes/notification.routes");
 const pdfRoute = require("./src/routes/pdf.routes");
 const DemoDataGenerator = require("./src/utils/demo-data-generator");
+const productExcelRoutes = require('./src/routes/excel/productExcel.routes');
+const syncRoutes = require('./src/routes/sync.routes');
+
+
 const { startCurrencyCron, getRates } = require("./src/utils/currency.service");
 // Database
 // ton index.js Sequelize
@@ -107,7 +111,7 @@ app.use((req, res, next) => {
 });
 app.use(
   cors({
-    origin: ["http://localhost:5173","http://localhost:5174", "https://iventello.vercel.app"], 
+    origin: ["http://localhost:5173", "https://iventello.vercel.app"], 
     credentials: true,
   })
 );
@@ -129,5 +133,8 @@ app.use("/api/workers", workers);
 app.use("/api/roles", rolesRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/pdf", pdfRoute);
+app.use('/api/excel', productExcelRoutes);
+app.use('/api/sync', syncRoutes);
+
 
 module.exports = app;
