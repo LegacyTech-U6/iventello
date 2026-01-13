@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="12430ff7-01c3-4325-84b6-4adc1e96590d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/src/components/statistics/ChartRevenue.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/src/components/statistics/RevenueCatgeory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/src/components/statistics/RevenueCatgeory.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/src/components/ui/charts/SalesChart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/src/components/ui/charts/SalesChart.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/src/components/workers/WorkerModals.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/src/components/workers/WorkerModals.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/src/views/Enterprise.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/src/views/Enterprise.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/src/views/Statistics/DashBoard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/src/views/Statistics/DashBoard.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/src/views/WorkerPage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/src/views/WorkerPage.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Stockly/src/views/settings/AdminSetting.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Stockly/src/views/settings/AdminSetting.vue" afterDir="false" />
-    </list>
+    <list default="true" id="37b9ba2b-44a7-4ac9-a36b-615a1fd0b514" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
