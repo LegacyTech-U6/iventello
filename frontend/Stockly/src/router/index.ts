@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
         path: 'features',
         name: 'features',
         component: () => import('@/components/landing/FeaturesPAge.vue'),
-        meta: { showNavbarAndFooter: true },
+        
       },
       {
         path: 'verify/:token',
@@ -36,13 +36,13 @@ const routes: RouteRecordRaw[] = [
     path: '/register',
     name: 'register',
     component: () => import('../views/auth/RegisterView.vue'),
-    meta: { showNavbarAndFooter: false },
+    
   },
   {
     path: '/login',
     name: 'login',
     component: () => import('../views/auth/LoginView.vue'),
-    meta: { showNavbarAndFooter: false },
+  
   },
 
   // ===================== ADMIN =====================
@@ -197,6 +197,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/SalesReport.vue'),
         meta: { permission: 'canViewInvoices' },
       },
+      {
+        path: 'EntrepriseSettings',
+        name: 'wholehouse_settings',
+        component: () => import('@/views/Settings.vue'),
+        meta: { permission: 'canAccessSettings' },
+      }
     ],
   },
 ]

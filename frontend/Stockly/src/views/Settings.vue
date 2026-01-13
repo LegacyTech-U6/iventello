@@ -101,9 +101,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div class="flex items-start justify-between mb-6">
             <h3 class="text-lg font-semibold text-gray-900">Préférences de l'application</h3>
-            <div class="flex items-center gap-2">
-              <SyncButton :syncService="syncService" direction="bidirectional" />
-          </div>
+            
 
           <div class="space-y-6">
             <!-- Langue -->
@@ -161,6 +159,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -168,8 +167,6 @@ import { reactive, onMounted, computed ,ref} from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import { useEntrepriseStore } from '@/stores/entrepriseStore';
-import { getSyncService } from '@/service/syncProvider';
-import SyncButton from '@/components/SyncButton.vue';
 
 
 const router = useRouter();
@@ -214,19 +211,10 @@ const preferences = reactive({
   timezone: 'Africa/Douala'
 });
 
-// Sync services (local instances for settings UI)
-const syncService = ref(null);
-
-const initSyncService = async () => {
-  syncService.value = await getSyncService();
-};
-
 onMounted(() => {
   if (!authStore.isAuthenticated) {
     router.push('/login');
-  } else {
-    initSyncService();
-  }
+  } 
 });
 
 // --- 3. Actions ---
