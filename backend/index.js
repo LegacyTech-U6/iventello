@@ -108,13 +108,24 @@ app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
   next();
 });
+const allowedOrigins = process.env.FRONTEND_URL.split(",");
+
 app.use(
-  cors({
-    origin: ["https://iventello.vercel.app"],
-    //""http://localhost:5173"
-    credentials: true,
-  })
+    cors({
+      origin: function (origin, callback) {
+        // Autorise Postman / requêtes sans origin
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
+      credentials: true,
+    })
 );
+
 
 
 app.use("/api/activities", activityRoutes);
