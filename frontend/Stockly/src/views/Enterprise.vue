@@ -77,7 +77,6 @@ import SalesChart from '@/components/ui/charts/SalesChart.vue'
 import TopSellingProducts from '@/components/statistics/TopSellingProducts.vue'
 import RecentSales from '@/components/statistics/RecentSales.vue'
 import RevenueCatgeory from '@/components/statistics/RevenueCatgeory.vue'
-import LowStockAlertsPanel from '@/components/statistics/LowStockAlertsPanel.vue'
 
 // Icons
 import { Package, DollarSign, Users, Layers, RotateCcw, Wallet } from 'lucide-vue-next'
