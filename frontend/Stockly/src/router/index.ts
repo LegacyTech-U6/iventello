@@ -20,6 +20,29 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/components/landing/FeaturesPAge.vue'),
         
       },
+   // index.ts
+{
+  path: 'blogs',
+  name: 'blogs',
+  component: () => import('@/views/BlogSection.vue'),
+},
+{
+  path: 'blogs/search',
+  name: 'blog-search',
+  component: () => import('@/views/blog/BlogSearch.vue'), // Le nouveau composant
+},
+{
+  path: 'blogs/:id', // On le met au même niveau, pas en enfant
+  name: 'blog-detail',
+  component: () => import('@/views/blog/HowIventelloManage.vue'),
+  props: true,
+},
+{
+  path: '/blogs/stock-alerts', // Chemin absolu pour éviter les conflits
+  name: 'blog-detail-absolute',
+  component: () => import('@/views/blog/StockAlert.vue'),
+  props: true,
+},
       {
         path: 'verify/:token',
         name: 'VerifyEmail',
