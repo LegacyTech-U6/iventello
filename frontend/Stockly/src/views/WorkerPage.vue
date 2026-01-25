@@ -22,63 +22,32 @@
 
 
           <!-- Bouton ajouter employé -->
-            <ValidationButton
-
-            text="Add Employer" width="100%"   color="#0C333B" variant="flat" :size="large" :asyncClick="create"
-            :loading="isLoading" :icon="Plus" />
+          <ValidationButton text="Add Employer" width="100%" color="#0C333B" variant="flat" :size="large"
+            :asyncClick="create" :loading="isLoading" :icon="PlusIcon" />
 
         </div>
       </div>
 
       <!-- Cartes de statistiques -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <GridCard
-          title="Total Employee"
-          :value="stats.total"
-          :icon="Users"
-          gradientFrom="purple-500"
-          gradientTo="purple-600"
-        />
-        <GridCard
-          title="Active"
-          :value="stats.active"
-          :icon="UserCheck"
-          gradientFrom="teal-500"
-          gradientTo="teal-600"
-        />
-        <GridCard
-          title="Inactive"
-          :value="stats.inactive"
-          :icon="UserX"
-          gradientFrom="slate-700"
-          gradientTo="slate-800"
-        />
-        <GridCard
-          title="New Joiners"
-          :value="stats.newJoiners"
-          :icon="UserPlus"
-          gradientFrom="blue-500"
-          gradientTo="blue-600"
-        />
+        <GridCard title="Total Employee" :value="stats.total" :icon="UsersIcon" gradientFrom="purple-500"
+          gradientTo="purple-600" />
+        <GridCard title="Active" :value="stats.active" :icon="UserIcon" gradientFrom="teal-500" gradientTo="teal-600" />
+        <GridCard title="Inactive" :value="stats.inactive" :icon="UserMinusIcon" gradientFrom="slate-700"
+          gradientTo="slate-800" />
+        <GridCard title="New Joiners" :value="stats.newJoiners" :icon="UserPlusIcon" gradientFrom="blue-500"
+          gradientTo="blue-600" />
       </div>
 
       <!-- Search and Filters -->
       <div class="mb-6 flex gap-3">
         <div class="flex-1 max-w-1/2 relative">
-          <Search
-            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"
-          />
-          <input
-            type="text"
-            placeholder="Search"
-            v-model="searchTerm"
-            class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white text-sm"
-          />
+          <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input type="text" placeholder="Search" v-model="searchTerm"
+            class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white text-sm" />
         </div>
-        <select
-          v-model="filterDepartment"
-          class="border border-gray-200 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white text-sm text-gray-600"
-        >
+        <select v-model="filterDepartment"
+          class="border border-gray-200 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white text-sm text-gray-600">
           <option value="">Select department</option>
           <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
         </select>
@@ -86,45 +55,26 @@
       </div>
 
       <!-- Workers Grid -->
-      <div
-        v-if="filteredWorkers.length > 0"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-      >
-        <WorkersCard
-          v-for="worker in filteredWorkers"
-          :key="worker.worker_id"
-          :worker="worker"
-          @edit="handleEditWorker"
-          @delete="handleDeleteWorker"
-        />
+      <div v-if="filteredWorkers.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <WorkersCard v-for="worker in filteredWorkers" :key="worker.worker_id" :worker="worker" @edit="handleEditWorker"
+          @delete="handleDeleteWorker" />
       </div>
 
       <!-- Empty State -->
       <div v-else class="text-center py-16 bg-white rounded-xl">
-        <Users class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+        <UsersIcon class="w-16 h-16 text-gray-300 mx-auto mb-4" />
         <p class="text-gray-500 text-base">No workers found matching your search</p>
       </div>
     </div>
 
     <!-- Create/Edit Worker Modal -->
-    <WorkerModals
-      v-if="showModal"
-      :show="showModal"
-      :worker="selectedWorker"
-      :is-editing="isEditing"
-      @close="closeModal"
-      @submit="handleSubmit"
-    />
+    <WorkerModals v-if="showModal" :show="showModal" :worker="selectedWorker" :is-editing="isEditing"
+      @close="closeModal" @submit="handleSubmit" />
 
     <!-- Delete Confirmation Modal -->
-    <ActionModal
-      v-model="showDeleteModal"
-      title="Delete Worker"
-      message="Are you sure you want to delete this worker? This action cannot be undone."
-      confirm-text="Delete"
-      cancel-text="Cancel"
-      @confirm="confirmDelete"
-    />
+    <ActionModal v-model="showDeleteModal" title="Delete Worker"
+      message="Are you sure you want to delete this worker? This action cannot be undone." confirm-text="Delete"
+      cancel-text="Cancel" @confirm="confirmDelete" />
   </div>
 </template>
 
@@ -155,19 +105,19 @@ import { ref, computed, onMounted } from 'vue'
 
 /** Icônes lucide pour l'interface utilisateur */
 import {
-  Users,          // Icône affichage total employés
-  UserCheck,      // Icône employés actifs
-  UserX,          // Icône employés inactifs
-  UserPlus,       // Icône nouveaux employés
-  Search,         // Icône barre de recherche
-  Plus,           // Icône bouton ajouter
-  List,           // Icône vue liste
-  Grid3x3,        // Icône vue grille
-  FileText,       // Icône export PDF
-  FileSpreadsheet,// Icône export Excel
-  RefreshCw,      // Icône rafraîchir
-  ChevronUp,      // Icône trier
-} from 'lucide-vue-next'
+  UsersIcon,          // Icône affichage total employés
+  UserIcon,           // Icône employés actifs (Mapping UserCheck -> UserIcon)
+  UserMinusIcon,      // Icône employés inactifs (Mapping UserX -> UserMinusIcon)
+  UserPlusIcon,       // Icône nouveaux employés
+  MagnifyingGlassIcon, // Icône barre de recherche
+  PlusIcon,           // Icône bouton ajouter
+  ListBulletIcon,      // Icône vue liste
+  Squares2x2Icon,     // Icône vue grille
+  DocumentTextIcon,    // Icône export PDF
+  TableCellsIcon,      // Icône export Excel
+  ArrowPathIcon,       // Icône rafraîchir
+  ChevronUpIcon,       // Icône trier
+} from '@heroicons/vue/24/outline'
 
 /** Stores Pinia pour gestion d'état */
 import { useWorkerStore } from '@/stores/workerStore'

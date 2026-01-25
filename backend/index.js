@@ -27,8 +27,7 @@ const cleanupInactiveUsers = require("./src/utils/cleanupInactiveUsers");
 const notificationRoutes = require("./src/routes/notification.routes");
 const pdfRoute = require("./src/routes/pdf.routes");
 const DemoDataGenerator = require("./src/utils/demo-data-generator");
-const productExcelRoutes = require('./src/routes/excel/productExcel.routes');
-
+const productExcelRoutes = require("./src/routes/excel/productExcel.routes");
 
 const { startCurrencyCron, getRates } = require("./src/utils/currency.service");
 // Database
@@ -82,12 +81,10 @@ async function seedPredefinedRoles() {
 const threst_hold = [{}];
 const env = process.env.NODE_ENV || "production";
 async function startApp() {
-
   if (process.env.NODE_ENV === "development") {
     console.log("🟢 Sync DEV activé");
 
     await db.sequelize.sync();
-
   } else {
     console.log("🚫 Sync désactivé en production");
   }
@@ -96,37 +93,42 @@ async function startApp() {
   await startCurrencyCron();
   await seedPredefinedRoles();
   await createAllUsersView();
-
- 
 }
 
 startApp();
-
 
 app.use(express.json());
 app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
   next();
 });
-const allowedOrigins = process.env.FRONTEND_URL.split(",") || ["https://iventello.vercel.app", "http://localhost:5173"];
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .filter(Boolean);
+if (allowedOrigins.length === 0) {
+  allowedOrigins.push("https://iventello.vercel.app", "http://localhost:5173");
+} else {
+  // Always include localhost for development if not present
+  if (!allowedOrigins.includes("http://localhost:5173")) {
+    allowedOrigins.push("http://localhost:5173");
+  }
+}
 
 app.use(
-    cors({
-      origin: function (origin, callback) {
-        // Autorise Postman / requêtes sans origin
-        if (!origin) return callback(null, true);
+  cors({
+    origin: function (origin, callback) {
+      // Autorise Postman / requêtes sans origin
+      if (!origin) return callback(null, true);
 
-        if (allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
-      credentials: true,
-    })
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
 );
-
-
 
 app.use("/api/activities", activityRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
@@ -144,7 +146,6 @@ app.use("/api/workers", workers);
 app.use("/api/roles", rolesRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/pdf", pdfRoute);
-app.use('/api/excel', productExcelRoutes);
-
+app.use("/api/excel", productExcelRoutes);
 
 module.exports = app;

@@ -66,6 +66,7 @@ const router = useRouter()
 const handleRegister = () => {
   router.push('/register')
 }
+import { CheckIcon } from '@heroicons/vue/24/outline'
 </script>
 
 <template>
@@ -117,7 +118,7 @@ const handleRegister = () => {
 
       <div class="flex flex-wrap items-center  justify-center h-100 gap-6 pt-4 text-gray-300">
         <div v-for="benefit in benefits" :key="benefit" class="flex items-center gap-2">
-          <i class="fas fa-check text-teal-400"></i>
+          <CheckIcon class="w-5 h-5 text-teal-400" />
           <span>{{ benefit }}</span>
         </div>
       </div>

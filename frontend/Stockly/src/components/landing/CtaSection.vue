@@ -4,10 +4,8 @@
       <!-- 📝 Text content -->
       <div class="flex flex-col gap-6">
         <div class="text-green-800">
-          <!-- Icon réduit -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
+          <!-- ArrowRightIcon -->
+          <ArrowRightIcon class="h-8 w-8" />
         </div>
         <h1 class="text-4xl lg:text-5xl font-bold text-white leading-tight">
           Managing your inventory has never been easier!
@@ -40,6 +38,7 @@
 <script setup>
 import router from '@/router';
 import multitasking from '@/assets/image/multitasking.png'
+import { ArrowRightIcon } from '@heroicons/vue/24/outline'
 
 const login = () => {
   router.push('/register')

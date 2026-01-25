@@ -14,16 +14,8 @@
     <div v-else>
       <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- 🔹 Loop through stats array -->
-        <GridCard
-          v-for="stat in topStats"
-          :key="stat.id"
-          :title="stat.label"
-          :value="stat.value"
-          :icon="stat.icon"
-          :gradientFrom="stat.gradientFrom"
-          :gradientTo="stat.gradientTo"
-          :trend="stat.trend"
-        />
+        <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
+          :gradientFrom="stat.gradientFrom" :gradientTo="stat.gradientTo" :trend="stat.trend" />
       </div>
 
       <div>
@@ -32,7 +24,7 @@
             <!-- <SalesPerformanceChart /> -->
             <SalesChart />
           </div>
-          
+
         </div>
         <TopSellingProducts />
       </div>
@@ -40,7 +32,7 @@
   </div>
 </template>
 
-<script setup >
+<script setup>
 import LazyLoader from '@/components/ui/LazyLoader.vue'
 import { ref, computed, onMounted } from 'vue'
 
@@ -52,16 +44,16 @@ import SalesChart from '@/components/ui/charts/SalesChart.vue'
 import GridCard from '@/components/ui/cards/GridCard.vue'
 import { useProductStore } from '@/stores/productStore'
 import {
-  Package,
-  DollarSign,
-  Users,
-  PieChart,
-  Clock,
-  Tag,
-  Layers,
-  RotateCcw,
-  Wallet,
-} from 'lucide-vue-next'
+  CubeIcon as Package,
+  CurrencyDollarIcon as DollarSign,
+  UsersIcon as Users,
+  ChartPieIcon as PieChart,
+  ClockIcon as Clock,
+  TagIcon as Tag,
+  LayersIcon as Layers,
+  ArrowPathIcon as RotateCcw,
+  WalletIcon as Wallet,
+} from '@heroicons/vue/24/outline'
 const productStore = useProductStore()
 
 // 🔹 Store
@@ -116,7 +108,7 @@ const topStats = computed(() => [
     id: 3,
     icon: DollarSign,
     label: 'Total Sales',
-    value:statsStore.topProducts.sales?.total,
+    value: statsStore.topProducts.sales?.total,
 
     trend: statsStore.topProducts.sales?.history.at(-1)?.growth_percent,
     gradientFrom: '#092C4C',

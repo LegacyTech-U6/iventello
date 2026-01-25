@@ -1,80 +1,32 @@
 <template>
   <div style="" class="w-full">
-    <div
-      class="fixed z-50 bg-black bg-opacity-50 flex justify-center items-start overflow-auto"
-      style="
+    <div class="fixed z-50 bg-black bg-opacity-50 flex justify-center items-start overflow-auto" style="
         background-color: rgba(0, 0, 0, 0.85);
         backdrop-filter: blur(4px);
         inset: 0px;
         margin-bottom: -1px;
-      "
-    >
+      ">
       <div class="flex absolute justify-between w-full p-4" style="z-index: 701">
-        <button
-          @click="$emit('close')"
-          class="text-gray-500 bg-gray-400 p-4 hover:text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+        <button @click="$emit('close')"
+          class="text-gray-500 bg-gray-400 p-4 hover:text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors">
+          <XMarkIcon class="h-5 w-5" />
         </button>
         <div class="flex items-center gap-2">
-          <button
-            @click="printInvoice"
-            class="bg-white border border-gray-300 text-gray-700 px-3 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors text-sm"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-              />
-            </svg>
+          <button @click="printInvoice"
+            class="bg-white border border-gray-300 text-gray-700 px-3 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors text-sm">
+            <PrinterIcon class="h-4 w-4" />
             Print
           </button>
-          <button
-            @click="downloadPDF"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors text-sm"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
+          <button @click="downloadPDF"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors text-sm">
+            <ArrowDownTrayIcon class="h-4 w-4" />
             PDF
           </button>
         </div>
       </div>
 
-     <div id="invoice-card"  ref="invoiceContent" class="bg-white rounded p-8 max-w-3xl w-full pdf-container">
-   
+      <div id="invoice-card" ref="invoiceContent" class="bg-white rounded p-8 max-w-3xl w-full pdf-container">
+
         <!-- Header -->
 
         <!-- Invoice Content -->
@@ -184,16 +136,14 @@
             <div class="grid grid-cols-2 gap-6 text-sm">
               <div>
                 <h4 class="font-bold text-black mb-2">STATUS</h4>
-                <span
-                  :class="[
-                    'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium',
-                    invoice.status === 'payée'
-                      ? 'bg-green-100 text-green-800'
-                      : invoice.status === 'en_attente'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800',
-                  ]"
-                >
+                <span :class="[
+                  'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium',
+                  invoice.status === 'payée'
+                    ? 'bg-green-100 text-green-800'
+                    : invoice.status === 'en_attente'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800',
+                ]">
                   {{ formatStatus(invoice.status) }}
                 </span>
               </div>
@@ -217,11 +167,12 @@
 
 <script setup>
 import { ref } from 'vue'
+import { XMarkIcon, PrinterIcon, ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import CompanyInfo from './CompanyInfo.vue'
 import { useCurrency } from '@/composable/useCurrency'
 import { exportToPDF } from '@/utils/invoicePdfTemplate'
-const {format} = useCurrency()
+const { format } = useCurrency()
 const invoiceContent = ref(null)
 const invoiceStore = useInvoiceStore()
 
@@ -361,15 +312,19 @@ async function downloadPDF() {
   .fixed {
     position: static !important;
   }
+
   .bg-black {
     background: white !important;
   }
+
   .shadow-xl {
     box-shadow: none !important;
   }
+
   .m-4 {
     margin: 0 !important;
   }
+
   button {
     display: none !important;
   }
@@ -377,10 +332,12 @@ async function downloadPDF() {
 
 /* Styles spécifiques pour le rendu PDF */
 .pdf-container {
-  font-family: 'Arial', sans-serif; /* Police standard pour éviter les bugs */
+  font-family: 'Arial', sans-serif;
+  /* Police standard pour éviter les bugs */
   color: #000 !important;
   background-color: #fff !important;
-  width: 210mm; /* Largeur forcée A4 */
+  width: 210mm;
+  /* Largeur forcée A4 */
   min-height: 297mm;
 }
 
@@ -390,8 +347,10 @@ async function downloadPDF() {
   border-collapse: collapse !important;
 }
 
-.pdf-container th, .pdf-container td {
-  border: 1px solid #d1d5db !important; /* Couleur gray-300 */
+.pdf-container th,
+.pdf-container td {
+  border: 1px solid #d1d5db !important;
+  /* Couleur gray-300 */
   padding: 8px !important;
 }
 
@@ -401,5 +360,4 @@ async function downloadPDF() {
     display: none !important;
   }
 }
-
 </style>

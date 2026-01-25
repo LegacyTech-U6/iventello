@@ -10,14 +10,14 @@
     <div class="flex gap-3">
       <span class="text-sm text-gray-600">Last 30 days</span>
       <button class="text-sm font-medium text-gray-900 flex items-center gap-1 hover:text-gray-700">
-        <Download class="w-4 h-4" /> Export
+        <ArrowDownTrayIcon class="w-4 h-4" /> Export
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { Download } from 'lucide-vue-next'
+import { ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
 
 defineProps({
   title: {
