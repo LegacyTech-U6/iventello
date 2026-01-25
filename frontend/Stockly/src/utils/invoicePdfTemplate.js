@@ -30,10 +30,15 @@ export const exportToPDF = async (elementId, fileName = 'facture.pdf') => {
     }
   };
 
-  try {
-    await html2pdf().set(options).from(element).save();
-  } catch (error) {
-    console.error("Erreur lors de la génération du PDF:", error);
-    throw error;
-  }
+try {
+  const worker = html2pdf().set(options).from(element);
+  
+  // Pour ouvrir dans un nouvel onglet au lieu de télécharger :
+  const pdfBlobUrl = await worker.outputPdf('bloburl');
+  window.open(pdfBlobUrl, '_blank');
+  
+} catch (error) {
+  console.error("Erreur lors de la génération du PDF:", error);
+  throw error;
+}
 };

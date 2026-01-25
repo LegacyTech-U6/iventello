@@ -338,35 +338,19 @@ function printInvoice() {
 }
 
 
-// Fonction de téléchargement du PDF
 // Dans InvoiceDetailModal.vue
 async function downloadPDF() {
   try {
-    const element = invoiceContent.value
-    if (!element) {
-      throw new Error('Invoice content not found')
-    }
+    // On utilise l'ID 'invoice-card' que tu as défini dans ton template
+    const elementId = 'invoice-card';
+    const fileName = `facture_${props.invoice.id || 'export'}.pdf`;
 
-    // HTML COMPLET à envoyer au backend
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8" />
-          ${document.head.innerHTML}
-        </head>
-        <body>
-          ${element.outerHTML}
-        </body>
-      </html>
-    `
-
-    await invoiceStore.createInvoice({
-      html
-    })
+    // Appel de la fonction utilitaire importée
+    await exportToPDF(elementId, fileName);
 
   } catch (error) {
-    console.error('Error downloading PDF:', error)
+    console.error('Erreur lors de l\'export PDF:', error);
+    // Optionnel : ajouter une notification d'erreur ici
   }
 }
 

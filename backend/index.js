@@ -108,7 +108,7 @@ app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
   next();
 });
-const allowedOrigins = process.env.FRONTEND_URL.split(",");
+const allowedOrigins = process.env.FRONTEND_URL.split(",") || ["https://iventello.vercel.app", "http://localhost:5173"];
 
 app.use(
     cors({
