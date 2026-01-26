@@ -1,168 +1,154 @@
 <template>
-  <div style="" class="w-full">
-    <div class="fixed z-50 bg-black bg-opacity-50 flex justify-center items-start overflow-auto" style="
-        background-color: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(4px);
-        inset: 0px;
-        margin-bottom: -1px;
-      ">
-      <div class="flex absolute justify-between w-full p-4" style="z-index: 701">
+  <Teleport to="body">
+    <div
+      class="absolute inset-0 w-full h-full z-50 bg-black/85 backdrop-blur-sm overflow-y-auto flex justify-center py-10">
+
+      <div class="absolute top-4 left-0 w-full px-6 flex justify-between items-start z-[60] pointer-events-none">
         <button @click="$emit('close')"
-          class="text-gray-500 bg-gray-400 p-4 hover:text-gray-700 hover:bg-gray-100 rounded-2xl transition-colors">
-          <XMarkIcon class="h-5 w-5" />
+          class="pointer-events-auto bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-red-500 hover:text-white transition-colors shadow-lg">
+          <XMarkIcon class="h-6 w-6" />
         </button>
-        <div class="flex items-center gap-2">
+
+        <div
+          class="pointer-events-auto flex items-center gap-2 bg-white/10 backdrop-blur-md p-2 rounded-lg border border-white/20 shadow-xl">
           <button @click="printInvoice"
-            class="bg-white border border-gray-300 text-gray-700 px-3 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors text-sm">
+            class="bg-white text-gray-800 px-4 py-2 rounded-md font-bold flex items-center gap-2 hover:bg-gray-200 transition-colors text-sm">
             <PrinterIcon class="h-4 w-4" />
             Print
           </button>
           <button @click="downloadPDF"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors text-sm">
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md font-bold flex items-center gap-2 transition-colors text-sm shadow-lg">
             <ArrowDownTrayIcon class="h-4 w-4" />
             PDF
           </button>
         </div>
       </div>
 
-      <div id="invoice-card" ref="invoiceContent" class="bg-white rounded p-8 max-w-3xl w-full pdf-container">
+      <div id="invoice-card" ref="invoiceContent"
+        class="relative bg-white shadow-2xl rounded-sm p-8 max-w-[210mm] w-full min-h-[297mm] pdf-container mt-8">
 
-        <!-- Header -->
-
-        <!-- Invoice Content -->
-        <div class="p-8">
-          <!-- Classic Invoice Design -->
-          <div class="border-b-2 border-black pb-6 mb-4">
-            <div class="flex justify-between items-end">
-              <div>
-                <h1 class="text-3xl font-bold text-black">INVOICE</h1>
-                <div class="text-sm text-gray-600">
-                  <CompanyInfo :entreprise="entreprise" />
-                </div>
+        <div class="border-b-2 border-gray-800 pb-6 mb-8">
+          <div class="flex justify-between items-start">
+            <div>
+              <h1 class="text-4xl font-extrabold text-gray-900 tracking-wide uppercase">Invoice</h1>
+              <div class="mt-4 text-sm text-gray-600">
+                <CompanyInfo :entreprise="entreprise" />
               </div>
-              <div class="text-right">
+            </div>
+            <div class="text-right">
+              <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
                 <div class="mb-2">
-                  <span class="font-semibold text-gray-700">Invoice #:</span>
-                  <span class="ml-2 font-bold text-black">{{ invoice.id }}</span>
+                  <span class="text-gray-500 text-xs uppercase font-bold tracking-wider">Invoice #</span>
+                  <div class="font-bold text-xl text-gray-900">{{ invoice.id }}</div>
                 </div>
-                <div class="mb-2">
-                  <span class="font-semibold text-gray-700">Date:</span>
-                  <span class="ml-2 text-black">{{ formatDate(invoice.createdAt) }}</span>
+                <div class="mb-1 text-sm">
+                  <span class="text-gray-500 font-medium">Date:</span>
+                  <span class="ml-2 font-mono text-gray-900">{{ formatDate(invoice.createdAt) }}</span>
                 </div>
-                <div>
-                  <span class="font-semibold text-gray-700">Due Date:</span>
-                  <span class="ml-2 text-black">{{ formatDate(invoice.date_echeance) }}</span>
+                <div class="text-sm">
+                  <span class="text-gray-500 font-medium">Due Date:</span>
+                  <span class="ml-2 font-mono text-gray-900">{{ formatDate(invoice.date_echeance) }}</span>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Bill To -->
-          <div class="mb-6">
-            <h3 class="font-bold text-black text-lg mb-3 border-b border-gray-300 pb-2">BILL TO</h3>
-            <div class="text-sm">
-              <div class="font-semibold text-black">
-                {{ invoice.client.client_name || 'Client Name' }}
-              </div>
-              <div class="text-gray-600">
-                {{ invoice.client.client_adresse || 'Address not specified' }}
-              </div>
-              <div class="text-gray-600" v-if="invoice.client.email">
-                Email: {{ invoice.client.email }}
-              </div>
-              <div class="text-gray-600" v-if="invoice.client.client_telephone">
-                Phone: {{ invoice.client.telephone }}
-              </div>
+        <div class="mb-8 grid grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Billed To</h3>
+            <div class="text-gray-900 font-bold text-lg">
+              {{ invoice.client.client_name || 'Client Name' }}
+            </div>
+            <div class="text-gray-600 text-sm mt-1 leading-relaxed">
+              {{ invoice.client.client_adresse || 'Address not specified' }}<br>
+              <span v-if="invoice.client.email">{{ invoice.client.email }}</span><br>
+              <span v-if="invoice.client.client_telephone">{{ invoice.client.telephone }}</span>
             </div>
           </div>
+        </div>
 
-          <!-- Items Table -->
-          <div class="mb-2">
-            <table class="w-full border-collapse border border-gray-300 text-sm">
-              <thead>
-                <tr class="bg-gray-100">
-                  <th class="border border-gray-300 px-3 py-2 text-left font-bold">#</th>
-                  <th class="border border-gray-300 px-3 py-2 text-left font-bold">Description</th>
-                  <th class="border border-gray-300 px-3 py-2 text-center font-bold">Qty</th>
-                  <th class="border border-gray-300 px-3 py-2 text-right font-bold">Unit Price</th>
-                  <th class="border border-gray-300 px-3 py-2 text-right font-bold">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, index) in invoice.items" :key="item.id">
-                  <td class="border border-gray-300 px-3 py-2 text-center">{{ index + 1 }}</td>
-                  <td class="border border-gray-300 px-3 py-2">
-                    <div class="font-medium">{{ item.product.Prod_name }}</div>
-                    <div class="text-xs text-gray-600" v-if="item.description">
-                      {{ item.description }}
-                    </div>
-                  </td>
-                  <td class="border border-gray-300 px-3 py-2 text-center">{{ item.quantity }}</td>
-                  <td class="border border-gray-300 px-3 py-2 text-right font-mono">
-                    {{ format(item.unit_price) }}
-                  </td>
-                  <td class="border border-gray-300 px-3 py-2 text-right font-mono font-semibold">
-                    {{ format(item.total_item) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="mb-8">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gray-50 border-y border-gray-200">
+                <th class="py-3 pl-4 text-left font-semibold text-gray-600 uppercase text-xs tracking-wider">#</th>
+                <th class="py-3 text-left font-semibold text-gray-600 uppercase text-xs tracking-wider w-1/2">
+                  Description</th>
+                <th class="py-3 text-center font-semibold text-gray-600 uppercase text-xs tracking-wider">Qty</th>
+                <th class="py-3 text-right font-semibold text-gray-600 uppercase text-xs tracking-wider">Price</th>
+                <th class="py-3 pr-4 text-right font-semibold text-gray-600 uppercase text-xs tracking-wider">Total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr v-for="(item, index) in invoice.items" :key="item.id">
+                <td class="py-4 pl-4 text-gray-500">{{ index + 1 }}</td>
+                <td class="py-4">
+                  <div class="font-bold text-gray-900">{{ item.product.Prod_name }}</div>
+                  <div class="text-xs text-gray-500 mt-0.5" v-if="item.description">
+                    {{ item.description }}
+                  </div>
+                </td>
+                <td class="py-4 text-center font-mono text-gray-700">{{ item.quantity }}</td>
+                <td class="py-4 text-right font-mono text-gray-700">{{ format(item.unit_price) }}</td>
+                <td class="py-4 pr-4 text-right font-mono font-bold text-gray-900">
+                  {{ format(item.total_item) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-          <!-- Summary -->
-          <div class="flex justify-end">
-            <div class="w-72 border border-gray-300 text-sm">
-              <div class="flex justify-between px-3 py-2 border-b border-gray-300">
-                <span class="font-semibold">Subtotal:</span>
-                <span class="font-mono">{{ format(invoice.total_hors_reduction) }}</span>
-              </div>
-              <!-- <div v-if="invoice.reduction > 0" class="flex justify-between px-3 py-2 border-b border-gray-300">
-              <span class="font-semibold">Discount ({{ invoice.reduction }}%):</span>
-              <span class="font-mono text-red-600">- {{ formatPrice(calculateDiscount()) }}</span>
-            </div>
-            <div class="flex justify-between px-3 py-2 border-b border-gray-300">
-              <span class="font-semibold">Tax ({{ invoice.tva }}%):</span>
-              <span class="font-mono">{{ formatPrice(calculateTax()) }}</span>
-            </div> -->
-              <div class="flex justify-between px-3 py-2 bg-gray-100 font-bold">
-                <span>TOTAL:</span>
-                <span class="font-mono">{{ format(invoice.total) }}</span>
-              </div>
-            </div>
-          </div>
+        <div class="flex flex-col md:flex-row justify-between gap-8 border-t-2 border-gray-100 pt-8">
 
-          <!-- Status and Payment Info -->
-          <div class="mt-3 border-t border-gray-300">
-            <div class="grid grid-cols-2 gap-6 text-sm">
+          <div class="md:w-1/2 space-y-6">
+            <div class="grid grid-cols-2 gap-4">
               <div>
-                <h4 class="font-bold text-black mb-2">STATUS</h4>
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Status</h4>
                 <span :class="[
-                  'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium',
-                  invoice.status === 'payée'
-                    ? 'bg-green-100 text-green-800'
-                    : invoice.status === 'en_attente'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800',
+                  'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border',
+                  invoice.status === 'payée' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                    invoice.status === 'en_attente' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                      'bg-red-50 text-red-700 border-red-200'
                 ]">
                   {{ formatStatus(invoice.status) }}
                 </span>
               </div>
               <div>
-                <h4 class="font-bold text-black mb-2">PAYMENT METHOD</h4>
-                <p class="text-gray-600">{{ invoice.mode_paiement || 'Not specified' }}</p>
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Payment Method</h4>
+                <p class="text-sm text-gray-900 font-medium">{{ invoice.mode_paiement || 'Not specified' }}</p>
               </div>
             </div>
-            <!-- Notes Section -->
-            <div v-if="invoice.notes" class="mt-4">
-              <h4 class="font-bold text-black mb-2">NOTES</h4>
-              <p class="text-gray-600 text-sm">{{ invoice.notes }}</p>
+
+            <div v-if="invoice.notes">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notes</h4>
+              <p class="text-sm text-gray-600 italic bg-gray-50 p-3 rounded border border-gray-100">
+                {{ invoice.notes }}
+              </p>
+            </div>
+          </div>
+
+          <div class="md:w-5/12">
+            <div class="space-y-3">
+              <div class="flex justify-between text-sm text-gray-600">
+                <span>Subtotal</span>
+                <span class="font-mono font-medium text-gray-900">{{ format(invoice.total_hors_reduction) }}</span>
+              </div>
+              <div class="border-t border-gray-200 pt-3 mt-3 flex justify-between items-center">
+                <span class="text-base font-bold text-gray-900">Total Due</span>
+                <span class="text-xl font-bold text-emerald-600 font-mono">{{ format(invoice.total) }}</span>
+              </div>
             </div>
           </div>
         </div>
+
+        <div class="mt-12 pt-6 border-t border-gray-100 text-center text-xs text-gray-400">
+          <p>Thank you for your business.</p>
+        </div>
+
       </div>
     </div>
-    <div></div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>
@@ -172,28 +158,10 @@ import { useInvoiceStore } from '@/stores/FactureStore'
 import CompanyInfo from './CompanyInfo.vue'
 import { useCurrency } from '@/composable/useCurrency'
 import { exportToPDF } from '@/utils/invoicePdfTemplate'
+
 const { format } = useCurrency()
 const invoiceContent = ref(null)
 const invoiceStore = useInvoiceStore()
-
-// const invoice = ref({
-//       id: '',
-//       date_of_creation: '',
-//       date_echeance: '',
-//       client_name: '',
-//       client_adresse: '',
-//       client_email: '',
-//       client_telephone: '',
-//       items: [],
-//       reduction: 0,
-//       tva: 0,
-//       total: 0,
-//       total_hors_reduction: 0,
-//       mode_paiement: '',
-//       status: '',
-//       notes: null
-
-// })
 
 const props = defineProps({
   invoice: {
@@ -208,25 +176,7 @@ const props = defineProps({
   },
 })
 
-// ✅ Calculs basés sur la structure réelle des données
-function calculateDiscount() {
-  const subtotal = props.invoice.value.total_hors_reduction || 0
-  return (subtotal * (invoice.value.reduction || 0)) / 100
-}
-
-function calculateTax() {
-  const subtotal = props.invoice.value.total_hors_reduction || 0
-  const discount = calculateDiscount()
-  return ((subtotal - discount) * (props.invoice.value.tva || 0)) / 100
-}
-
-
-
 defineEmits(['close'])
-
-function calculateSubtotal() {
-  return invoice.value.items.reduce((sum, item) => sum + item.selling_price * item.quantity, 0)
-}
 
 function formatDate(date) {
   if (!date) return 'N/A'
@@ -254,14 +204,11 @@ function printInvoice() {
   const printElement = invoiceContent.value
   if (!printElement) return
 
-  // Create a hidden iframe to avoid modifying the main page
   const iframe = document.createElement('iframe')
   iframe.style.display = 'none'
   document.body.appendChild(iframe)
 
   const doc = iframe.contentWindow.document
-
-  // Copy all styles from the <head> to preserve the invoice's appearance
   const headContent = document.head.innerHTML
 
   doc.open()
@@ -269,8 +216,11 @@ function printInvoice() {
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Print Invoice</title>
+        <title>Invoice #${props.invoice.id}</title>
         ${headContent}
+        <style>
+           body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        </style>
       </head>
       <body>
         ${printElement.innerHTML}
@@ -279,50 +229,39 @@ function printInvoice() {
   `)
   doc.close()
 
-  // Wait for the content to be loaded in the iframe before printing
   setTimeout(() => {
     iframe.contentWindow.focus()
     iframe.contentWindow.print()
-    // Remove the iframe after printing
     document.body.removeChild(iframe)
   }, 500)
 }
 
-
-// Dans InvoiceDetailModal.vue
 async function downloadPDF() {
   try {
-    // On utilise l'ID 'invoice-card' que tu as défini dans ton template
     const elementId = 'invoice-card';
-    const fileName = `facture_${props.invoice.id || 'export'}.pdf`;
-
-    // Appel de la fonction utilitaire importée
+    const fileName = `Invoice_${props.invoice.id || 'export'}.pdf`;
     await exportToPDF(elementId, fileName);
-
   } catch (error) {
     console.error('Erreur lors de l\'export PDF:', error);
-    // Optionnel : ajouter une notification d'erreur ici
   }
 }
-
 </script>
 
 <style scoped>
+/* Pour l'impression native */
 @media print {
-  .fixed {
+
+  .fixed,
+  .absolute {
     position: static !important;
   }
 
-  .bg-black {
+  .bg-black\/85 {
     background: white !important;
   }
 
-  .shadow-xl {
+  .shadow-2xl {
     box-shadow: none !important;
-  }
-
-  .m-4 {
-    margin: 0 !important;
   }
 
   button {
@@ -330,34 +269,16 @@ async function downloadPDF() {
   }
 }
 
-/* Styles spécifiques pour le rendu PDF */
+/* Styles pour le rendu PDF/A4 */
 .pdf-container {
-  font-family: 'Arial', sans-serif;
-  /* Police standard pour éviter les bugs */
-  color: #000 !important;
+  font-family: 'Inter', 'Arial', sans-serif;
+  color: #111827 !important;
+  /* gray-900 */
   background-color: #fff !important;
   width: 210mm;
-  /* Largeur forcée A4 */
+  /* Largeur A4 */
   min-height: 297mm;
-}
-
-/* On force l'affichage des bordures si Tailwind est ignoré */
-.pdf-container table {
-  width: 100%;
-  border-collapse: collapse !important;
-}
-
-.pdf-container th,
-.pdf-container td {
-  border: 1px solid #d1d5db !important;
-  /* Couleur gray-300 */
-  padding: 8px !important;
-}
-
-/* Cacher les éléments non désirés sur le PDF */
-@media print {
-  .no-print {
-    display: none !important;
-  }
+  /* Hauteur A4 minimum */
+  margin: 0 auto;
 }
 </style>

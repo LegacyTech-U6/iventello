@@ -1,56 +1,49 @@
 <template>
-  <div
-    class="fixed inset-0 z-50 bg-white/80 bg-opacity-50 flex flex-col justify-center items-center overflow-auto mb-5"
-    style="
+  <Teleport to="body">
+    <div
+      class="fixed inset-0 z-50 bg-white/80 bg-opacity-50 flex flex-col justify-center items-center overflow-auto mb-5"
+      style="
       background-color: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(4px);
       inset: 0px;
       margin-bottom: -1px;
-    "
-  >
-    <div class="action-buttons w-full pt-10 px-5">
-      <button class="btn btn-secondary" @click="$emit('close')">Close</button>
-      <div class="flex space-x-5">
-        <button class="btn btn-primary" @click="downloadPDF">Confirm</button>
-        <button class="btn" @click="printInvoice">Print</button>
-      </div>
-    </div>
-    <div class="bg-white rounded shadow max-w-3xl w-full relative">
-      <!-- Action Buttons -->
-
-      <div class="p-1">
-        <div v-if="loading" class="text-center py-8">
-          <div class="text-gray-500">Loading invoice data...</div>
+    ">
+      <div class="action-buttons w-full pt-10 px-5">
+        <button class="btn btn-secondary" @click="$emit('close')">Close</button>
+        <div class="flex space-x-5">
+          <button class="btn btn-primary" @click="downloadPDF">Confirm</button>
+          <button class="btn" @click="printInvoice">Print</button>
         </div>
+      </div>
+      <div class="bg-white rounded shadow max-w-3xl w-full relative">
+        <!-- Action Buttons -->
 
-        <div v-else ref="invoiceContent" class="invoice-content">
-          <!-- Classic Invoice Layout -->
-          <CompanyInfo :entreprise="entrepriseData" />
-
-          <div class="invoice-grid">
-            <div class="invoice-header-section">
-              <InvoiceHeader
-                :invoiceNumber="invoice.id"
-                :creationDate="invoice.date"
-                :dueDate="invoice.dueDate"
-              />
-            </div>
-            <div class="client-section">
-              <BillTo :client="clientData" />
-            </div>
+        <div class="p-1">
+          <div v-if="loading" class="text-center py-8">
+            <div class="text-gray-500">Loading invoice data...</div>
           </div>
 
-          <InvoiceItemsTable :items="invoice.items" />
-          <InvoiceSummary
-            :items="invoice.items"
-            :discount="invoice.discount"
-            :tax-rate="invoice.taxRate"
-          />
-          <PaymentTerms />
+          <div v-else ref="invoiceContent" class="invoice-content">
+            <!-- Classic Invoice Layout -->
+            <CompanyInfo :entreprise="entrepriseData" />
+
+            <div class="invoice-grid">
+              <div class="invoice-header-section">
+                <InvoiceHeader :invoiceNumber="invoice.id" :creationDate="invoice.date" :dueDate="invoice.dueDate" />
+              </div>
+              <div class="client-section">
+                <BillTo :client="clientData" />
+              </div>
+            </div>
+
+            <InvoiceItemsTable :items="invoice.items" />
+            <InvoiceSummary :items="invoice.items" :discount="invoice.discount" :tax-rate="invoice.taxRate" />
+            <PaymentTerms />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>
