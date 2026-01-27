@@ -1,16 +1,18 @@
 <template>
-  <div class="card flex flex-col h-full transition-all duration-300 ease-in-out hover:elevation-3 hover:-translate-y-1 border-t-4 border-error">
+  <div
+    class="card flex flex-col h-full transition-all duration-300 ease-in-out hover:elevation-3 hover:-translate-y-1 border-t-4 border-error">
     <!-- Header -->
     <div class="flex justify-between items-start mb-3">
       <div class="flex-1 min-w-0">
         <h3 class="card-title truncate text-on-surface" :title="product.Prod_name">{{ product.Prod_name }}</h3>
         <div class="badge-error inline-flex items-center gap-1.5 font-mono text-xs">
-          <Barcode class="w-4 h-4" />
+          <QrCodeIcon class="w-4 h-4" />
           <span>{{ product.sku }}</span>
         </div>
       </div>
-      <div v-if="product.isHighValue" class="badge-warning inline-flex items-center gap-1.5 ml-2 flex-shrink-0" title="High Value Product">
-        <Gem class="w-3.5 h-3.5" />
+      <div v-if="product.isHighValue" class="badge-warning inline-flex items-center gap-1.5 ml-2 flex-shrink-0"
+        title="High Value Product">
+        <SparklesIcon class="w-3.5 h-3.5" />
         <span>HIGH VALUE</span>
       </div>
     </div>
@@ -38,18 +40,16 @@
     </div>
 
     <!-- Action Button -->
-    <button
-      @click="$emit('restock', product)"
-      class="btn-primary w-full py-3 text-sm font-semibold flex items-center justify-center gap-2"
-    >
-      <PackagePlus class="w-5 h-5" />
+    <button @click="$emit('restock', product)"
+      class="btn-primary w-full py-3 text-sm font-semibold flex items-center justify-center gap-2">
+      <ArchiveBoxArrowDownIcon class="w-5 h-5" />
       Restock Now
     </button>
   </div>
 </template>
 
 <script setup>
-import { Barcode, Gem, PackagePlus } from 'lucide-vue-next'
+import { QrCodeIcon, SparklesIcon, ArchiveBoxArrowDownIcon } from '@heroicons/vue/24/outline'
 
 defineProps({
   product: {

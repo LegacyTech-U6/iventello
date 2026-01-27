@@ -72,10 +72,7 @@
             </div>
 
             <div v-if="saleItems.length <= 0" class="flex flex-col justify-center items-center py-12 text-gray-400">
-              <svg class="w-16 h-16 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
+              <ShoppingBagIcon class="w-16 h-16 mb-3 text-gray-300" />
               <p class="text-sm">No items added yet</p>
             </div>
 
@@ -177,10 +174,7 @@
               <h3 class="font-semibold text-gray-900 mb-3">Cart Items ({{ saleItems.length }})</h3>
 
               <div v-if="saleItems.length <= 0" class="flex flex-col justify-center items-center py-12 text-gray-400">
-                <svg class="w-16 h-16 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
+                <ShoppingBagIcon class="w-16 h-16 mb-3 text-gray-300" />
                 <p class="text-sm">No items added yet</p>
               </div>
 
@@ -349,12 +343,13 @@
       </Transition>
     </Teleport>
 
-      <CreateInvoiceForm v-if="showInvoiceModal" :invoice="modalInvoice" @close="showInvoiceModal = false" />
+    <CreateInvoiceForm v-if="showInvoiceModal" :invoice="modalInvoice" @close="showInvoiceModal = false" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { ShoppingBagIcon } from '@heroicons/vue/24/outline'
 import ClientSelector from '@/components/ClientSelector.vue'
 import ProductSelector from '@/components/ProductSelector.vue'
 import CartItem from '@/components/CartItem.vue'

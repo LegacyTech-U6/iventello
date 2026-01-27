@@ -55,7 +55,7 @@ import InvoiceSummary from './InvoiceSummary.vue'
 import PaymentTerms from './PaymentTerms.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useActionMessage } from '@/composable/useActionMessage'
-
+import { exportToPDF } from '@/utils/invoicePdfTemplate'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import { useClientStore } from '@/stores/clientStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
@@ -108,14 +108,10 @@ async function downloadPDF() {
 
     // Étape 2️⃣ — Afficher un message de succès
     show('Invoice created successfully! Preparing for print...', 'success')
-
-    // Étape 4️⃣ — Ouvrir dans un nouvel onglet pour impression
-    const printWindow = window.open('', '_blank')
-
-    // Quand le PDF est chargé, ouvrir la boîte d'impression
-    printWindow.onload = () => {
-      printWindow.print()
-    }
+    const clientName = clientData.value?.client_name || 'customer'
+    const fileName = `invoice-${clientName}-${props.invoice.id}.pdf`
+    // Étape 4️⃣ — Appeler l'export vers PDF
+    await exportToPDF(invoiceContent.value, fileName)
 
     // Étape 5️⃣ — Fermer la modale après impression
     emit('close')

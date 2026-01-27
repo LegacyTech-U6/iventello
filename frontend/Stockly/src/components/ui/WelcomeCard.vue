@@ -1,15 +1,12 @@
 <template>
-    <div
-        class=" bg-[#0C333B] text-white rounded-2xl p-6 flex items-start justify-between overflow-visible shadow-md">
+    <div class=" bg-[#0C333B] text-white rounded-2xl p-6 flex items-start justify-between overflow-visible shadow-md">
 
         <!-- TEXT -->
         <div class="flex-1">
             <h2 class="text-3xl font-bold mb-3">
                 Welcome back, {{ user }}
                 <!-- Utilisation -->
-                <span class="material-icons">
-                    waving_hand
-                </span>
+                <SparklesIcon class="w-8 h-8 text-yellow-400 inline-block mb-1" />
             </h2>
 
             <p class="text-xl mb-2">
@@ -30,6 +27,8 @@
 </template>
 
 <script setup>
+import { SparklesIcon } from '@heroicons/vue/24/outline'
+
 defineProps({
     user: {
         type: String,
@@ -45,12 +44,3 @@ defineProps({
     }
 });
 </script>
-<style>
-.material-symbols-outlined {
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24
-}
-</style>

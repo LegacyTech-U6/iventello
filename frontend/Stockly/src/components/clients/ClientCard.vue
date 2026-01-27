@@ -6,15 +6,15 @@
       <div class="flex-1">
         <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ client.client_name }}</h3>
         <div class="flex items-center gap-2 text-sm text-gray-600 mb-1">
-          <Mail :size="14" />
+          <EnvelopeIcon class="w-3.5 h-3.5" />
           <span>{{ client.email }}</span>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-600 mb-1">
-          <Phone :size="14" />
+          <PhoneIcon class="w-3.5 h-3.5" />
           <span>{{ client.client_PhoneNumber }}</span>
         </div>
         <div class="flex items-center gap-2 text-sm text-gray-600">
-          <MapPin :size="14" />
+          <MapPinIcon class="w-3.5 h-3.5" />
           <span>{{ client.location }}</span>
         </div>
       </div>
@@ -23,11 +23,11 @@
 
         <button @click="$emit('edit', client)"
           class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition-colors">
-          <Edit2 :size="16" class="text-gray-600" />
+          <PencilIcon class="w-4 h-4 text-gray-600" />
         </button>
         <button @click="$emit('delete', client)"
           class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 transition-colors">
-          <Trash2 :size="16" class="text-red-500" />
+          <TrashIcon class="w-4 h-4 text-red-500" />
         </button>
       </div>
     </div>
@@ -36,9 +36,7 @@
     <div class="grid grid-cols-3 gap-4 pt-4 border-t border-gray-200">
       <div class="bg-purple-50 rounded-lg p-3">
         <div class="flex items-center gap-2 mb-1">
-          <span class="material-symbols-rounded">
-            receipt
-          </span>
+          <DocumentTextIcon class="w-4 h-4 text-purple-700" />
           <span class="text-xs text-purple-700 font-medium">Invoices</span>
         </div>
         <p class="text-lg font-semibold text-purple-900">{{ invoiceCount }}</p>
@@ -46,9 +44,7 @@
 
       <div class="bg-green-100 rounded-lg p-3">
         <div class="flex items-center gap-2 mb-1">
-          <span class="material-symbols-rounded">
-            paid
-          </span>
+          <CurrencyDollarIcon class="w-4 h-4 text-green-500" />
           <span class="text-xs text-green-500 font-medium">Total Spend</span>
         </div>
         <p class="text-lg font-semibold text-green-900">{{ format(totalSpend) }}</p>
@@ -56,9 +52,7 @@
 
       <div class="bg-amber-50 rounded-lg p-3">
         <div class="flex items-center gap-2 mb-1">
-          <span class="material-symbols-rounded">
-            done_all
-          </span>
+          <CheckBadgeIcon class="w-4 h-4 text-amber-700" />
           <span class="text-xs text-amber-700 font-medium">Status</span>
         </div>
         <span :class="{
@@ -82,9 +76,19 @@
 
 <script setup>
 import { computed } from 'vue'
+import {
+  EnvelopeIcon,
+  PhoneIcon,
+  MapPinIcon,
+  PencilIcon,
+  TrashIcon,
+  DocumentTextIcon,
+  CurrencyDollarIcon,
+  CheckBadgeIcon
+} from '@heroicons/vue/24/outline'
 import { useCurrency } from '@/composable/useCurrency'
 
-const {format} = useCurrency()
+const { format } = useCurrency()
 const props = defineProps({
   client: {
     type: Object,

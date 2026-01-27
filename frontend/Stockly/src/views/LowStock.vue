@@ -3,24 +3,11 @@
     <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-20">
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <GridCard
-          title="Units Needed"
-          :value="totalUnitsNeeded"
-          :icon="Package"
-          bgColor="bg-primary"
-        />
-        <GridCard
-          title="Est. Reorder Cost"
-          :value="'$' + formatCurrency(totalReorderCost)"
-          :icon="DollarSign"
-          bgColor="bg-tertiary"
-        />
-        <GridCard
-          title="Urgent Restocks"
-          :value="urgentRestockCount"
-          :icon="AlertTriangle"
-          bgColor="bg-error"
-        />
+        <GridCard title="Units Needed" :value="totalUnitsNeeded" :icon="CubeIcon" bgColor="bg-primary" />
+        <GridCard title="Est. Reorder Cost" :value="'$' + formatCurrency(totalReorderCost)" :icon="CurrencyDollarIcon"
+          bgColor="bg-tertiary" />
+        <GridCard title="Urgent Restocks" :value="urgentRestockCount" :icon="ExclamationTriangleIcon"
+          bgColor="bg-error" />
       </div>
 
       <!-- Search and Filter -->
@@ -29,22 +16,15 @@
           <!-- Search -->
           <div class="lg:col-span-2">
             <div class="relative flex items-center w-full">
-              <Search class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Search products by name, SKU, or supplier..."
-                v-model="searchQuery"
-                class="input-field w-full pl-12 pr-4 py-3 text-base rounded-xl"
-              />
+              <MagnifyingGlassIcon class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
+              <input type="text" placeholder="Search products by name, SKU, or supplier..." v-model="searchQuery"
+                class="input-field w-full pl-12 pr-4 py-3 text-base rounded-xl" />
             </div>
           </div>
 
           <!-- Stock Level Filter -->
           <div class="lg:col-span-1">
-            <select
-              v-model="stockLevelFilter"
-              class="input-field w-full px-3 py-3 text-base rounded-xl"
-            >
+            <select v-model="stockLevelFilter" class="input-field w-full px-3 py-3 text-base rounded-xl">
               <option value="all">All Low Stock</option>
               <option value="critical">Critical Only</option>
               <option value="warning">Warning Only</option>
@@ -55,18 +35,13 @@
 
       <!-- Products Grid - 1 col mobile, 2 cols tablet, 2 cols desktop -->
       <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-        <LowStockCard
-          v-for="product in filteredProducts"
-          :key="product.id"
-          :product="product"
-          @restock="handleRestock"
-          :reorderCost="totalReorderCost"
-        />
+        <LowStockCard v-for="product in filteredProducts" :key="product.id" :product="product" @restock="handleRestock"
+          :reorderCost="totalReorderCost" />
       </div>
 
       <!-- Empty State -->
       <div v-else class="card text-center p-16 mt-6">
-        <CheckCircle2 class="mx-auto mb-4 w-16 h-16 text-tertiary" />
+        <CheckCircleIcon class="mx-auto mb-4 w-16 h-16 text-tertiary" />
         <h3 class="card-title text-xl mb-2">All Stock Levels Normal</h3>
         <p class="card-subtitle">
           Great job! All products are adequately stocked.
@@ -75,27 +50,22 @@
     </div>
 
     <!-- Restock Modal -->
-    <RestockModal
-      :isOpen="isModalOpen"
-      :product="selectedProduct"
-      :suppliers="suppliers"
-      @close="isModalOpen = false"
-      @restock="handleRestock"
-    />
+    <RestockModal :isOpen="isModalOpen" :product="selectedProduct" :suppliers="suppliers" @close="isModalOpen = false"
+      @restock="handleRestock" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import {
-  Package,
-  DollarSign,
-  AlertTriangle,
-  Search,
-  ChevronLeft,
-  ArrowLeft,
-  CheckCircle2
-} from 'lucide-vue-next'
+  CubeIcon,
+  CurrencyDollarIcon,
+  ExclamationTriangleIcon,
+  MagnifyingGlassIcon,
+  ChevronLeftIcon,
+  ArrowLeftIcon,
+  CheckCircleIcon
+} from '@heroicons/vue/24/outline'
 import LowStockCard from '../components/LowStockCard.vue'
 import GridCard from '@/components/ui/cards/GridCard.vue'
 import { LowStock } from '@/service/api'

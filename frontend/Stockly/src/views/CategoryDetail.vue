@@ -3,18 +3,9 @@
     <!-- Header Section -->
     <div class="">
       <div class="mx-auto px-6 py-4">
-        <button
-          @click="goBack"
-          class="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-3 transition-colors text-sm"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
+        <button @click="goBack"
+          class="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-3 transition-colors text-sm">
+          <ChevronLeftIcon class="w-4 h-4" />
           Back to Category
         </button>
 
@@ -30,34 +21,18 @@
         </div>
       </div>
       <div class="flex items-center border border-gray-200 rounded-md">
-        <button
-          :class="
-            viewMode === 'grid'
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-          "
-          class="p-2 transition-colors"
-          @click="viewMode = 'grid'"
-          title="Grid View"
-        >
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z" />
-          </svg>
+        <button :class="viewMode === 'grid'
+            ? 'bg-gray-100 text-gray-900'
+            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          " class="p-2 transition-colors" @click="viewMode = 'grid'" title="Grid View">
+          <Squares2X2Icon class="w-5 h-5" />
         </button>
         <div class="w-px h-6 bg-gray-200"></div>
-        <button
-          :class="
-            viewMode === 'list'
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-          "
-          class="p-2 transition-colors"
-          @click="viewMode = 'list'"
-          title="List View"
-        >
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
-          </svg>
+        <button :class="viewMode === 'list'
+            ? 'bg-gray-100 text-gray-900'
+            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          " class="p-2 transition-colors" @click="viewMode = 'list'" title="List View">
+          <ListBulletIcon class="w-5 h-5" />
         </button>
       </div>
     </div>
@@ -66,14 +41,7 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon-wrapper blue">
-          <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 10h16M4 14h16M4 18h16"
-            ></path>
-          </svg>
+          <ListBulletIcon class="stat-icon" />
         </div>
         <div class="stat-content">
           <div class="stat-label">Total Products</div>
@@ -83,14 +51,7 @@
 
       <div class="stat-card">
         <div class="stat-icon-wrapper purple">
-          <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-            ></path>
-          </svg>
+          <CubeIcon class="stat-icon" />
         </div>
         <div class="stat-content">
           <div class="stat-label">Total Value</div>
@@ -100,14 +61,7 @@
 
       <div class="stat-card">
         <div class="stat-icon-wrapper orange">
-          <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-            ></path>
-          </svg>
+          <ArrowTrendingUpIcon class="stat-icon" />
         </div>
         <div class="stat-content">
           <div class="stat-label">Avg Products</div>
@@ -119,20 +73,9 @@
     <!-- Search Section -->
     <div class="search-section">
       <div class="search-box">
-        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          ></path>
-        </svg>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search categories by name or description..."
-          class="search-input"
-        />
+        <MagnifyingGlassIcon class="search-icon" />
+        <input v-model="searchQuery" type="text" placeholder="Search categories by name or description..."
+          class="search-input" />
       </div>
     </div>
 
@@ -140,69 +83,38 @@
     <div class="px-8 py-6">
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-32">
-        <div
-          class="animate-spin rounded-full h-12 w-12 border-3 border-gray-200 border-t-green-600"
-        ></div>
+        <div class="animate-spin rounded-full h-12 w-12 border-3 border-gray-200 border-t-green-600"></div>
       </div>
 
       <!-- Empty State -->
-      <div
-        v-else-if="filteredProducts.length === 0"
-        class="bg-white border border-gray-200 rounded-lg py-20"
-      >
+      <div v-else-if="filteredProducts.length === 0" class="bg-white border border-gray-200 rounded-lg py-20">
         <div class="text-center">
-          <div
-            class="w-16 h-16 bg-gray-100 rounded-lg mx-auto mb-4 flex items-center justify-center"
-          >
-            <svg
-              class="w-8 h-8 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-              />
-            </svg>
+          <div class="w-16 h-16 bg-gray-100 rounded-lg mx-auto mb-4 flex items-center justify-center">
+            <ArchiveBoxIcon class="w-8 h-8 text-gray-400" />
           </div>
           <h3 class="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
           <p class="text-gray-500 mb-6 max-w-md mx-auto">
             We couldn't find any products matching your criteria. Try adjusting your filters or
             search query.
           </p>
-          <button
-            @click="clearFilters"
-            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition-colors"
-          >
+          <button @click="clearFilters"
+            class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition-colors">
             Clear All Filters
           </button>
         </div>
       </div>
 
       <!-- Grid View -->
-      <div
-        v-else-if="viewMode === 'grid'"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-4 gap-1"
-      >
-        <ProductListItem
-          v-for="product in filteredProducts"
-          :key="product.id"
-          :product="product"
-          :display-mode="viewMode"
-          @view="handleViewProduct"
-        />
+      <div v-else-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-4 gap-1">
+        <ProductListItem v-for="product in filteredProducts" :key="product.id" :product="product"
+          :display-mode="viewMode" @view="handleViewProduct" />
       </div>
 
       <!-- List View -->
       <div v-else class="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <!-- List Header -->
         <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
-          <div
-            class="flex items-center gap-4 text-xs font-medium text-gray-600 uppercase tracking-wide"
-          >
+          <div class="flex items-center gap-4 text-xs font-medium text-gray-600 uppercase tracking-wide">
             <div class="flex-1">Product Name</div>
             <div class="w-36 hidden lg:block">Category</div>
             <div class="w-32 hidden md:block">Barcode</div>
@@ -214,13 +126,8 @@
         </div>
 
         <!-- List Items -->
-        <ProductListItem
-          v-for="product in filteredProducts"
-          :key="product.id"
-          :product="product"
-          :display-mode="viewMode"
-          @view="handleViewProduct"
-        />
+        <ProductListItem v-for="product in filteredProducts" :key="product.id" :product="product"
+          :display-mode="viewMode" @view="handleViewProduct" />
       </div>
     </div>
   </div>
@@ -228,6 +135,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import {
+  ChevronLeftIcon,
+  Squares2X2Icon,
+  ListBulletIcon,
+  CubeIcon,
+  ArrowTrendingUpIcon,
+  MagnifyingGlassIcon,
+  ArchiveBoxIcon
+} from '@heroicons/vue/24/outline'
 import CategoryCard from '../components/CategoryCard.vue'
 import AddCategoryModal from '../components/AddCategoryModal.vue'
 import { useCategoryStore } from '@/stores/CategoryStore'

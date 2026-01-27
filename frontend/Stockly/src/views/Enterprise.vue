@@ -1,45 +1,23 @@
 <template>
   <div class="p-4 md:p-8 lg:p-7 space-y-8 min-h-screen bg-gray-50/50">
-    
+
     <div class="hidden md:block w-full  flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
       <div class="flex flex-1 w-full sm:w-auto space-x-4">
-        <WelcomeCard 
-          :user="authStore.user?.username || 'User'" 
-          :enterprise="entrepriseStore.activeEntreprise.name"
-          :image="mascot" 
-        />
+        <WelcomeCard :user="authStore.user?.username || 'User'" :enterprise="entrepriseStore.activeEntreprise.name"
+          :image="mascot" />
         <Logo :logo="entrepriseStore.activeEntreprise.logo_url" class="hidden sm:block" />
       </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-      <GridCard 
-        v-for="stat in topStats" 
-        :key="stat.id" 
-        :title="stat.label" 
-        :value="stat.value" 
-        :icon="stat.icon"
-        :is-currency="stat.isCurrency" 
-        :bgColor="stat.bgColor" 
-        :trend="stat.trend" 
-      />
+      <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
+        :is-currency="stat.isCurrency" :bgColor="stat.bgColor" :trend="stat.trend" />
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-      <MetricCard 
-        v-for="stat in statsTable" 
-        :key="stat.id"
-        :disabled="stat.disabled"  
-        :is-currency="stat.isCurrency" 
-        :icon="stat.icon" 
-        :value="stat.value" 
-        :label="stat.label"
-        :trend="stat.trend" 
-        :viewLink="stat.viewLink" 
-        :icon-bg="stat.iconBg" 
-        :icon-color="stat.iconColor"
-        :period="stat.period" 
-      />
+      <MetricCard v-for="stat in statsTable" :key="stat.id" :disabled="stat.disabled" :is-currency="stat.isCurrency"
+        :icon="stat.icon" :value="stat.value" :label="stat.label" :trend="stat.trend" :viewLink="stat.viewLink"
+        :icon-bg="stat.iconBg" :icon-color="stat.iconColor" :period="stat.period" />
     </div>
 
     <div class="w-full">
@@ -52,7 +30,7 @@
       <TopSellingProducts class="xl:col-span-1" />
       <RevenueCatgeory class="xl:col-span-1" />
       <LowStockAlertsPanel class="xl:col-span-1" />
-      
+
       <RecentSales class="lg:col-span-2 xl:col-span-3" />
     </div>
 
@@ -79,7 +57,7 @@ import RecentSales from '@/components/statistics/RecentSales.vue'
 import RevenueCatgeory from '@/components/statistics/RevenueCatgeory.vue'
 
 // Icons
-import { Package, DollarSign, Users, Layers, RotateCcw, Wallet } from 'lucide-vue-next'
+import { CubeIcon, CurrencyDollarIcon, UsersIcon, Square3Stack3DIcon, ArrowPathIcon, WalletIcon } from '@heroicons/vue/24/outline'
 import mascot from '@/assets/image/professional.png'
 
 // SEO & Head
@@ -125,7 +103,7 @@ const statsTable = computed(() => [
     label: 'Total profit',
     value: statisticStore.profit.profit?.total || 0,
     trend: statisticStore.profit.profit?.history.at(-1)?.growth_percent || 0,
-    icon: Layers,
+    icon: Square3Stack3DIcon,
     iconBg: '#E6F4F0',
     iconColor: '#16a34a',
     viewLink: '/sales',
@@ -137,7 +115,7 @@ const statsTable = computed(() => [
     label: 'Total Customers',
     value: statisticStore.client.clients?.total || 0,
     trend: statisticStore.client.clients?.history?.at(-1)?.growth_percent || 0,
-    icon: Users,
+    icon: UsersIcon,
     iconBg: '#E6F0FF',
     iconColor: '#2563eb',
     viewLink: '/customers',
@@ -149,7 +127,7 @@ const statsTable = computed(() => [
     label: 'Total Returns',
     value: 0,
     trend: 0,
-    icon: RotateCcw,
+    icon: ArrowPathIcon,
     iconBg: '#FDEDEE',
     iconColor: '#dc2626',
     viewLink: '/returns',
@@ -162,7 +140,7 @@ const statsTable = computed(() => [
     label: 'Total Expenses',
     value: 0,
     trend: 0,
-    icon: Wallet,
+    icon: WalletIcon,
     iconBg: '#FFF7E6',
     iconColor: '#f59e0b',
     viewLink: '/expenses',
@@ -175,7 +153,7 @@ const statsTable = computed(() => [
 const topStats = computed(() => [
   {
     id: 1,
-    icon: Package,
+    icon: CubeIcon,
     label: 'Total products',
     value: productStore.totalProducts,
     bgColor: "#006879",
@@ -183,7 +161,7 @@ const topStats = computed(() => [
   },
   {
     id: 2,
-    icon: DollarSign,
+    icon: CurrencyDollarIcon,
     label: 'Stock Value',
     value: totalProductsValue.value,
     bgColor: "#3E4565",
@@ -191,7 +169,7 @@ const topStats = computed(() => [
   },
   {
     id: 3,
-    icon: DollarSign,
+    icon: CurrencyDollarIcon,
     label: 'Total Sales',
     value: statisticStore.topProducts.sales?.total || 0,
     bgColor: "#565D7E",
@@ -200,7 +178,7 @@ const topStats = computed(() => [
   },
   {
     id: 4,
-    icon: RotateCcw,
+    icon: ArrowPathIcon,
     label: 'Total Purchase',
     value: 0, // À connecter au store achat si dispo
     bgColor: "#BA1A1A",

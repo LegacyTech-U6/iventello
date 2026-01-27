@@ -13,40 +13,41 @@
               <button @click="viewMode = 'grid'"
                 :class="viewMode === 'grid' ? 'bg-gray-100 text-blue-600' : 'text-gray-500'"
                 class="p-1.5 rounded-md transition-all">
-                <LayoutGrid :size="18" />
+                <Squares2X2Icon class="w-5 h-5" />
               </button>
               <button @click="viewMode = 'list'"
                 :class="viewMode === 'list' ? 'bg-gray-100 text-blue-600' : 'text-gray-500'"
                 class="p-1.5 rounded-md transition-all">
-                <List :size="18" />
+                <ListBulletIcon class="w-5 h-5" />
               </button>
             </div>
 
             <button @click="productStore.exportProducts()" :disabled="productStore.loading"
               class="flex-shrink-0 p-2 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium">
-              <Download :size="18" :class="{ 'animate-bounce': productStore.loading }" />
+              <ArrowDownTrayIcon class="w-5 h-5" :class="{ 'animate-bounce': productStore.loading }" />
               <span class="hidden sm:inline">Export</span>
             </button>
 
             <button @click="isImportModalOpen = true"
               class="flex-shrink-0 p-2 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium">
-              <Upload :size="18" />
+              <ArrowUpTrayIcon class="w-5 h-5" />
               <span class="hidden sm:inline">Import</span>
             </button>
 
             <button @click="handleAddProduct"
               class="flex-shrink-0 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg shadow-sm shadow-green-200 transition-all flex items-center gap-2">
-              <Plus :size="20" />
+              <PlusIcon class="w-5 h-5" />
               <span>Ajouter</span>
             </button>
           </div>
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <GridCard title="Total Produits" :value="productStore.totalProducts || 0" :icon="Package" bgColor="#0f172a" />
-          <GridCard title="En Stock" :value="inStockCount" :icon="CheckCircle2" bgColor="#16a34a" />
-          <GridCard title="Stock Faible" :value="lowStockCount" :icon="AlertTriangle" bgColor="#ea580c" />
-          <GridCard title="Catégories" :value="categories.length" :icon="Layers" bgColor="#2563eb" />
+          <GridCard title="Total Produits" :value="productStore.totalProducts || 0" :icon="CubeIcon"
+            bgColor="#0f172a" />
+          <GridCard title="En Stock" :value="inStockCount" :icon="CheckCircleIcon" bgColor="#16a34a" />
+          <GridCard title="Stock Faible" :value="lowStockCount" :icon="ExclamationTriangleIcon" bgColor="#ea580c" />
+          <GridCard title="Catégories" :value="categories.length" :icon="Square3Stack3DIcon" bgColor="#2563eb" />
         </div>
       </div>
     </div>
@@ -54,7 +55,7 @@
     <div class="px-4 py-4 sm:px-8 bg-white border-b border-gray-200 shadow-sm">
       <div class="flex flex-col lg:flex-row gap-3">
         <div class="relative flex-1">
-          <Search class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input v-model="searchQuery" type="text" placeholder="Rechercher un produit ou code-barres..."
             class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
         </div>
@@ -76,7 +77,7 @@
 
           <button v-if="searchQuery || selectedCategory || selectedStock" @click="clearFilters"
             class="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-colors">
-            <X :size="20" />
+            <XMarkIcon class="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -84,14 +85,14 @@
 
     <div class="px-4 py-6 sm:px-8">
       <div v-if="loading" class="flex flex-col justify-center items-center py-32 gap-4">
-        <Loader2 class="w-10 h-10 text-green-600 animate-spin" />
+        <ArrowPathIcon class="w-10 h-10 text-green-600 animate-spin" />
         <p class="text-gray-500 animate-pulse">Chargement de l'inventaire...</p>
       </div>
 
       <div v-else-if="filteredProducts.length === 0"
         class="bg-white border-2 border-dashed border-gray-200 rounded-3xl py-20 px-6 text-center">
         <div class="w-20 h-20 bg-gray-50 rounded-full mx-auto mb-4 flex items-center justify-center">
-          <SearchX :size="40" class="text-gray-300" />
+          <MagnifyingGlassMinusIcon class="w-10 h-10 text-gray-300" />
         </div>
         <h3 class="text-lg font-bold text-gray-900 mb-1">Aucun produit trouvé</h3>
         <p class="text-gray-500 mb-6 max-w-xs mx-auto text-sm">Essayez de modifier vos filtres ou le terme de recherche.
@@ -108,25 +109,28 @@
       </div>
 
       <div v-else class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-  <div class="overflow-x-auto">
-    <table class="w-full text-left border-collapse">
-      <thead class="bg-gray-50 border-b border-gray-200 hidden sm:table-header-group">
-        <tr class="flex items-center gap-3 sm:gap-4 px-4 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-          <th class="w-10 sm:w-12 border-none"></th> <th class="flex-1 border-none text-left">Produit</th>
-          <th class="w-32 hidden sm:block border-none text-left">Catégorie</th>
-          <th class="w-32 hidden md:block border-none text-left">Code-barres</th>
-          <th class="w-16 sm:w-24 border-none text-center">Stock</th>
-          <th class="w-24 sm:w-32 border-none text-right">P. Achat</th>
-          <th class="w-24 sm:w-32 border-none text-right">P. Vente</th>
-          <th class="w-8 sm:w-12 border-none"></th> </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-100 block sm:table-row-group">
-        <ProductListItem v-for="product in filteredProducts" :key="product.id" :product="product"
-          :display-mode="viewMode" @view="handleViewProduct" />
-      </tbody>
-    </table>
-  </div>
-</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-50 border-b border-gray-200 hidden sm:table-header-group">
+              <tr
+                class="flex items-center gap-3 sm:gap-4 px-4 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                <th class="w-10 sm:w-12 border-none"></th>
+                <th class="flex-1 border-none text-left">Produit</th>
+                <th class="w-32 hidden sm:block border-none text-left">Catégorie</th>
+                <th class="w-32 hidden md:block border-none text-left">Code-barres</th>
+                <th class="w-16 sm:w-24 border-none text-center">Stock</th>
+                <th class="w-24 sm:w-32 border-none text-right">P. Achat</th>
+                <th class="w-24 sm:w-32 border-none text-right">P. Vente</th>
+                <th class="w-8 sm:w-12 border-none"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 block sm:table-row-group">
+              <ProductListItem v-for="product in filteredProducts" :key="product.id" :product="product"
+                :display-mode="viewMode" @view="handleViewProduct" />
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <ValidationModal />
@@ -138,7 +142,7 @@
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
           <h3 class="text-lg font-bold text-gray-800">Importer des produits</h3>
           <button @click="isImportModalOpen = false" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <X :size="20" />
+            <XMarkIcon class="w-5 h-5" />
           </button>
         </div>
         <div class="p-6">
@@ -151,10 +155,10 @@
 
 <script setup>
 import {
-  LayoutGrid, List, Download, Upload, Plus,
-  Package, CheckCircle2, AlertTriangle, Layers,
-  Search, X, Loader2, SearchX
-} from 'lucide-vue-next'
+  Squares2X2Icon, ListBulletIcon, ArrowDownTrayIcon, ArrowUpTrayIcon, PlusIcon,
+  CubeIcon, CheckCircleIcon, ExclamationTriangleIcon, Square3Stack3DIcon,
+  MagnifyingGlassIcon, XMarkIcon, ArrowPathIcon, MagnifyingGlassMinusIcon
+} from '@heroicons/vue/24/outline'
 /**
  * ProductView.vue - Script Setup
  * 

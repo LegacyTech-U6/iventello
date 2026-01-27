@@ -6,7 +6,7 @@
           <div class="flex-1 min-w-0 flex items-center gap-5">
             <button @click="isEditing ? cancelEdit() : goBack()"
               class="flex items-center justify-center text-gray-400 hover:text-indigo-600 transition-all p-2 -ml-2 rounded-full hover:bg-indigo-50">
-              <ChevronLeft :size="20" />
+              <ChevronLeftIcon class="w-5 h-5" />
             </button>
 
             <div class="max-w-xs sm:max-w-md">
@@ -23,11 +23,13 @@
 
           <div class="flex gap-2 items-center">
             <template v-if="!isEditing">
-              <validation-button text="Modifier" :loading="saving" color="primary" size="medium" :icon="Pencil" @click="handleEdit" />
+              <validation-button text="Modifier" :loading="saving" color="primary" size="medium" :icon="PencilIcon"
+                @click="handleEdit" />
             </template>
             <template v-else>
-              <validation-button text="Enregistrer" :loading="saving" color="success" size="medium" :icon="Save" @click="handleSaveEdit" />
-              <validation-button text="Annuler" color="default" size="medium" :icon="X" @click="cancelEdit" />
+              <validation-button text="Enregistrer" :loading="saving" color="success" size="medium" :icon="SaveIcon"
+                @click="handleSaveEdit" />
+              <validation-button text="Annuler" color="default" size="medium" :icon="XMarkIcon" @click="cancelEdit" />
             </template>
           </div>
         </div>
@@ -37,15 +39,16 @@
     <div class="flex-1 overflow-y-auto">
       <div class="mx-auto px-5 py-5 max-w-8xl">
         <div v-if="loading" class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-          <Loader2 class="animate-spin mx-auto text-indigo-500 mb-4" :size="40" />
+          <Loader2Icon class="animate-spin mx-auto text-indigo-500 mb-4 w-10 h-10" />
           <p class="text-gray-500 font-medium">Chargement des données...</p>
         </div>
 
         <div v-else-if="!product" class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-          <PackageX class="mx-auto text-gray-300 mb-4" :size="60" />
+          <PackageXIcon class="mx-auto text-gray-300 mb-4 w-16 h-16" />
           <h3 class="text-lg font-bold text-gray-900 mb-2">Produit introuvable</h3>
-          <button @click="goBack" class="mt-4 px-4 py-2 bg-gray-900 text-white rounded-lg flex items-center gap-2 mx-auto text-sm">
-            <ArrowLeft :size="16" /> Retour à l'inventaire
+          <button @click="goBack"
+            class="mt-4 px-4 py-2 bg-gray-900 text-white rounded-lg flex items-center gap-2 mx-auto text-sm">
+            <ArrowLeftIcon class="w-4 h-4" /> Retour à l'inventaire
           </button>
         </div>
 
@@ -53,62 +56,81 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
               <div>
-                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Stock Actuel</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Stock
+                  Actuel</span>
                 <div v-if="isEditing">
-                  <input v-model.number="editForm.quantity" type="number" class="w-20 font-bold border-b border-indigo-300 focus:outline-none focus:border-indigo-600" />
+                  <input v-model.number="editForm.quantity" type="number"
+                    class="w-20 font-bold border-b border-indigo-300 focus:outline-none focus:border-indigo-600" />
                 </div>
                 <span v-else class="text-lg font-bold text-gray-900">{{ product.quantity }}</span>
               </div>
-              <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600"><Package :size="20" /></div>
+              <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                <CubeIcon class="w-5 h-5" />
+              </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
               <div>
-                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Alerte Stock</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Alerte
+                  Stock</span>
                 <div v-if="isEditing">
-                  <input v-model.number="editForm.min_stock_level" type="number" class="w-20 font-bold border-b border-red-300 focus:outline-none" />
+                  <input v-model.number="editForm.min_stock_level" type="number"
+                    class="w-20 font-bold border-b border-red-300 focus:outline-none" />
                 </div>
                 <span v-else class="text-lg font-bold text-red-600">{{ product.min_stock_level }}</span>
               </div>
-              <div class="p-2 bg-red-50 rounded-lg text-red-600"><AlertTriangle :size="20" /></div>
+              <div class="p-2 bg-red-50 rounded-lg text-red-600">
+                <ExclamationTriangleIcon class="w-5 h-5" />
+              </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
               <div>
-                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Prix de Vente</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Prix de
+                  Vente</span>
                 <div v-if="isEditing">
-                  <input v-model.number="editForm.selling_price" type="number" step="0.01" class="w-24 font-bold border-b border-green-300 focus:outline-none" />
+                  <input v-model.number="editForm.selling_price" type="number" step="0.01"
+                    class="w-24 font-bold border-b border-green-300 focus:outline-none" />
                 </div>
                 <span v-else class="text-lg font-bold text-green-600">{{ format(product.selling_price) }}</span>
               </div>
-              <div class="p-2 bg-green-50 rounded-lg text-green-600"><Tag :size="20" /></div>
+              <div class="p-2 bg-green-50 rounded-lg text-green-600">
+                <TagIcon class="w-5 h-5" />
+              </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
               <div>
-                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Prix d'Achat</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Prix
+                  d'Achat</span>
                 <div v-if="isEditing">
-                  <input v-model.number="editForm.cost_price" type="number" step="0.01" class="w-24 font-bold border-b border-amber-300 focus:outline-none" />
+                  <input v-model.number="editForm.cost_price" type="number" step="0.01"
+                    class="w-24 font-bold border-b border-amber-300 focus:outline-none" />
                 </div>
                 <span v-else class="text-lg font-bold text-gray-900">{{ format(product.cost_price) }}</span>
               </div>
-              <div class="p-2 bg-amber-50 rounded-lg text-amber-600"><TrendingDown :size="20" /></div>
+              <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
+                <ArrowTrendingDownIcon class="w-5 h-5" />
+              </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-1">
               <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-20">
-                <div class="aspect-square rounded-xl mb-4 flex items-center justify-center overflow-hidden border border-gray-100 bg-gray-50 group">
-                  <img :src="isEditing ? editForm.Prod_image : product.Prod_image" 
-                       class="w-full h-full object-contain p-4 transition-transform group-hover:scale-105" />
+                <div
+                  class="aspect-square rounded-xl mb-4 flex items-center justify-center overflow-hidden border border-gray-100 bg-gray-50 group">
+                  <img :src="isEditing ? editForm.Prod_image : product.Prod_image"
+                    class="w-full h-full object-contain p-4 transition-transform group-hover:scale-105" />
                 </div>
 
                 <div v-if="isEditing" class="space-y-3">
                   <label class="block text-xs font-bold text-gray-500 uppercase">URL de l'image</label>
                   <div class="relative">
-                    <input v-model="editForm.Prod_image" type="url" class="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://..." />
-                    <Link :size="14" class="absolute left-2.5 top-2.5 text-gray-400" />
+                    <input v-model="editForm.Prod_image" type="url"
+                      class="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                      placeholder="https://..." />
+                    <LinkIcon class="absolute left-2.5 top-2.5 text-gray-400 w-4 h-4" />
                   </div>
                 </div>
 
@@ -116,8 +138,9 @@
                   <div class="aspect-square bg-indigo-50 rounded-lg border-2 border-indigo-500 p-1">
                     <img :src="product.Prod_image" class="w-full h-full object-cover rounded-md" />
                   </div>
-                  <div v-for="i in 3" :key="i" class="aspect-square bg-gray-50 rounded-lg border border-dashed border-gray-200 flex items-center justify-center text-gray-300">
-                    <Camera :size="18" />
+                  <div v-for="i in 3" :key="i"
+                    class="aspect-square bg-gray-50 rounded-lg border border-dashed border-gray-200 flex items-center justify-center text-gray-300">
+                    <CameraIcon class="w-5 h-5" />
                   </div>
                 </div>
               </div>
@@ -126,21 +149,24 @@
             <div class="lg:col-span-2 space-y-6">
               <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <h2 class="text-sm font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  <FileText class="text-indigo-500" :size="18" /> Information Générale
+                  <DocumentTextIcon class="text-indigo-500 w-5 h-5" /> Information Générale
                 </h2>
 
                 <div v-if="isEditing" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div class="space-y-1">
                     <label class="text-xs font-bold text-gray-500 uppercase">Nom du Produit</label>
-                    <input v-model="editForm.Prod_name" type="text" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                    <input v-model="editForm.Prod_name" type="text"
+                      class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                   </div>
                   <div class="space-y-1">
                     <label class="text-xs font-bold text-gray-500 uppercase">Code Barre / SKU</label>
-                    <input v-model="editForm.code_bar" type="text" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                    <input v-model="editForm.code_bar" type="text"
+                      class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                   </div>
                   <div class="sm:col-span-2 space-y-1">
                     <label class="text-xs font-bold text-gray-500 uppercase">Description</label>
-                    <textarea v-model="editForm.Prod_Description" rows="4" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
+                    <textarea v-model="editForm.Prod_Description" rows="4"
+                      class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
                   </div>
                 </div>
 
@@ -162,8 +188,9 @@
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-indigo-600 rounded-xl p-5 text-white shadow-lg shadow-indigo-200">
-                  <div class="flex items-center gap-3 mb-4 text-indigo-100 uppercase tracking-widest text-[10px] font-bold">
-                    <PieChart :size="16" /> Valorisation du stock
+                  <div
+                    class="flex items-center gap-3 mb-4 text-indigo-100 uppercase tracking-widest text-[10px] font-bold">
+                    <ChartPieIcon class="w-4 h-4" /> Valorisation du stock
                   </div>
                   <div class="space-y-4">
                     <div>
@@ -178,20 +205,24 @@
                 </div>
 
                 <div class="grid grid-rows-2 gap-4">
-                  <button @click="handleRestock" class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-indigo-500 hover:shadow-sm transition-all group">
+                  <button @click="handleRestock"
+                    class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-indigo-500 hover:shadow-sm transition-all group">
                     <div class="flex items-center gap-3">
-                      <span class="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                        <Truck :size="18" />
+                      <span
+                        class="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <TruckIcon class="w-5 h-5" />
                       </span>
                       <span class="font-bold text-gray-700 text-xs">Réapprovisionner</span>
                     </div>
                     <ChevronRight :size="16" class="text-gray-300" />
                   </button>
 
-                  <button class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-indigo-500 hover:shadow-sm transition-all group">
+                  <button
+                    class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:border-indigo-500 hover:shadow-sm transition-all group">
                     <div class="flex items-center gap-3">
-                      <span class="p-2 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                        <QrCode :size="18" />
+                      <span
+                        class="p-2 bg-gray-50 text-gray-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <QrCodeIcon class="w-5 h-5" />
                       </span>
                       <span class="font-bold text-gray-700 text-xs">Imprimer Étiquettes</span>
                     </div>
@@ -210,11 +241,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { 
-  ChevronLeft, ChevronRight, Pencil, Save, X, Loader2, Package, 
-  PackageX, AlertTriangle, Tag, TrendingDown, Camera, Link, 
-  FileText, PieChart, Truck, QrCode, ArrowLeft 
-} from 'lucide-vue-next'
+import {
+  ChevronLeftIcon, ChevronRightIcon, PencilIcon, CheckIcon as SaveIcon, XMarkIcon, ArrowPathIcon as Loader2Icon, CubeIcon,
+  ArchiveBoxXMarkIcon as PackageXIcon, ExclamationTriangleIcon, TagIcon, ArrowTrendingDownIcon, CameraIcon, LinkIcon,
+  DocumentTextIcon, ChartPieIcon, TruckIcon, QrCodeIcon, ArrowLeftIcon
+} from '@heroicons/vue/24/outline'
 import { getOneProduct as fetchProductById } from '@/service/api'
 import { useActionMessage } from '@/composable/useActionMessage'
 import { useCurrency } from '@/composable/useCurrency'
@@ -263,7 +294,7 @@ onMounted(async () => {
   try {
     const response = await fetchProductById(id)
     const data = response?.data?.[0] || response?.data || response
-    
+
     if (data) {
       product.value = {
         ...data,
@@ -309,7 +340,7 @@ const handleSaveEdit = async () => {
 }
 
 const handleRestock = () => {
-  router.push({ name: 'restock', params: { reStockId: product.value?.id }})
+  router.push({ name: 'restock', params: { reStockId: product.value?.id } })
 }
 </script>
 
@@ -317,6 +348,7 @@ const handleRestock = () => {
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

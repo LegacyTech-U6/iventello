@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div class="flex space-x-2">
-        <span class="material-symbols-rounded">swap_horiz</span>
+        <ArrowsRightLeftIcon class="w-6 h-6 text-gray-400" />
 
         <h1 class="text-2xl font-bold text-gray-900">Transactions</h1>
       </div>
@@ -12,20 +12,15 @@
     <!-- Filters Bar -->
     <div class="flex items-center gap-3 bg-white p-4 rounded-lg shadow-sm">
       <div class="flex-1 relative">
-        <span class="material-symbols-rounded  absolute left-3 top-1/2 transform -translate-y-1/2">
-          search
-        </span>
+        <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <input v-model="search" type="text" placeholder="Search Transactions"
           class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
       </div>
 
-      
+
       <button
         class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
+        <CalendarIcon class="w-4 h-4" />
         This Month <span class="text-gray-400">01/10/2025 - 31/10/2025</span>
       </button>
     </div>
@@ -132,6 +127,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
+import { ArrowsRightLeftIcon, MagnifyingGlassIcon, CalendarIcon } from '@heroicons/vue/24/outline'
 import { useActivityStore } from '@/stores/activityStore'
 import { useCurrency } from '@/composable/useCurrency'
 import multitasking from '@/assets/image/multitasking.png'

@@ -1,19 +1,14 @@
 <template>
   <div class="bg-white rounded-lg">
     <!-- Zone de Drop / Sélection -->
-    <div 
-      class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors"
-      :class="{ 'border-blue-500 bg-blue-50': isDragging }"
-      @dragover.prevent="isDragging = true"
-      @dragleave.prevent="isDragging = false"
-      @drop.prevent="handleDrop"
-    >
+    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors"
+      :class="{ 'border-blue-500 bg-blue-50': isDragging }" @dragover.prevent="isDragging = true"
+      @dragleave.prevent="isDragging = false" @drop.prevent="handleDrop">
       <div v-if="!importStore.file">
-        <span class="material-symbols-rounded text-4xl text-gray-400 mb-3">
-          upload_file
-        </span>
+        <DocumentArrowUpIcon class="w-12 h-12 text-gray-400 mb-3 mx-auto" />
         <p class="text-gray-600 mb-4">Glissez votre fichier Excel ici ou</p>
-        <label class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors inline-block">
+        <label
+          class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors inline-block">
           Choisir un fichier
           <input type="file" class="hidden" accept=".xlsx" @change="handleFileSelect">
         </label>
@@ -21,9 +16,7 @@
       </div>
 
       <div v-else class="flex flex-col items-center">
-        <span class="material-symbols-rounded text-4xl text-green-500 mb-2">
-          description
-        </span>
+        <DocumentIcon class="w-12 h-12 text-green-500 mb-2" />
         <p class="font-medium text-gray-800">{{ importStore.file.name }}</p>
         <p class="text-sm text-gray-500 mb-4">{{ formatSize(importStore.file.size) }}</p>
         <button @click="importStore.reset()" class="text-red-500 text-sm hover:underline">
@@ -33,13 +26,15 @@
     </div>
 
     <!-- Messages d'état -->
-    <div v-if="importStore.error" class="mt-4 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200 flex items-center gap-2">
-      <span class="material-symbols-rounded">error</span>
+    <div v-if="importStore.error"
+      class="mt-4 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200 flex items-center gap-2">
+      <ExclamationCircleIcon class="w-5 h-5" />
       {{ importStore.error }}
     </div>
 
-    <div v-if="importStore.success" class="mt-4 p-3 bg-green-50 text-green-700 rounded-lg border border-green-200 flex items-center gap-2">
-      <span class="material-symbols-rounded">check_circle</span>
+    <div v-if="importStore.success"
+      class="mt-4 p-3 bg-green-50 text-green-700 rounded-lg border border-green-200 flex items-center gap-2">
+      <CheckCircleIcon class="w-5 h-5" />
       {{ importStore.success }}
     </div>
 
@@ -74,19 +69,14 @@
 
     <!-- Actions -->
     <div class="mt-6 flex justify-end gap-3">
-      <button 
-        @click="$emit('close')" 
-        class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-      >
+      <button @click="$emit('close')" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
         Annuler
       </button>
-      <button 
-        @click="handleUpload"
-        :disabled="!importStore.file || importStore.loading || !!importStore.success"
-        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <span v-if="importStore.loading" class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-        <span v-else class="material-symbols-rounded text-lg">cloud_upload</span>
+      <button @click="handleUpload" :disabled="!importStore.file || importStore.loading || !!importStore.success"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        <span v-if="importStore.loading"
+          class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+        <CloudArrowUpIcon v-else class="w-5 h-5" />
         {{ importStore.loading ? 'Importation...' : 'Importer' }}
       </button>
     </div>
@@ -95,6 +85,13 @@
 
 <script setup>
 import { ref, onUnmounted } from 'vue'
+import {
+  DocumentArrowUpIcon,
+  DocumentIcon,
+  ExclamationCircleIcon,
+  CheckCircleIcon,
+  CloudArrowUpIcon
+} from '@heroicons/vue/24/outline'
 import { useProductImportStore } from '@/stores/productImportStore'
 
 const emit = defineEmits(['close', 'imported'])
@@ -119,7 +116,7 @@ const handleDrop = (event) => {
 
 const processFile = (file) => {
   if (!file) return
-  
+
   // Validation extension
   if (!file.name.endsWith('.xlsx')) {
     importStore.error = "Format de fichier invalide. Veuillez utiliser un fichier .xlsx"

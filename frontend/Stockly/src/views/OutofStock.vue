@@ -7,45 +7,36 @@
           <h1 class="text-2xl font-semibold text-on-surface">Out of Stock Products</h1>
           <p class="text-sm text-on-surface-variant mt-1">Manage inventory shortages and potential lost revenue.</p>
         </div>
-        <button
-          class="btn-primary px-5 py-2.5 rounded-full text-sm flex items-center gap-2 elevation-1 mt-4 md:mt-0"
-        >
-          <PackagePlus class="w-4 h-4" />
+        <button class="btn-primary px-5 py-2.5 rounded-full text-sm flex items-center gap-2 elevation-1 mt-4 md:mt-0">
+          <ArchiveBoxArrowDownIcon class="w-4 h-4" />
           Restock Selected
         </button>
       </div>
 
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <GridCard title="Out of Stock" :value="outOfStockProducts?.length || 0" :icon="PackageX" bgColor="bg-error" />
-        <GridCard title="Lost Revenue" :value="'$' + formatNumber(totalLostRevenue)" :icon="DollarSign" bgColor="bg-secondary" />
-        <GridCard title="Avg Days Empty" :value="Math.round(averageDaysEmpty)" :icon="History" bgColor="bg-tertiary" />
-        <GridCard title="High Value Items" :value="highValueCount" :icon="Gem" bgColor="bg-primary" />
+        <GridCard title="Out of Stock" :value="outOfStockProducts?.length || 0" :icon="ArchiveBoxXMarkIcon"
+          bgColor="bg-error" />
+        <GridCard title="Lost Revenue" :value="'$' + formatNumber(totalLostRevenue)" :icon="CurrencyDollarIcon"
+          bgColor="bg-secondary" />
+        <GridCard title="Avg Days Empty" :value="Math.round(averageDaysEmpty)" :icon="ClockIcon"
+          bgColor="bg-tertiary" />
+        <GridCard title="High Value Items" :value="highValueCount" :icon="SparklesIcon" bgColor="bg-primary" />
       </div>
 
       <!-- Search and Filters -->
       <div class="card p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="md:col-span-1 relative flex items-center w-full">
-            <Search class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search products by name or SKU..."
-              class="input-field w-full pl-12 pr-4 py-3 text-base rounded-xl"
-            />
+            <MagnifyingGlassIcon class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
+            <input v-model="searchQuery" type="text" placeholder="Search products by name or SKU..."
+              class="input-field w-full pl-12 pr-4 py-3 text-base rounded-xl" />
           </div>
-          <select
-            v-model="selectedCategory"
-            class="input-field w-full px-4 py-3 text-base rounded-xl"
-          >
+          <select v-model="selectedCategory" class="input-field w-full px-4 py-3 text-base rounded-xl">
             <option value="all">All Categories</option>
             <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
           </select>
-          <select
-            v-model="sortBy"
-            class="input-field w-full px-4 py-3 text-base rounded-xl"
-          >
+          <select v-model="sortBy" class="input-field w-full px-4 py-3 text-base rounded-xl">
             <option value="daysEmpty">Days Empty</option>
             <option value="lostRevenue">Lost Revenue</option>
             <option value="unitPrice">Unit Price</option>
@@ -55,17 +46,13 @@
 
       <!-- Products Grid -->
       <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <OutOfStockCard
-          v-for="product in filteredProducts"
-          :key="product.id"
-          :product="product"
-          @restock="handleRestock"
-        />
+        <OutOfStockCard v-for="product in filteredProducts" :key="product.id" :product="product"
+          @restock="handleRestock" />
       </div>
 
       <!-- Empty State -->
       <div v-if="filteredProducts.length === 0" class="card text-center p-16 mt-6">
-        <PartyPopper class="mx-auto mb-4 w-16 h-16 text-tertiary" />
+        <PartyPopperIcon class="mx-auto mb-4 w-16 h-16 text-tertiary" />
         <h3 class="card-title text-xl mb-2">All Stocked Up!</h3>
         <p class="card-subtitle">No out-of-stock products found. Great inventory management!</p>
       </div>
@@ -90,15 +77,15 @@ import { OutOfStock } from '@/service/api'
 import GridCard from '@/components/ui/cards/GridCard.vue'
 import OutOfStockCard from '@/components/OutOfStockCard.vue'
 import {
-  PackagePlus,
-  PackageX,
-  DollarSign,
-  History,
-  Gem,
-  Search,
-  PartyPopper,
-  CheckCircle2
-} from 'lucide-vue-next'
+  ArchiveBoxArrowDownIcon,
+  ArchiveBoxXMarkIcon,
+  CurrencyDollarIcon,
+  ClockIcon,
+  SparklesIcon,
+  MagnifyingGlassIcon,
+  SparklesIcon as PartyPopperIcon,
+  CheckCircleIcon
+} from '@heroicons/vue/24/outline'
 import { useRoute, useRouter } from 'vue-router'
 import { useActionMessage } from '@/composable/useActionMessage'
 
@@ -240,15 +227,15 @@ const filteredProducts = computed(() => {
       case 'daysEmpty':
         // Trie par nombre de jours (du plus ancien au plus récent)
         return (b.daysEmpty || 0) - (a.daysEmpty || 0)
-      
+
       case 'lostRevenue':
         // Trie par revenu perdu (du plus important au moins important)
         return (b.lostRevenue || 0) - (a.lostRevenue || 0)
-      
+
       case 'unitPrice':
         // Trie par prix de vente (du plus cher au moins cher)
         return (b.selling_price || 0) - (a.selling_price || 0)
-      
+
       default:
         return 0
     }

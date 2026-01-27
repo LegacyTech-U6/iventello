@@ -3,7 +3,7 @@
     <div class="max-w-8xl mx-auto">
       <!-- Header -->
       <div class="mb-6">
-       
+
         <p class="text-gray-600 mt-1">View and analyze your daily sales performance</p>
       </div>
 
@@ -12,22 +12,15 @@
         <div class="flex flex-wrap items-center gap-3">
           <div class="flex items-center gap-2">
             <label class="text-sm font-medium text-gray-700">Date:</label>
-            <input
-              type="date"
-              v-model="selectedDate"
-              class="border border-gray-300 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+            <input type="date" v-model="selectedDate"
+              class="border border-gray-300 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
           </div>
-          <button
-            @click="filterByDate"
-            class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
-          >
+          <button @click="filterByDate"
+            class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
             Apply Filter
           </button>
-          <button
-            @click="resetFilter"
-            class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition"
-          >
+          <button @click="resetFilter"
+            class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition">
             Reset
           </button>
           <div class="ml-auto text-sm text-gray-600">
@@ -44,19 +37,7 @@
       <!-- Reports Table -->
       <div v-else class="bg-white rounded-lg shadow-sm overflow-hidden">
         <div v-if="filteredReports.length === 0" class="text-center py-12">
-          <svg
-            class="mx-auto h-12 w-12 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
+          <DocumentMagnifyingGlassIcon class="mx-auto h-12 w-12 text-gray-400" />
           <h3 class="mt-2 text-sm font-medium text-gray-900">No reports found</h3>
           <p class="mt-1 text-sm text-gray-500">Try adjusting your filters</p>
         </div>
@@ -64,45 +45,29 @@
         <table v-else class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Date
               </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Transactions
               </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Items Sold
               </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Total Sales
               </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Avg Sale
               </th>
-              <th
-                class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="report in filteredReports"
-              :key="report.id"
-              class="hover:bg-gray-50 transition cursor-pointer"
-              @click="openDetail(report)"
-            >
+            <tr v-for="report in filteredReports" :key="report.id" class="hover:bg-gray-50 transition cursor-pointer"
+              @click="openDetail(report)">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900">
                   {{ formatDisplayDate(report.date) }}
@@ -154,11 +119,7 @@
     </div>
 
     <!-- Detail Modal -->
-    <SalesReportDetailModal
-      v-if="selectedReport"
-      :report="selectedReport"
-      @close="selectedReport = null"
-    />
+    <SalesReportDetailModal v-if="selectedReport" :report="selectedReport" @close="selectedReport = null" />
   </div>
 </template>
 
@@ -168,7 +129,7 @@ import { useActivityStore } from '@/stores/activityStore'
 import SalesReportDetailModal from '@/components/reports/SalesReportDetailModal.vue'
 import { useCurrency } from '@/composable/useCurrency'
 
-const {format} = useCurrency()
+const { format } = useCurrency()
 const activityStore = useActivityStore()
 const reports = ref([])
 const filteredReports = ref([])
@@ -250,6 +211,7 @@ const openDetail = (report) => {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

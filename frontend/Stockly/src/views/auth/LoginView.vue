@@ -39,8 +39,8 @@
             <!-- Icone oeil -->
             <button type="button" @click="showPassword = !showPassword"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-              <Eye v-if="!showPassword" class="w-5 h-5" />
-              <EyeOff v-else class="w-5 h-5" />
+              <EyeIcon v-if="!showPassword" class="w-5 h-5" />
+              <EyeSlashIcon v-else class="w-5 h-5" />
             </button>
 
           </div>
@@ -57,10 +57,8 @@
           {{ loginError }}
         </div>
         <div class=" justify-center">
-          <ValidationButton
-            
-            text="Sign in" width="100%"  loadingText="Signing in" color="#0C333B" variant="flat" :icon="Check" size="large" :asyncClick="handleLogin"
-            :loading="isLoading" />
+          <ValidationButton text="Sign in" width="100%" loadingText="Signing in" color="#0C333B" variant="flat"
+            :icon="CheckIcon" size="large" :asyncClick="handleLogin" :loading="isLoading" />
         </div>
         <!-- Links -->
         <p class="text-center text-sm text-gray-700">
@@ -82,7 +80,7 @@ import { useHead } from '@unhead/vue'
 import { useAuthStore } from "@/stores/authStore";
 import Iventello from "@/assets/iventello.png";
 import IventelloPlatform from "@/assets/image/IventelloPlatform.png";
-import { Eye, EyeOff, Check } from "lucide-vue-next"
+import { EyeIcon, EyeSlashIcon, CheckIcon } from "@heroicons/vue/24/outline"
 import image from "@/assets/image/IventelloPlatform.png"
 import ValidationButton from "@/components/ui/buttons/ValidationButton.vue";
 const authStore = useAuthStore();

@@ -16,17 +16,9 @@
         <div class="flex items-center justify-between">
           <div class="p-1 flex items-center gap-1">
             <!-- Bouton supprimer l'article -->
-            <button
-              @click="$emit('remove-item', item.id)"
-              class="text-red-500 hover:text-red-700 w-6 h-6 flex items-center justify-center rounded transition-colors"
-            >
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fill-rule="evenodd"
-                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+            <button @click="$emit('remove-item', item.id)"
+              class="text-red-500 hover:text-red-700 w-6 h-6 flex items-center justify-center rounded transition-colors">
+              <TrashIcon class="w-4 h-4" />
             </button>
             <!-- Nom du produit -->
             <p class="font-medium text-gray-900 text-sm">{{ item.Prod_name }}</p>
@@ -35,10 +27,8 @@
           <!-- Contrôles de quantité -->
           <div class="flex">
             <!-- Bouton diminuer -->
-            <button
-              @click="decreaseQuantity"
-              class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded text-gray-600 hover:bg-gray-100"
-            >
+            <button @click="decreaseQuantity"
+              class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded text-gray-600 hover:bg-gray-100">
               <span class="text-sm font-bold">-</span>
             </button>
 
@@ -46,10 +36,8 @@
             <span class="text-sm text-gray-700 min-w-6 text-center">{{ item.quantity }}</span>
 
             <!-- Bouton augmenter -->
-            <button
-              @click="increaseQuantity"
-              class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded text-gray-600 hover:bg-gray-100"
-            >
+            <button @click="increaseQuantity"
+              class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded text-gray-600 hover:bg-gray-100">
               <span class="text-sm font-bold">+</span>
             </button>
           </div>
@@ -68,6 +56,7 @@
 </template>
 
 <script setup>
+import { TrashIcon } from '@heroicons/vue/20/solid'
 const props = defineProps({
   item: {
     type: Object,

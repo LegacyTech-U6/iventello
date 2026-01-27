@@ -103,7 +103,7 @@
 
 import { ref, computed, onMounted } from 'vue'
 
-/** Icônes lucide pour l'interface utilisateur */
+/** Icônes Heroicons pour l'interface utilisateur */
 import {
   UsersIcon,          // Icône affichage total employés
   UserIcon,           // Icône employés actifs (Mapping UserCheck -> UserIcon)

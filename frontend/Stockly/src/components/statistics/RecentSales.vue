@@ -12,26 +12,20 @@
     </div>
 
     <ul v-else class="divide-y divide-gray-100">
-      <li
-        v-for="(activity, index) in recentActivities"
-        :key="index"
-        class="flex justify-between items-center py-3"
-      >
+      <li v-for="(activity, index) in recentActivities" :key="index" class="flex justify-between items-center py-3">
         <div class="flex items-center space-x-3">
           <!-- 🔹 Petite icône selon le type -->
-          <div
-            :class="[
-              'w-10 h-10 rounded-full flex items-center justify-center',
-              activity.action === 'sale'
-                ? 'bg-green-100 text-green-600'
-                : activity.action === 'purchase'
-                  ? 'bg-blue-100 text-blue-600'
-                  : 'bg-yellow-100 text-yellow-600',
-            ]"
-          >
-            <ArrowUpRight v-if="activity.action === 'Vente'" class="w-5 h-5" />
-            <ArrowDownLeft v-else-if="activity.action === 'purchase'" class="w-5 h-5" />
-            <Bell v-else class="w-5 h-5" />
+          <div :class="[
+            'w-10 h-10 rounded-full flex items-center justify-center',
+            activity.action === 'sale'
+              ? 'bg-green-100 text-green-600'
+              : activity.action === 'purchase'
+                ? 'bg-blue-100 text-blue-600'
+                : 'bg-yellow-100 text-yellow-600',
+          ]">
+            <ArrowUpRightIcon v-if="activity.action === 'Vente'" class="w-5 h-5" />
+            <ArrowDownLeftIcon v-else-if="activity.action === 'purchase'" class="w-5 h-5" />
+            <BellIcon v-else class="w-5 h-5" />
           </div>
 
           <!-- 🔹 Détails -->
@@ -46,10 +40,7 @@
         </div>
 
         <!-- 🔹 Montant -->
-        <p
-          class="font-semibold"
-          :class="activity.type === 'sale' ? 'text-green-600' : 'text-blue-600'"
-        >
+        <p class="font-semibold" :class="activity.type === 'sale' ? 'text-green-600' : 'text-blue-600'">
           {{ activity.amount ? format(activity.amount) : '-' }}
         </p>
       </li>
@@ -61,12 +52,12 @@
 import { onMounted, computed } from 'vue'
 import { useActivityStore } from '@/stores/activityStore'
 import { storeToRefs } from 'pinia'
-import { ArrowUpRight, ArrowDownLeft, Bell } from 'lucide-vue-next'
+import { ArrowUpRightIcon, ArrowDownLeftIcon, BellIcon } from '@heroicons/vue/24/outline'
 const activityStore = useActivityStore()
 const { activities, loading } = storeToRefs(activityStore)
 import { useCurrency } from '@/composable/useCurrency'
 
-const {format} = useCurrency()
+const { format } = useCurrency()
 
 const loadActivities = async () => {
   await activityStore.fetchActivities()

@@ -9,22 +9,13 @@
           <p class="text-sm text-gray-500">Manage your customers</p>
         </div>
         <div class="flex gap-3 items-center">
-          <button
-            @click="handleRefresh"
-            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <span class="material-symbols-rounded">
-refresh
-</span>
+          <button @click="handleRefresh"
+            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+            <ArrowPathIcon class="w-5 h-5" />
           </button>
-          
-        
-            <ValidationButton 
-            color="#334A50"
-            :asyncClick="handleAddClient"
-            text="Add Customer"
-            icon="Plus"
-            />
+
+
+          <ValidationButton color="#334A50" :asyncClick="handleAddClient" text="Add Customer" :icon="PlusIcon" />
         </div>
       </div>
     </div>
@@ -33,22 +24,19 @@ refresh
       <!-- Search and Filter Toolbar - Intégré dans le header -->
       <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
         <div class="flex-1 relative">
-          <Search :size="20" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            v-model="search"
-            type="text"
-            placeholder="Search customers..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
-          />
+          <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input v-model="search" type="text" placeholder="Search customers..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
         </div>
-        
+
       </div>
     </div>
 
     <div class="px-4  py-6 flex flex-col gap-4">
 
       <!-- Loading State -->
-      <div v-if="loadingClients" class="flex justify-center items-center min-h-[400px] bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div v-if="loadingClients"
+        class="flex justify-center items-center min-h-[400px] bg-white rounded-lg border border-gray-200 shadow-sm">
         <div class="flex flex-col items-center gap-6">
           <n-spin size="large" />
         </div>
@@ -57,19 +45,13 @@ refresh
       <!-- Client Cards Grid -->
       <div v-else-if="filteredClients.length > 0">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          <ClientCard
-            v-for="client in paginatedClients"
-            :key="client.id"
-            :client="client"
-            @view="handleViewClient"
-            @edit="handleEditClient"
-            @delete="handleDeleteClient"
-          />
+          <ClientCard v-for="client in paginatedClients" :key="client.id" :client="client" @view="handleViewClient"
+            @edit="handleEditClient" @delete="handleDeleteClient" />
         </div>
 
         <!-- Pagination -->
-        
-        
+
+
       </div>
 
       <!-- Empty State -->
@@ -83,15 +65,13 @@ refresh
             <p class="text-sm text-gray-500 mb-6">
               {{ search ? 'Try adjusting your search terms' : 'Get started by adding your first customer' }}
             </p>
-            <button
-              v-if="!search"
-              @click="handleAddClient"
-              class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center gap-2 mx-auto transition-colors"
-            >
-              <Plus :size="20" />
+            <button v-if="!search" @click="handleAddClient"
+              class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center gap-2 mx-auto transition-colors">
+              <PlusIcon class="w-5 h-5" />
               Add Your First Customer
             </button>
-            <button v-else @click="search = ''" class="px-6 py-3 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg font-medium transition-colors">
+            <button v-else @click="search = ''"
+              class="px-6 py-3 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg font-medium transition-colors">
               Clear Search
             </button>
           </div>
@@ -100,28 +80,20 @@ refresh
     </div>
 
     <!-- Modals -->
-    <FromModal
-      :open="showModal"
-      :isEdit="isEditMode"
-      :clientData="selectedClient"
-      :loading="loading"
-      :error="error"
-      @close="handleCloseModal"
-      @submit="handleSubmit"
-    />
+    <FromModal :open="showModal" :isEdit="isEditMode" :clientData="selectedClient" :loading="loading" :error="error"
+      @close="handleCloseModal" @submit="handleSubmit" />
 
     <!-- Delete Modal -->
-    <div
-      v-if="showDeleteModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      @click.self="showDeleteModal = false"
-    >
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      @click.self="showDeleteModal = false">
       <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
         <div class="p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Delete Customer</h3>
           <div class="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg flex gap-3">
             <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              <path fill-rule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clip-rule="evenodd" />
             </svg>
             <p class="text-sm text-amber-800">This action cannot be undone</p>
           </div>
@@ -129,16 +101,12 @@ refresh
             Are you sure you want to delete <strong class="text-gray-900">{{ selectedClient?.client_name }}</strong>?
           </p>
           <div class="flex gap-3 justify-end">
-            <button
-              @click="showDeleteModal = false"
-              class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors"
-            >
+            <button @click="showDeleteModal = false"
+              class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors">
               Cancel
             </button>
-            <button
-              @click="confirmDelete"
-              class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors"
-            >
+            <button @click="confirmDelete"
+              class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors">
               Delete
             </button>
           </div>
@@ -150,7 +118,7 @@ refresh
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Search, Plus, Inbox, RefreshCw } from 'lucide-vue-next'
+import { MagnifyingGlassIcon, PlusIcon, ArrowPathIcon } from '@heroicons/vue/24/outline'
 import { NSpin } from 'naive-ui'
 import { useGlobalModal } from '@/composable/useValidation'
 import { useClientStore } from '@/stores/clientStore'
@@ -158,7 +126,7 @@ import { useActionMessage } from '@/composable/useActionMessage'
 import FromModal from '../components/clients/FromModal.vue'
 import ClientCard from '../components/clients/ClientCard.vue'
 import Noclient from '@/assets/icon svg/Noclient.vue'
-import  ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
+import ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
 
 const { show } = useGlobalModal()
 const { showSuccess } = useActionMessage()
@@ -181,13 +149,13 @@ const filteredClients = computed(() => {
   if (search.value) {
     const searchLower = search.value.toLowerCase()
     clients = clients.filter(
-      (c) => c.client_name?.toLowerCase().includes(searchLower) || 
-            c.email?.toLowerCase().includes(searchLower) || 
-            c.client_signature?.toLowerCase().includes(searchLower)
+      (c) => c.client_name?.toLowerCase().includes(searchLower) ||
+        c.email?.toLowerCase().includes(searchLower) ||
+        c.client_signature?.toLowerCase().includes(searchLower)
     )
   }
 
-  
+
 
   return clients
 })

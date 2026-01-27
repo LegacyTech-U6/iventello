@@ -15,7 +15,7 @@
         </div>
         <button @click="handleClose"
           class="text-gray-400 hover:text-gray-700 transition p-2 hover:bg-gray-50 rounded-lg">
-          <X class="w-5 h-5" />
+          <XMarkIcon class="w-5 h-5" />
         </button>
       </div>
 
@@ -26,11 +26,11 @@
             class="w-full flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-green-100 rounded-lg">
-                <User class="w-5 h-5 text-green-700" />
+                <UserIcon class="w-5 h-5 text-green-700" />
               </div>
               <h3 class="text-lg font-semibold text-gray-800">Employee Information</h3>
             </div>
-            <ChevronDown :class="[
+            <ChevronDownIcon :class="[
               'w-5 h-5 text-gray-400 transition-transform',
               { 'rotate-180': sections.employee },
             ]" />
@@ -47,9 +47,8 @@
                 </label>
                 <input v-model="formWorker.name" type="text" placeholder="Enter full name"
                   class="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none text-sm"
-                  required
-                  :class="{ 'border-red-500': errors.name }"/>
-                  <p v-if="errors.name" class="text-red-600 text-xs mt-1 ">{{ errors.name }}</p>
+                  required :class="{ 'border-red-500': errors.name }" />
+                <p v-if="errors.name" class="text-red-600 text-xs mt-1 ">{{ errors.name }}</p>
 
               </div>
 
@@ -60,8 +59,7 @@
                 </label>
                 <input v-model="formWorker.email" type="email" placeholder="Enter email"
                   class="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none text-sm"
-                  required
-                  :class="{ 'border-red-500': errors.email }" />
+                  required :class="{ 'border-red-500': errors.email }" />
                 <p v-if="errors.email" class="text-red-600 text-xs mt-1 ">{{ errors.email }}</p>
               </div>
 
@@ -84,8 +82,7 @@
                 <label class="block text-gray-700 font-medium mb-2 text-sm">Department</label>
                 <select v-model="formWorker.entreprise_id"
                   class="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none text-sm text-gray-500"
-                  :class="{ 'border-red-500': errors.entreprise }"
-                  >
+                  :class="{ 'border-red-500': errors.entreprise }">
                   <option value="">Select</option>
                   <option v-for="enterprise in entreprises" :key="enterprise.id" :value="enterprise.id">
                     {{ enterprise.name }}
@@ -131,11 +128,11 @@
             class="w-full flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-green-100 rounded-lg">
-                <Lock class="w-5 h-5 text-green-700" />
+                <LockClosedIcon class="w-5 h-5 text-green-700" />
               </div>
               <h3 class="text-lg font-semibold text-gray-800">Password</h3>
             </div>
-            <ChevronDown :class="[
+            <ChevronDownIcon :class="[
               'w-5 h-5 text-gray-400 transition-transform',
               { 'rotate-180': sections.password_hash },
             ]" />
@@ -156,9 +153,8 @@
               </label>
               <input v-model="confirmPassword" type="password_hash"
                 class="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none text-sm"
-                :required="!isEditing"
-                 :class="{ 'border-red-500': errors.match }" />
-                <p v-if="errors.match" class="text-red-600 text-xs mt-1">{{ errors.match }}</p>
+                :required="!isEditing" :class="{ 'border-red-500': errors.match }" />
+              <p v-if="errors.match" class="text-red-600 text-xs mt-1">{{ errors.match }}</p>
 
             </div>
           </div>
@@ -180,8 +176,8 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted,reactive } from 'vue'
-import { X, User, Lock, ChevronDown, UserCircle } from 'lucide-vue-next'
+import { ref, watch, computed, onMounted, reactive } from 'vue'
+import { XMarkIcon, UserIcon, LockClosedIcon, ChevronDownIcon, UserCircleIcon } from '@heroicons/vue/24/outline'
 import { useRoleStore } from '@/stores/roleStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import ValidationButton from '../ui/buttons/ValidationButton.vue'
@@ -236,7 +232,7 @@ const validate = () => {
   if (!formWorker.value.name.trim()) errors.name = 'Employer name is required'
   if (!formWorker.value.entreprise_id) errors.entreprise = 'required'
   if (!formWorker.value.password_hash) errors.password_hash = 'password needed'
-  if(!formWorker.value.role_id) errors.role = "required"
+  if (!formWorker.value.role_id) errors.role = "required"
   if (formWorker.value.password_hash !== confirmPassword.value) errors.match = 'password do not match'
   return Object.keys(errors).length === 0
 }
