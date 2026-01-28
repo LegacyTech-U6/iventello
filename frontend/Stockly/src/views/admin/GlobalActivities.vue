@@ -62,10 +62,10 @@
                                 <td class="px-6 py-4">
                                     <span
                                         class="px-2 py-1 bg-gray-100 text-gray-500 rounded-lg text-[10px] font-black uppercase">{{
-                                        log.entreprise?.name || 'Global' }}</span>
+                                            log.entreprise?.name || 'Global' }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-xs font-bold text-gray-400">
-                                    {{ formatDate(log.created_at) }}
+                                    {{ formatDate(log.createdAt) }}
                                 </td>
                             </tr>
                         </tbody>

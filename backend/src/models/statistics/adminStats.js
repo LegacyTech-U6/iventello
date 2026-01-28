@@ -71,7 +71,7 @@ async function getEnterprisePerformance() {
 async function getRecentGlobalActivities(limit = 10) {
   const logs = await activities.findAll({
     limit,
-    order: [["created_at", "DESC"]],
+    order: [["createdAt", "DESC"]],
     include: [
       { model: db.User, as: "user", attributes: ["username"] },
       { model: db.Entreprise, as: "entreprise", attributes: ["name", "uuid"] },

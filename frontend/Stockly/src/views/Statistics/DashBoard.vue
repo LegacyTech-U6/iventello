@@ -79,7 +79,7 @@
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-1.5">
                         <span class="text-sm font-bold text-green-600">{{ formatCurrency(ent.profit, ent.currency)
-                          }}</span>
+                        }}</span>
                         <ArrowUpRightIcon class="w-3 h-3 text-green-500" />
                       </div>
                     </td>
@@ -135,7 +135,7 @@
                   <p class="text-[11px] text-gray-500 leading-snug mb-1">
                     {{ log.action }} <span class="text-orange-500 font-bold">@{{ log.entreprise?.name }}</span>
                   </p>
-                  <p class="text-[9px] text-gray-400 font-bold tracking-tight">{{ formatDate(log.created_at) }}</p>
+                  <p class="text-[9px] text-gray-400 font-bold tracking-tight">{{ formatDate(log.createdAt) }}</p>
                 </div>
               </div>
             </div>
