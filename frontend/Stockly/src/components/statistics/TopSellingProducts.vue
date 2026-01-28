@@ -14,28 +14,23 @@
     <div class="p-6 space-y-4">
       <div v-for="(product, index) in products" :key="index" class="flex items-center gap-4">
         <!-- Product Image -->
-       
-          <!-- Product Image -->
-          <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-            <img :src="product.image || `https://picsum.photos/seed/${product.id || index}/150`"
-              :alt="product.name || 'No image'" class="w-full h-full object-cover" />
-          </div>
-        </
-
-
+        <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-100">
+          <img :src="product.image || `https://picsum.photos/seed/${product.id || index}/150`"
+            :alt="product.name || 'No image'" class="w-full h-full object-cover" />
+        </div>
 
         <!-- Product Info -->
         <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-gray-800 text-sm truncate">
-            {{ product.name }}
+          <h3 class="font-bold text-gray-900 text-sm truncate mb-0.5">
+            {{ product.Prod_name || product.name }}
           </h3>
-          <p class="text-sm text-gray-500">{{ format(product.selling_price) }}</p>
+          <p class="text-xs font-black text-primary uppercase tracking-widest">{{ format(product.selling_price) }}</p>
         </div>
 
         <!-- Sales Info -->
         <div class="text-right flex-shrink-0">
-          <p class="text-xs text-gray-500 mb-1">Sales</p>
-          <p class="font-semibold text-gray-800 text-sm">{{ product.total_sold }}</p>
+          <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Sales</p>
+          <p class="font-bold text-gray-900 text-sm">{{ product.total_sold }}</p>
         </div>
       </div>
     </div>
@@ -51,11 +46,15 @@ const { format } = useCurrency()
 const statisticStore = useStatisticsStore()
 const selectedPeriod = ref('month')
 
+const fetchData = async () => {
+  await statisticStore.fetchBestSellingProduct(selectedPeriod.value)
+}
+
 onMounted(() => {
-  statisticStore.fetchBestSellingProduct(selectedPeriod)
+  fetchData()
 })
-const randomImageUrl = ref(`https://picsum.photos/seed/${Math.floor(Math.random() * 1000)}/150`)
-const products = computed(() => statisticStore.bestSellingProduct?.products)
+
+const products = computed(() => statisticStore.bestSellingProduct?.products || [])
 </script>
 
 <style scoped>

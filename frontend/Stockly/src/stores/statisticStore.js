@@ -14,6 +14,7 @@ import {
   getRevenueByCategory,
   getProductDistributionByCategory,
   getClientsTats,
+  getAdminDashboard,
 } from '@/service/api'
 
 export const useStatisticsStore = defineStore('statistics', {
@@ -33,6 +34,18 @@ export const useStatisticsStore = defineStore('statistics', {
     revenueByCategory: [],
     topProducts: [],
     client: [],
+    // Admin Global Stats
+    adminStats: {
+      totalRevenue: 0,
+      totalProfit: 0,
+      totalSales: 0,
+      totalEnterprises: 0,
+      totalProducts: 0,
+      totalWorkers: 0,
+      totalClients: 0,
+    },
+    enterprisePerformance: [],
+    globalActivities: [],
   }),
 
   actions: {
@@ -211,6 +224,21 @@ export const useStatisticsStore = defineStore('statistics', {
         this.client = data
       } catch (err) {
         console.error('Erreur', err)
+      }
+    },
+
+    async fetchAdminDashboard() {
+      this.loading = true
+      try {
+        const { data } = await getAdminDashboard()
+        this.adminStats = data.stats
+        this.enterprisePerformance = data.performance
+        this.globalActivities = data.activities
+        return data
+      } catch (err) {
+        this.error = err.message
+      } finally {
+        this.loading = false
       }
     },
   },

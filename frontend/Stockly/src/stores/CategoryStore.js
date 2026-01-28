@@ -24,9 +24,13 @@ export const useCategoryStore = defineStore('Category', {
       this.error = null
       try {
         await createCategory(categoryData)
+        return true
       } catch (error) {
         this.error = error.message
         console.error("erreur lors de l'ajout de la category")
+        return false
+      } finally {
+        this.submitLoading = false
       }
     },
     async fetchCategory() {
@@ -34,20 +38,15 @@ export const useCategoryStore = defineStore('Category', {
       this.error = null
       try {
         const category = await getCategory()
-        console.log('category loged from store', category.data)
         this.categories = category.data
-        console.log('====================================')
-        console.log(this.categories)
-        console.log('====================================')
         this.totalCategory = category.count
-
-        this.loading = false
-        return this.categories // ✅ return the data
+        return this.categories
       } catch (error) {
         this.error = error
-        this.loading = false
         console.error('Erreur lors de la récupération des catégories', error)
-        return [] // return empty array in case of error
+        return []
+      } finally {
+        this.loading = false
       }
     },
     async fetchOneCategory(id) {
@@ -55,9 +54,7 @@ export const useCategoryStore = defineStore('Category', {
       this.error = null
       try {
         const response = await getOneCategory(id)
-        console.log(response)
         this.category = response
-        console.log('category loged from store', this.category)
         this.error = null
       } catch (error) {
         this.error = error
@@ -71,9 +68,11 @@ export const useCategoryStore = defineStore('Category', {
       this.error = null
       try {
         await updateCategory(CategoryId, categoryData)
+        return true
       } catch (error) {
         this.error = error.message
         console.error('erreur lors de la modification de la category')
+        return false
       } finally {
         this.submitLoading = false
       }
@@ -83,9 +82,11 @@ export const useCategoryStore = defineStore('Category', {
       this.error = null
       try {
         await deleteCategory(CategoryId)
+        return true
       } catch (error) {
         this.error = error.message
         console.error('erreur lors de la suppression de la category')
+        return false
       } finally {
         this.submitLoading = false
       }

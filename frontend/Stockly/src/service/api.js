@@ -350,8 +350,39 @@ export async function getEntrepriseById(uuid) {
 
 // ✅ Mettre à jour une entreprise par UUID
 export async function updateEntreprise(uuid, entrepriseData) {
-  const { data } = await API.put(`/entreprises/${uuid}`, entrepriseData)
-  return data
+  console.log('🚀 API: Updating entreprise with data:', entrepriseData)
+
+  const formData = new FormData()
+
+  for (const key in entrepriseData) {
+    if (key !== 'logo_url' && entrepriseData[key] !== null && entrepriseData[key] !== undefined) {
+      formData.append(key, entrepriseData[key])
+    }
+  }
+
+  // Add image (if present and is a File)
+  if (entrepriseData.logo_file instanceof File) {
+    formData.append('logo_url', entrepriseData.logo_file)
+  } else if (
+    entrepriseData.logo_url &&
+    typeof entrepriseData.logo_url === 'string' &&
+    !entrepriseData.logo_url.startsWith('blob:')
+  ) {
+    // If it's a URL string and not a preview blob, we might still want to send it or ignore if backend doesn't need it
+    formData.append('logo_url', entrepriseData.logo_url)
+  }
+
+  try {
+    const { data } = await API.put(`/entreprises/${uuid}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    return data
+  } catch (error) {
+    console.error('❌ API: Error updating entreprise:', error)
+    throw error
+  }
 }
 
 // ✅ Supprimer une entreprise par UUID
@@ -570,3 +601,5 @@ export async function markAllNotificationsAsRead() {
   const { data } = await API.patch('/notifications/read-all')
   return data
 }
+
+export const getAdminDashboard = () => API.get('/admin/dashboard')

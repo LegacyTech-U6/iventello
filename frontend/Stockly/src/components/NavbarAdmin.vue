@@ -124,7 +124,9 @@ import {
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   ChevronUpIcon,
-  BellIcon
+  BellIcon,
+  ClipboardDocumentListIcon,
+  ListBulletIcon
 } from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
@@ -137,10 +139,12 @@ const logout = () => {
 }
 
 const navLinks = [
-  { to: '/ad/dashboard', icon: Squares2X2Icon, label: 'Dashboard' },
-  { to: '/ad/workers', icon: UserGroupIcon, label: 'Workers' },
-  { to: '/ad/admin', icon: BuildingOfficeIcon, label: 'Companies' },
-  { to: '/ad/settings', icon: Cog6ToothIcon, label: 'Settings' },
+  { to: '/ad/dashboard', icon: Squares2X2Icon, label: 'Tableau de Bord' },
+  { to: '/ad/reports', icon: ClipboardDocumentListIcon, label: 'Rapports' },
+  { to: '/ad/activities', icon: ListBulletIcon, label: 'Audit Trail' },
+  { to: '/ad/admin', icon: BuildingOfficeIcon, label: 'Compagnies' },
+  { to: '/ad/workers', icon: UserGroupIcon, label: 'Employés' },
+  { to: '/ad/settings', icon: Cog6ToothIcon, label: 'Paramètres' },
 ]
 
 const isActive = (path) => {

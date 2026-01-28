@@ -67,10 +67,15 @@ export const useWorkerStore = defineStore('worker', {
       this.loading = true
       this.error = null
       try {
-        const updatedWorker = await updateWorker(id, updatedData)
-        const index = this.workers.findIndex((w) => w.id === id)
-        if (index !== -1) this.workers[index] = updatedWorker
-        return updatedWorker
+        const response = await updateWorker(id, updatedData)
+
+        // Si le backend renvoie un message de succès plutôt que l'objet mis à jour
+        // On fusionne les données mises à jour dans notre liste locale
+        const index = this.workers.findIndex((w) => w.id === id || w.worker_id === id)
+        if (index !== -1) {
+          this.workers[index] = { ...this.workers[index], ...updatedData }
+        }
+        return response
       } catch (err) {
         this.error = err.message || 'Erreur lors de la mise à jour du worker'
         throw err

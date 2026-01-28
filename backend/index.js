@@ -28,6 +28,7 @@ const notificationRoutes = require("./src/routes/notification.routes");
 const pdfRoute = require("./src/routes/pdf.routes");
 const DemoDataGenerator = require("./src/utils/demo-data-generator");
 const productExcelRoutes = require("./src/routes/excel/productExcel.routes");
+const adminStatsRoutes = require("./src/routes/adminStats.routes");
 
 const { startCurrencyCron, getRates } = require("./src/utils/currency.service");
 // Database
@@ -147,5 +148,6 @@ app.use("/api/roles", rolesRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/pdf", pdfRoute);
 app.use("/api/excel", productExcelRoutes);
+app.use("/api/admin", adminStatsRoutes);
 
 module.exports = app;

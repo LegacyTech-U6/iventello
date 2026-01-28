@@ -3,9 +3,9 @@
 
     <div class="hidden md:block w-full  flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
       <div class="flex flex-1 w-full sm:w-auto space-x-4">
-        <WelcomeCard :user="authStore.user?.username || 'User'" :enterprise="entrepriseStore.activeEntreprise.name"
+        <WelcomeCard :user="authStore.user?.username || 'User'" :enterprise="entrepriseStore.activeEntreprise?.name"
           :image="mascot" />
-        <Logo :logo="entrepriseStore.activeEntreprise.logo_url" class="hidden sm:block" />
+        <Logo :logo="entrepriseStore.activeEntreprise?.logo_url" class="hidden sm:block" />
       </div>
     </div>
 

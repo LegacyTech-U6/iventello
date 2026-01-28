@@ -82,11 +82,17 @@ export const useEntrepriseStore = defineStore('entreprise', {
       this.successMessage = null
 
       try {
-        const data = await updateEntreprise(uuid, entrepriseData)
-        const index = this.entreprises.findIndex((e) => e.id === uuid)
-        if (index !== -1) this.entreprises[index] = data
+        const response = await updateEntreprise(uuid, entrepriseData)
+        // Le backend renvoie { message, entreprise: (...) }
+        const updatedEntreprise = response.entreprise || response
+
+        const index = this.entreprises.findIndex((e) => e.uuid === uuid || e.id === uuid)
+        if (index !== -1) {
+          this.entreprises[index] = updatedEntreprise
+        }
+
         this.successMessage = 'Entreprise mise à jour avec succès 🎉'
-        return data
+        return updatedEntreprise
       } catch (err) {
         this.error = err.response?.data?.message || 'Erreur lors de la mise à jour ❌'
       } finally {

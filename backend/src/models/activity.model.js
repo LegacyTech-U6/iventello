@@ -1,8 +1,8 @@
 // models/Activity.js
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Activity = sequelize.define('Activity', {
+  const Activity = sequelize.define("Activity", {
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -27,9 +27,9 @@ module.exports = (sequelize) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-    quantity:{
-      type:DataTypes.INTEGER,
-      allowNull:true
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     ip_address: {
       type: DataTypes.STRING,
@@ -39,9 +39,15 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
-  })
-
-  
+    entreprise_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    worker_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+  });
 
   return Activity;
 };

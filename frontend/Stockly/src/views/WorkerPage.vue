@@ -22,7 +22,7 @@
 
 
           <!-- Bouton ajouter employé -->
-          <ValidationButton text="Add Employer" width="100%" color="#0C333B" variant="flat" :size="large"
+          <ValidationButton text="Add Employer" width="100%" color="#0C333B" variant="flat" size="large"
             :asyncClick="create" :loading="isLoading" :icon="PlusIcon" />
 
         </div>
@@ -56,7 +56,7 @@
 
       <!-- Workers Grid -->
       <div v-if="filteredWorkers.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <WorkersCard v-for="worker in filteredWorkers" :key="worker.worker_id" :worker="worker" @edit="handleEditWorker"
+        <WorkersCard v-for="worker in filteredWorkers" :key="worker.id" :worker="worker" @edit="handleEditWorker"
           @delete="handleDeleteWorker" />
       </div>
 
@@ -112,7 +112,7 @@ import {
   MagnifyingGlassIcon, // Icône barre de recherche
   PlusIcon,           // Icône bouton ajouter
   ListBulletIcon,      // Icône vue liste
-  Squares2x2Icon,     // Icône vue grille
+  Squares2X2Icon,     // Icône vue grille
   DocumentTextIcon,    // Icône export PDF
   TableCellsIcon,      // Icône export Excel
   ArrowPathIcon,       // Icône rafraîchir
@@ -123,6 +123,7 @@ import {
 import { useWorkerStore } from '@/stores/workerStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import { useRoleStore } from '@/stores/roleStore'
+import { storeToRefs } from 'pinia'
 
 /** Composables pour actions et validations */
 import { useActionMessage } from '@/composable/useActionMessage'
@@ -145,6 +146,7 @@ const { showSuccess, showError } = useActionMessage()
 
 /** Store Pinia contenant la liste des employés et méthodes CRUD */
 const store = useWorkerStore()
+const { isLoading } = storeToRefs(store)
 
 /** Store pour accéder aux entreprises (départements) */
 const enterpriseStore = useEntrepriseStore()
@@ -239,7 +241,7 @@ const create = () => {
  * @returns {Array<string>} Liste unique des noms d'entreprises
  */
 const departments = computed(() => {
-  return [...new Set(store.workers.map((w) => w.entreprise_name).filter(Boolean))]
+  return [...new Set(store.workers.map((w) => w.entreprise?.name).filter(Boolean))]
 })
 
 /**
@@ -283,7 +285,7 @@ const filteredWorkers = computed(() => {
 
   // Filtre 2: Département/Entreprise
   if (filterDepartment.value) {
-    workers = workers.filter((w) => w.entreprise_name === filterDepartment.value)
+    workers = workers.filter((w) => w.entreprise?.name === filterDepartment.value)
   }
 
   // Filtre 3: Désignation/Poste

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@fontsource/nunito": "^5.2.7",
+    "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
     "@lottiefiles/lottie-player": "^2.0.12",
     "@tailwindcss/postcss": "^4.1.15",

@@ -143,7 +143,7 @@
               <label class="block text-gray-700 font-medium mb-2 text-sm">
                 Password <span class="text-red-500">*</span>
               </label>
-              <input v-model="formWorker.password_hash" type="password_hash"
+              <input v-model="formWorker.password_hash" type="password"
                 class="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none text-sm"
                 :required="!isEditing" />
             </div>
@@ -151,11 +151,10 @@
               <label class="block text-gray-700 font-medium mb-2 text-sm">
                 Confirm Password <span class="text-red-500">*</span>
               </label>
-              <input v-model="confirmPassword" type="password_hash"
+              <input v-model="confirmPassword" type="password"
                 class="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-transparent focus:outline-none text-sm"
                 :required="!isEditing" :class="{ 'border-red-500': errors.match }" />
               <p v-if="errors.match" class="text-red-600 text-xs mt-1">{{ errors.match }}</p>
-
             </div>
           </div>
         </div>

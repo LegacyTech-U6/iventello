@@ -21,13 +21,17 @@ exports.getAllWorkers = async (req, res) => {
 
     const data = await Worker.findAll({
       where: query.where,
-      order: query.order || [['id','ASC']],
+      order: query.order || [["id", "ASC"]],
       limit: query.limit,
       offset: query.offset,
       include: [
-        { model: Entreprise, as: 'entreprise', attributes: ['id','name','description'] },
-        { model: Role, as: 'role', attributes: ['id','name'] }
-      ]
+        {
+          model: Entreprise,
+          as: "entreprise",
+          attributes: ["id", "name", "description"],
+        },
+        { model: Role, as: "role", attributes: ["id", "name"] },
+      ],
     });
 
     const count = await Worker.count({ where: query.where });
@@ -38,7 +42,6 @@ exports.getAllWorkers = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 // ===============================
 // 🔹 Récupérer un employé par ID
@@ -70,16 +73,35 @@ exports.createWorker = async (req, res) => {
   console.log("Worker payload:", req.body);
 
   try {
+    const { email } = req.body;
+
+    const existingInAdmin = await db.User.findOne({ where: { email } });
+    const existingInWorker = await Worker.findOne({ where: { email } });
+
+    if (existingInAdmin || existingInWorker) {
+      return res.status(400).json({
+        message:
+          "Cet email est déjà utilisé par un autre compte (admin ou employé).",
+      });
+    }
+
     const user_id = req.user.id;
     const workerData = { ...req.body, user_id };
-    console.log("====================================");
-    console.log(workerData);
-    console.log("====================================");
     const worker = await Worker.create(workerData);
-    console.log("====================================");
-    console.log(worker);
-    console.log("====================================");
-    res.status(201).json(worker);
+
+    // Récupérer le worker complet avec ses relations pour le frontend
+    const fullWorker = await Worker.findByPk(worker.id, {
+      include: [
+        { model: db.roles, as: "role", attributes: ["id", "name"] },
+        {
+          model: db.Entreprise,
+          as: "entreprise",
+          attributes: ["id", "name", "uuid", "currency", "logo_url"],
+        },
+      ],
+    });
+
+    res.status(201).json(fullWorker);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../config/db"); // Import des modèles Sequelize
 const User = db.User;
-const {sendMail }= require("../utils/mailer");
+const { sendMail } = require("../utils/mailer");
 require("dotenv").config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -15,18 +15,26 @@ exports.register = async (req, res) => {
   try {
     // Gérer les deux formats de payload
     let userData = req.body;
-    
+
     // Si les données sont imbriquées dans une clé 'username'
-    if (req.body.username && typeof req.body.username === 'object') {
+    if (req.body.username && typeof req.body.username === "object") {
       userData = req.body.username;
     }
 
     const { username, Last_name, email, telephone, password } = userData;
-    
+
     console.log("Payload register traité:", userData);
-    const existing = await User.findOne({ where: { email } });
-    if (existing)
-      return res.status(400).json({ message: "Email déjà utilisé" });
+    const existingInAdmin = await User.findOne({ where: { email } });
+    const existingInWorker = await db.Worker.findOne({ where: { email } });
+
+    if (existingInAdmin || existingInWorker) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Cet email est déjà utilisé par un autre compte (admin ou employé).",
+        });
+    }
 
     // 2️⃣ Hacher le mot de passe (à remplacer par bcrypt)
     const password_hash = password; // TODO: bcrypt.hash(password, 10)
@@ -45,14 +53,14 @@ exports.register = async (req, res) => {
     const activationToken = jwt.sign(
       { id: newUser.id },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     // 5️⃣ Lien d’activation
     const activationLink = `${process.env.FRONTEND_URL}/verify/${activationToken}`;
 
     // 6️⃣ Préparer le mail
-    
+
     const htmlContent = `
       <h2>Bienvenue, ${username} 👋</h2>
       <p>Merci de vous être inscrit sur <strong>Iventello</strong>.</p>
@@ -65,24 +73,27 @@ exports.register = async (req, res) => {
     `;
 
     // 7️⃣ Envoi du mail via Resend + logs détaillés
-   // 7️⃣ Envoi du mail via Mailjet
-const mailResult = await sendMail({
-  to: email,
-  subject: "Activez votre compte Stockly", 
-  html: htmlContent
-});
-
-console.log("Résultat envoi mail:", mailResult);
-
-if (!mailResult.success) {
-  console.error("⚠️ L'email d'activation n'a pas pu être envoyé:", mailResult.error);
-}
-    // 8️⃣ Réponse API
-    res.status(201).json({
-      message: "Utilisateur créé. Un email d’activation a été envoyé (voir logs pour debug).",
-      mailLog: mailResult.response || null,
+    // 7️⃣ Envoi du mail via Mailjet
+    const mailResult = await sendMail({
+      to: email,
+      subject: "Activez votre compte Stockly",
+      html: htmlContent,
     });
 
+    console.log("Résultat envoi mail:", mailResult);
+
+    if (!mailResult.success) {
+      console.error(
+        "⚠️ L'email d'activation n'a pas pu être envoyé:",
+        mailResult.error,
+      );
+    }
+    // 8️⃣ Réponse API
+    res.status(201).json({
+      message:
+        "Utilisateur créé. Un email d’activation a été envoyé (voir logs pour debug).",
+      mailLog: mailResult.response || null,
+    });
   } catch (err) {
     console.error("❌ Erreur register:", err);
     res.status(500).json({ message: err.message });
@@ -92,7 +103,7 @@ if (!mailResult.success) {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Payload login:", req.body);  // Log du payload
+    console.log("Payload login:", req.body); // Log du payload
 
     // Vérifier si l'email et le mot de passe sont présents
     if (!email || !password) {
@@ -107,39 +118,44 @@ exports.login = async (req, res) => {
       WHERE email = :email
       LIMIT 1
       `,
-      { replacements: { email } }
+      { replacements: { email } },
     );
 
-    console.log("Résultat de la requête SQL:", results);  // Log des résultats de la requête SQL
+    console.log("Résultat de la requête SQL:", results); // Log des résultats de la requête SQL
 
     // Si aucun utilisateur n'est trouvé
     if (!results || results.length === 0) {
       console.log("Cet email n'a pas de compte Iventello");
-      return res.status(400).json({ message: "Cet email n'a pas de compte Iventello" });
+      return res
+        .status(400)
+        .json({ message: "Cet email n'a pas de compte Iventello" });
     }
 
     // On récupère l'utilisateur trouvé
     const userRecord = results[0];
-    console.log("Utilisateur trouvé:", userRecord);  // Log de l'utilisateur trouvé
+    console.log("Utilisateur trouvé:", userRecord); // Log de l'utilisateur trouvé
 
     // 2️⃣ Vérifier le mot de passe
     const match = await bcrypt.compare(password, userRecord.password_hash);
-    console.log("Mot de passe correct ?", match);  // Log du résultat de la comparaison de mot de passe
 
     if (!match) {
-      console.log("Mot de passe incorrect");
       return res.status(400).json({ message: "Mot de passe incorrect" });
     }
 
-    // 3️⃣ Récupérer les détails de l'utilisateur selon son type
+    // 3️⃣ Récupérer les détails et vérifier le statut selon le type
     let userDetails;
     if (userRecord.type === "admin") {
-      console.log("Utilisateur de type admin");  // Log pour vérifier le type d'utilisateur
       userDetails = await db.User.findByPk(userRecord.id, {
-        attributes: ["id", "username", "email"],
+        attributes: ["id", "username", "email", "is_active"],
       });
+
+      if (!userDetails.is_active) {
+        return res.status(403).json({
+          message:
+            "Votre compte administrateur n'est pas encore activé. Veuillez vérifier vos emails.",
+        });
+      }
     } else if (userRecord.type === "worker") {
-      console.log("Utilisateur de type worker");  // Log pour vérifier le type d'utilisateur
       userDetails = await db.Worker.findByPk(userRecord.id, {
         attributes: [
           "id",
@@ -152,19 +168,44 @@ exports.login = async (req, res) => {
         ],
         include: [
           { model: db.roles, as: "role", attributes: ["id", "name"] },
-          { model: db.Entreprise, as: "entreprise", attributes: ["id", "name"] },
+          {
+            model: db.Entreprise,
+            as: "entreprise",
+            attributes: [
+              "id",
+              "name",
+              "uuid",
+              "currency",
+              "logo_url",
+              "description",
+            ],
+          },
         ],
       });
+
+      if (!userDetails) {
+        return res
+          .status(404)
+          .json({ message: "Détails de l'employé introuvables" });
+      }
+
+      if (userDetails.status !== "active") {
+        const statusMsg =
+          userDetails.status === "suspended" ? "suspendu" : "inactif";
+        return res.status(403).json({
+          message: `Votre compte est actuellement ${statusMsg}. Contactez votre administrateur.`,
+        });
+      }
     }
 
     // 4️⃣ Générer le token JWT
     const token = jwt.sign(
       { id: userRecord.id, email: userRecord.email, type: userRecord.type },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
-    console.log("Token généré:", token);  // Log du token généré
+    console.log("Token généré:", token); // Log du token généré
 
     // Réponse avec succès et le token généré
     res.status(200).json({
@@ -172,10 +213,9 @@ exports.login = async (req, res) => {
       token,
       user: userDetails,
     });
-    console.log("Détails de l'utilisateur:", userDetails);  // Log des détails de l'utilisateur
-
+    console.log("Détails de l'utilisateur:", userDetails); // Log des détails de l'utilisateur
   } catch (err) {
-    console.error("Erreur dans le processus de login:", err);  // Log détaillé de l'erreur
+    console.error("Erreur dans le processus de login:", err); // Log détaillé de l'erreur
     res.status(500).json({ message: "Erreur serveur lors de la connexion" });
   }
 };
@@ -302,7 +342,7 @@ exports.updateProfile = async (req, res) => {
 
     await User.update(
       { username, email, telephone, Last_name },
-      { where: { id: userId } }
+      { where: { id: userId } },
     );
 
     res.status(200).json({ message: "Profil mis à jour avec succès" });
@@ -322,7 +362,14 @@ exports.getProfile = async (req, res) => {
 
     if (type === "admin") {
       profile = await db.User.findByPk(id, {
-        attributes: ["id", "username", "email", "Last_name", "telephone", "created_at"],
+        attributes: [
+          "id",
+          "username",
+          "email",
+          "Last_name",
+          "telephone",
+          "created_at",
+        ],
       });
 
       if (profile) {
@@ -331,9 +378,7 @@ exports.getProfile = async (req, res) => {
           type: "admin", // 🔹 on ajoute le type ici
         };
       }
-    }
-
-    else if (type === "worker") {
+    } else if (type === "worker") {
       profile = await db.Worker.findByPk(id, {
         attributes: [
           "id",
@@ -347,7 +392,18 @@ exports.getProfile = async (req, res) => {
         ],
         include: [
           { model: db.roles, as: "role", attributes: ["id", "name"] },
-          { model: db.Entreprise, as: "entreprise", attributes: ["id", "name","uuid"] },
+          {
+            model: db.Entreprise,
+            as: "entreprise",
+            attributes: [
+              "id",
+              "name",
+              "uuid",
+              "currency",
+              "logo_url",
+              "description",
+            ],
+          },
         ],
       });
 
@@ -359,7 +415,8 @@ exports.getProfile = async (req, res) => {
       }
     }
 
-    if (!profile) return res.status(404).json({ message: "Utilisateur non trouvé" });
+    if (!profile)
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
 
     res.status(200).json(profile);
   } catch (err) {
@@ -367,7 +424,6 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 // =================================
 // activation link message
