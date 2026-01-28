@@ -1,50 +1,117 @@
-// ProductSelector.vue const ProductSelector = `
 <template>
-  <div class="product-selector bg-gray-50 h-full p-6">
-    <!-- Header -->
+  <div class="product-selector bg-white h-full w-full p-6">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Create Transaction</h1>
+    </div>
 
+    <div class="flex flex-col gap-6 mb-8">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide flex-1">
+          <button 
+            @click="selectedCategoryId = null"
+            :class="[
+              'px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap border',
+              selectedCategoryId === null 
+                ? 'bg-[#DFFF00] border-[#DFFF00] text-black shadow-sm' 
+                : 'bg-white border-gray-100 text-gray-500 hover:border-gray-300'
+            ]"
+          >
+            All Product
+            <span class="bg-black/10 px-2 py-0.5 rounded-md text-[10px]">{{ products.length }}</span>
+          </button>
 
-    <!-- Search and Filters -->
-    <div class="flex gap-3 mb-6">
-      <div class="relative flex-1">
-        <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
-          <MagnifyingGlassIcon class="w-5 h-5 text-gray-400" />
+          <button 
+            v-for="cat in categoryStore.categories" 
+            :key="cat.id"
+            @click="selectedCategoryId = cat.id"
+            :class="[
+              'px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap border',
+              selectedCategoryId === cat.id 
+                ? 'bg-[#DFFF00] border-[#DFFF00] text-black shadow-sm' 
+                : 'bg-white border-gray-100 text-gray-500 hover:border-gray-300'
+            ]"
+          >
+            {{ cat.name }}
+            <span class="bg-gray-100 px-2 py-0.5 rounded-md text-[10px] text-gray-400">
+              {{ getProductCountByCategory(cat.id) }}
+            </span>
+          </button>
         </div>
-        <input v-model="search" placeholder="Search Product"
-          class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
+
+        <div class="relative">
+          <button class="p-3 rounded-full border border-gray-100 hover:bg-gray-50 transition-all">
+            <MagnifyingGlassIcon class="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Products Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product"
-        @add="() => emit('add-to-sale', product)" />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+      <ProductCard 
+        v-for="product in finalFilteredProducts" 
+        :key="product.id" 
+        :product="product"
+        @add="() => $emit('add-to-sale', product)" 
+      />
     </div>
 
-    <!-- Empty State -->
-    <div v-if="filteredProducts.length === 0" class="text-center py-16">
-      <div class="w-20 h-20 rounded-3xl bg-white flex items-center justify-center mx-auto mb-4">
-        <ArchiveBoxIcon class="w-10 h-10 text-gray-400" />
+    <div v-if="finalFilteredProducts.length === 0" class="text-center py-20">
+      <div class="w-20 h-20 rounded-[2.5rem] bg-gray-50 flex items-center justify-center mx-auto mb-4 border border-gray-100">
+        <ArchiveBoxIcon class="w-10 h-10 text-gray-300" />
       </div>
-      <p class="text-base font-semibold text-gray-900 mb-1">No products found</p>
-      <p class="text-sm text-gray-500">Try adjusting your search</p>
+      <p class="text-lg font-bold text-gray-900">No products found</p>
+      <p class="text-gray-500">Try selecting another category or check your stock.</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { MagnifyingGlassIcon, ArchiveBoxIcon } from '@heroicons/vue/24/outline'
 import ProductCard from './ProductCard.vue'
+import { useCategoryStore } from '@/stores/CategoryStore' // Vérifie ton chemin
 
 const props = defineProps({
-  products: Array,
+  products: {
+    type: Array,
+    default: () => []
+  }
 })
 
 const emit = defineEmits(['add-to-sale'])
+const categoryStore = useCategoryStore()
+
+const selectedCategoryId = ref(null)
 const search = ref('')
 
-const filteredProducts = computed(() =>
-  props.products.filter((p) => p.Prod_name.toLowerCase().includes(search.value.toLowerCase())),
-)
+// Charger les catégories au montage
+onMounted(() => {
+  categoryStore.fetchCategory()
+})
+
+// Logique de filtrage combinée (Catégorie + Recherche)
+const finalFilteredProducts = computed(() => {
+  return props.products.filter((p) => {
+    const matchesSearch = p.Prod_name.toLowerCase().includes(search.value.toLowerCase())
+    const matchesCategory = selectedCategoryId.value 
+      ? p.category_id === selectedCategoryId.value || (p.category && p.category.id === selectedCategoryId.value)
+      : true
+    return matchesSearch && matchesCategory
+  })
+})
+
+// Pour afficher le petit nombre à côté du nom de la catégorie
+const getProductCountByCategory = (catId) => {
+  return props.products.filter(p => p.category_id === catId || (p.category && p.category.id === catId)).length
+}
 </script>
+
+<style scoped>
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>

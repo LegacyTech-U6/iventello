@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <div class="p-4 lg:p-6">
+    <div class="">
       <div class="lg:grid grid-cols-12 gap-6">
         <!-- Section gauche: Sélection client et produits -->
         <div class="lg:col-span-8 space-y-4">
@@ -151,7 +151,7 @@
               &times;
             </button>
           </div>
-          <div class="p-4">
+          <div class="p-1">
             <ProductSelector :products="products" @add-to-sale="addToSale" />
           </div>
         </div>

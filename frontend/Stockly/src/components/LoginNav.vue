@@ -161,8 +161,8 @@
         </div>
       </header>
 
-      <main class="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-8 pt-20 lg:pt-8 custom-scrollbar">
-        <div class="w-full max-w-[1600px] mx-auto animate-fade-in-up">
+      <main class="flex-1 overflow-y-auto overflow-x-hidden  pt-20 lg:pt-8 custom-scrollbar">
+        <div class="w-full mx-auto animate-fade-in-up">
           <slot></slot>
         </div>
       </main>

@@ -124,11 +124,25 @@ export const useProductStore = defineStore('product', {
     async fetchFinishedProducts() {
       this.loading = true
       try {
-        this.finishedProducts = (await OutOfStock()) || 0
+        const data = await OutOfStock()
+        console.log('📦 Finished products (Out of stock) response:', data)
+
+        // Enrich products data if present
+        if (data && data.products) {
+          data.products = data.products.map((p) => ({
+            ...p,
+            stockLevel: 'out_of_stock',
+            category_name: p.category?.name || p.category || 'N/A',
+            supplier_name: p.supplierInfo?.supplier_name || 'N/A',
+          }))
+        }
+
+        this.finishedProducts = data
         this.error = null
-        console.log(this.finishedProducts)
+        console.log('✅ Finished products loaded and enriched:', data)
       } catch (err) {
         this.error = err
+        this.finishedProducts = { products: [] }
       } finally {
         this.loading = false
       }

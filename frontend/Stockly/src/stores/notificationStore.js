@@ -1,7 +1,7 @@
 // src/stores/notificationStore.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getNotifications, markNotificationAsRead } from '@/service/api'
+import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '@/service/api'
 import { io } from 'socket.io-client'
 
 export const useNotificationStore = defineStore('notification', () => {
@@ -38,6 +38,16 @@ export const useNotificationStore = defineStore('notification', () => {
     }
   }
 
+  // 🔹 Marquer toutes comme lues
+  async function markAllAsRead() {
+    try {
+      await markAllNotificationsAsRead()
+      notifications.value.forEach((n) => (n.read = true))
+    } catch (err) {
+      console.error('Failed to mark all notifications as read:', err)
+    }
+  }
+
   // 🔹 Connexion Socket.IO pour temps réel
   function connectSocket(userId, entrepriseId) {
     if (socket.value) return // déjà connecté
@@ -68,6 +78,7 @@ export const useNotificationStore = defineStore('notification', () => {
     unreadCount,
     fetchNotifications,
     markAsRead,
+    markAllAsRead,
     connectSocket,
     disconnectSocket,
   }

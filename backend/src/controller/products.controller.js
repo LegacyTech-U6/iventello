@@ -543,8 +543,9 @@ exports.getLowStockProducts = async (req, res) => {
       await sendNotification({
         type: "stock",
         message: `Alerte : ${products.length} produits sont actuellement en stock faible.`,
+        entreprise_id: entrepriseId,
         user_id: req.user?.id,
-        save: false,
+        save: true,
       });
     }
 
@@ -581,8 +582,9 @@ exports.getOutOfStockProducts = async (req, res) => {
       await sendNotification({
         type: "stock",
         message: `Rappel : ${products.length} produits sont en rupture de stock.`,
+        entreprise_id: req.entrepriseId,
         user_id: req.user?.id,
-        save: false,
+        save: true,
       });
     }
 

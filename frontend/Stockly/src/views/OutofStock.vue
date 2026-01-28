@@ -30,7 +30,7 @@
           <div class="md:col-span-1 relative flex items-center w-full">
             <MagnifyingGlassIcon class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
             <input v-model="searchQuery" type="text" placeholder="Search products by name or SKU..."
-            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
+              class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
           </div>
           <select v-model="selectedCategory" class="input-field w-full px-4 py-3 text-base rounded-xl">
             <option value="all">All Categories</option>
@@ -87,6 +87,7 @@ import {
   CheckCircleIcon
 } from '@heroicons/vue/24/outline'
 import { useRoute, useRouter } from 'vue-router'
+import { useProductStore } from '@/stores/productStore'
 import { useActionMessage } from '@/composable/useActionMessage'
 
 // ========================================
@@ -107,13 +108,13 @@ const router = useRouter()
  * Liste des produits en rupture de stock
  * Tableau vide au départ (rempli par fetchFinishedProducts)
  */
-const finishedProducts = ref([])
+const productStore = useProductStore()
 
 /** Message retourné par l'API */
-const message = ref('')
+const message = computed(() => productStore.finishedProducts?.message || '')
 
 /** Commandes de réapprovisionnement */
-const orders = ref([])
+const orders = computed(() => productStore.finishedProducts?.orders || [])
 
 /** Terme de recherche pour filtrer les produits */
 const searchQuery = ref('')
@@ -124,20 +125,36 @@ const selectedCategory = ref('all')
 /** Champ de tri sélectionné: 'daysEmpty', 'lostRevenue', 'unitPrice' */
 const sortBy = ref('daysEmpty')
 
-/** Compteur de produits haute valeur (prix de vente élevé) */
-const highValueCount = ref(0)
-
-/** Liste de toutes les catégories disponibles */
-const categories = ref([])
 
 /** Alias pour finishedProducts (pour la compatibilité) */
-const outOfStockProducts = ref([])
+const outOfStockProducts = computed(() => productStore.finishedProducts?.products || [])
 
 /** Revenu total perdu à cause des ruptures de stock */
-const totalLostRevenue = ref(0)
+const totalLostRevenue = computed(() => {
+  return outOfStockProducts.value.reduce((sum, p) => {
+    // Si le backend ne fournit pas déjà lostRevenue, on peut l'estimer
+    // Ici on utilise la valeur si elle existe
+    return sum + (parseFloat(p.lostRevenue) || 0)
+  }, 0)
+})
 
 /** Nombre moyen de jours depuis la rupture */
-const averageDaysEmpty = ref(0)
+const averageDaysEmpty = computed(() => {
+  if (outOfStockProducts.value.length === 0) return 0
+  const totalDays = outOfStockProducts.value.reduce((sum, p) => sum + (parseInt(p.daysEmpty) || 0), 0)
+  return totalDays / outOfStockProducts.value.length
+})
+
+/** Compteur de produits haute valeur */
+const highValueCount = computed(() => {
+  return outOfStockProducts.value.filter(p => parseFloat(p.selling_price) > 100).length
+})
+
+/** Liste de toutes les catégories disponibles */
+const categories = computed(() => {
+  const cats = outOfStockProducts.value.map(p => p.category_name)
+  return [...new Set(cats)].filter(Boolean)
+})
 
 // ========================================
 // LIFECYCLE HOOKS
@@ -173,52 +190,27 @@ onMounted(async () => {
  * }
  */
 async function fetchFinishedProducts() {
-  try {
-    const data = await OutOfStock()
-    console.log('✅ API Response:', data)
-
-    // Stocke les données de la réponse API
-    message.value = data.message
-    orders.value = data.orders
-    finishedProducts.value = data.products || [] // Initialise avec un tableau vide si pas de produits
-  } catch (err) {
-    showError('Failed to fetch out-of-stock products')
-    console.error('❌ Error fetching out-of-stock products:', err)
-  }
+  await productStore.fetchFinishedProducts()
 }
 
-// ========================================
-// PROPRIÉTÉS CALCULÉES (COMPUTED)
-// ========================================
-
-/**
- * Filtre et trie les produits selon les critères sélectionnés
- * 
- * Applique 3 niveaux de traitement:
- * 1. COPIE: Crée une copie du tableau pour ne pas modifier l'original
- * 2. FILTRAGE:
- *    - Recherche: par nom de produit
- *    - Catégorie: si une catégorie est sélectionnée
- * 3. TRI:
- *    - 'daysEmpty': Jours depuis la rupture (ordre décroissant)
- *    - 'lostRevenue': Revenu perdu (ordre décroissant)
- *    - 'unitPrice': Prix de vente (ordre décroissant)
- * 
- * @returns {Array} Tableau filtré et trié de produits
- */
 const filteredProducts = computed(() => {
   // Crée une copie pour éviter de modifier finishedProducts
-  let filtered = [...finishedProducts.value]
+  let filtered = [...outOfStockProducts.value]
 
-  // FILTRAGE 1: Recherche par nom
+  // FILTRAGE 1: Recherche par nom, SKU ou fournisseur
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter((p) => p.Prod_name.toLowerCase().includes(query))
+    filtered = filtered.filter(
+      (p) =>
+        p.Prod_name.toLowerCase().includes(query) ||
+        (p.code_bar && p.code_bar.toLowerCase().includes(query)) ||
+        (p.supplier_name && p.supplier_name.toLowerCase().includes(query)),
+    )
   }
 
   // FILTRAGE 2: Catégorie
   if (selectedCategory.value !== 'all') {
-    filtered = filtered.filter((p) => p.category === selectedCategory.value)
+    filtered = filtered.filter((p) => p.category_name === selectedCategory.value)
   }
 
   // TRI: Applique le tri selon le champ sélectionné
@@ -243,6 +235,7 @@ const filteredProducts = computed(() => {
 
   return filtered
 })
+
 
 // ========================================
 // MÉTHODES - UTILITAIRES

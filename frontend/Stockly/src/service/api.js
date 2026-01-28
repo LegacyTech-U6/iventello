@@ -165,12 +165,11 @@ export async function generateInvoicePdf(html) {
     { html },
     {
       responseType: 'blob', // 🔴 OBLIGATOIRE pour PDF
-    }
+    },
   )
 
   return response.data
 }
-
 
 ///////////////////////////////////////
 // Invoice calls
@@ -299,7 +298,7 @@ export async function deleteSupplier(supplierId) {
 
 // ✅ Créer une entreprise
 export async function createEntreprise(entrepriseData) {
-   console.log(API)
+  console.log(API)
   console.log('🚀 API: Creating entreprise with data:', entrepriseData)
 
   const formData = new FormData()
@@ -339,7 +338,6 @@ export async function createEntreprise(entrepriseData) {
 
 // ✅ Récupérer toutes les entreprises de l'utilisateur connecté
 export async function getEntreprises() {
- 
   const { data } = await API.get('/entreprises')
   return data
 }
@@ -565,5 +563,10 @@ export async function getNotifications() {
 export async function markNotificationAsRead(notificationId) {
   const { data } = await API.patch(`/notifications/${notificationId}/read`) // route PATCH /api/notifications/:id/read
   console.log(`🔔 Notification ${notificationId} marked as read:`, data)
+  return data
+}
+// ✅ Marquer toutes les notifications comme lues
+export async function markAllNotificationsAsRead() {
+  const { data } = await API.patch('/notifications/read-all')
   return data
 }
