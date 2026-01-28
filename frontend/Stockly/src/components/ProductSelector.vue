@@ -12,7 +12,7 @@
             :class="[
               'px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap border',
               selectedCategoryId === null 
-                ? 'bg-[#DFFF00] border-[#DFFF00] text-black shadow-sm' 
+                ? 'bg-[#006879] border-[#006879] text-white shadow-sm' 
                 : 'bg-white border-gray-100 text-gray-500 hover:border-gray-300'
             ]"
           >
@@ -27,7 +27,7 @@
             :class="[
               'px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap border',
               selectedCategoryId === cat.id 
-                ? 'bg-[#DFFF00] border-[#DFFF00] text-black shadow-sm' 
+                ? 'bg-[#006879] border-[#006879] text-white shadow-sm' 
                 : 'bg-white border-gray-100 text-gray-500 hover:border-gray-300'
             ]"
           >
@@ -45,8 +45,17 @@
         </div>
       </div>
     </div>
+    <div v-if="loading" class="relative min-h-[400px]">
+      <div class="absolute inset-0 z-20 flex items-center justify-center bg-white/60 backdrop-blur-[2px]">
+        <n-spin size="large">
+          <template #description>
+            <span class="text-sm font-bold text-gray-500 uppercase tracking-widest mt-2 block">Chargement...</span>
+          </template>
+        </n-spin>
+      </div>
+    </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+    <div v-else-if="finalFilteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
       <ProductCard 
         v-for="product in finalFilteredProducts" 
         :key="product.id" 
@@ -55,7 +64,8 @@
       />
     </div>
 
-    <div v-if="finalFilteredProducts.length === 0" class="text-center py-20">
+
+    <div v-else="finalFilteredProducts.length === 0" class="text-center py-20">
       <div class="w-20 h-20 rounded-[2.5rem] bg-gray-50 flex items-center justify-center mx-auto mb-4 border border-gray-100">
         <ArchiveBoxIcon class="w-10 h-10 text-gray-300" />
       </div>
@@ -70,11 +80,15 @@ import { ref, computed, onMounted } from 'vue'
 import { MagnifyingGlassIcon, ArchiveBoxIcon } from '@heroicons/vue/24/outline'
 import ProductCard from './ProductCard.vue'
 import { useCategoryStore } from '@/stores/CategoryStore' // Vérifie ton chemin
-
+import { NSpin } from 'naive-ui'
 const props = defineProps({
   products: {
     type: Array,
     default: () => []
+  },
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 

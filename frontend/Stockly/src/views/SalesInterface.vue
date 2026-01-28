@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <div class="">
+    <div class="p-4">
       <div class="lg:grid grid-cols-12 gap-6">
         <!-- Section gauche: Sélection client et produits -->
         <div class="lg:col-span-8 space-y-4">
@@ -49,7 +49,7 @@
 
             <!-- Affichage desktop: liste des produits visible -->
             <div class="hidden lg:block">
-              <ProductSelector :products="products" @add-to-sale="addToSale" />
+              <ProductSelector :products="products" @add-to-sale="addToSale" :loading="productLoading" />
             </div>
 
             <!-- Affichage mobile: info sur le nombre de produits -->
@@ -152,7 +152,7 @@
             </button>
           </div>
           <div class="p-1">
-            <ProductSelector :products="products" @add-to-sale="addToSale" />
+            <ProductSelector :products="products" @add-to-sale="addToSale" :loading="productLoading" />
           </div>
         </div>
       </Transition>
@@ -359,6 +359,7 @@ import CreateInvoiceForm from '@/components/invoices/CreateInvoiceForm.vue'
 import { useRouter } from 'vue-router'
 import { useClientStore } from '@/stores/clientStore'
 import { useCurrency } from '@/composable/useCurrency'
+const productLoading = ref(false) 
 const { format } = useCurrency()
 const clientStore = useClientStore()
 const router = useRouter()
@@ -479,9 +480,10 @@ async function createInvoice() {
 }
 
 onMounted(async () => {
+  productLoading.value = true
   await productStore.fetchProducts()
+  productLoading.value = false
   products.value = productStore.products
-  console.log('Produits chargés :', products.value)
 })
 </script>
 

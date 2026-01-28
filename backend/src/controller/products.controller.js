@@ -587,7 +587,9 @@ exports.getOutOfStockProducts = async (req, res) => {
         save: true,
       });
     }
-
+    console.log("====================================");
+    console.log( "finished products",data);
+    console.log("====================================");
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: err.message });
