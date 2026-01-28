@@ -4,7 +4,7 @@
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <GridCard title="Units Needed" :value="totalUnitsNeeded" :icon="CubeIcon" bgColor="bg-primary" />
-        <GridCard title="Est. Reorder Cost" :value="'$' + formatCurrency(totalReorderCost)" :icon="CurrencyDollarIcon"
+        <GridCard title="Est. Reorder Cost" :value="totalReorderCost" :icon="CurrencyDollarIcon"
           bgColor="bg-tertiary" />
         <GridCard title="Urgent Restocks" :value="urgentRestockCount" :icon="ExclamationTriangleIcon"
           bgColor="bg-error" />
@@ -18,7 +18,7 @@
             <div class="relative flex items-center w-full">
               <MagnifyingGlassIcon class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
               <input type="text" placeholder="Search products by name, SKU, or supplier..." v-model="searchQuery"
-                class="input-field w-full pl-12 pr-4 py-3 text-base rounded-xl" />
+                class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
             </div>
           </div>
 
@@ -71,10 +71,12 @@ import GridCard from '@/components/ui/cards/GridCard.vue'
 import { LowStock } from '@/service/api'
 import RestockModal from '@/components/RestockModal.vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useProductStore } from '@/stores/productStore'
+
+const productStore = useProductStore()
 
 const searchQuery = ref('')
 const stockLevelFilter = ref('all')
-const lowStockProducts = ref([])
 const error = ref(null)
 const isModalOpen = ref(false)
 const message = ref('')
@@ -83,38 +85,36 @@ const route = useRoute()
 const selectedProduct = ref(null)
 
 onMounted(async () => {
-  await fetchLowStockProducts()
+  await productStore.fetchLowStockProducts()
 })
 
-async function fetchLowStockProducts() {
-  try {
-    const data = await LowStock()
-    message.value = data.message
-    lowStockProducts.value = data.products
-    error.value = null
-    console.log('✅ Low products loaded:', lowStockProducts.value)
-  } catch (err) {
-    console.error('❌ Error fetching low stock:', err)
-    error.value = err
-    lowStockProducts.value = []
-  }
-}
+const lowStockProducts = computed(() => productStore.lowProducts?.data || [])
 
 const suppliers = ref([
   { id: 1, name: 'Supplier A' },
   { id: 2, name: 'Supplier B' },
 ])
 
-const totalUnitsNeeded = computed(() =>
-  (lowStockProducts.value || []).reduce((sum, p) => sum + (p.min_stock_level - p.quantity), 0),
-)
+// ✅ Version corrigée et sécurisée
+const totalUnitsNeeded = computed(() => {
+  return (lowStockProducts.value || []).reduce((sum, p) => {
+    const min = parseInt(p.min_stock_level) || 0
+    const current = parseInt(p.quantity) || 0
+    // On ne compte que les unités manquantes (pas de négatif)
+    const needed = min > current ? min - current : 0
+    return sum + needed
+  }, 0)
+})
 
-const totalReorderCost = computed(() =>
-  (lowStockProducts.value || []).reduce(
-    (sum, p) => sum + p.cost_price * (p.min_stock_level - p.quantity),
-    0,
-  ),
-)
+const totalReorderCost = computed(() => {
+  return (lowStockProducts.value || []).reduce((sum, p) => {
+    const price = parseFloat(p.cost_price) || 0
+    const min = parseInt(p.min_stock_level) || 0
+    const current = parseInt(p.quantity) || 0
+    const unitsToBuy = min > current ? min - current : 0
+    return sum + (price * unitsToBuy)
+  }, 0)
+})
 
 const urgentRestockCount = computed(
   () => (lowStockProducts.value || []).filter((p) => p.stockLevel === 'critical').length,
@@ -127,9 +127,9 @@ const filteredProducts = computed(() => {
     const q = searchQuery.value.toLowerCase()
     result = result.filter(
       (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q) ||
-        p.supplier.toLowerCase().includes(q),
+        (p.Prod_name && p.Prod_name.toLowerCase().includes(q)) ||
+        (p.code_bar && p.code_bar.toLowerCase().includes(q)) ||
+        (p.supplierInfo?.supplier_name && p.supplierInfo.supplier_name.toLowerCase().includes(q)),
     )
   }
 

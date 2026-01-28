@@ -262,6 +262,21 @@ const handleResize = () => { isDesktop.value = window.innerWidth >= 1024; if (is
 onMounted(async () => {
   window.addEventListener('resize', handleResize)
   if (authStore.token && !authStore.user) await authStore.getAccount()
+
+  // Connecter le socket si l'utilisateur est présent
+  if (authStore.user) {
+    notificationStore.connectSocket(authStore.user.id, authStore.user.entreprise_id)
+    notificationStore.fetchNotifications()
+  }
+})
+
+// Surveiller les changements d'utilisateur (login/logout)
+watch(() => authStore.user, (user) => {
+  if (user) {
+    notificationStore.connectSocket(user.id, user.entreprise_id)
+  } else {
+    notificationStore.disconnectSocket()
+  }
 })
 onUnmounted(() => window.removeEventListener('resize', handleResize))
 </script>

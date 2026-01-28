@@ -19,24 +19,37 @@
     </div>
 
     <div class="mb-6 bg-surface p-6 rounded-xl elevation-1">
-      <div class="relative max-w-full">
+      <div class="relative  flex-1">
         <MagnifyingGlassIcon
           class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
         <input v-model="searchQuery" type="text" placeholder="Search categories by name or description..."
-          class="input-field w-full pl-12 pr-4 py-3.5 text-base rounded-xl" />
+            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
       </div>
     </div>
 
-    <div class="grid grid-cols-1 p-6 lg:grid-cols-2 gap-6">
+    
+
+    
+     <!-- Loading State -->
+      <div v-if="loadingCategories"
+        class="flex justify-center items-center min-h-[400px] bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div class="flex flex-col items-center gap-6">
+          <n-spin size="large" />
+        </div>
+      </div>
+
+      <div v-else-if="filteredCategories.length > 0" class="grid grid-cols-1 p-6 lg:grid-cols-2 gap-6">
       <CategoryCard v-for="category in filteredCategories" :key="category.id" :category="category"
         @edit="handleEditCategory" @delete="handleDeleteCategory" @view="handleViewCategory" />
     </div>
 
-    <div v-if="filteredCategories.length === 0" class="card text-center p-16 mt-6">
+    <div v-else class="card text-center p-16 mt-6">
       <FolderMinusIcon class="mx-auto mb-4 w-16 h-16 text-primary" />
       <h3 class="card-title text-xl mb-2">No Categories Found</h3>
       <p class="card-subtitle">Your search did not match any existing categories.</p>
     </div>
+
+
 
     <AddCategoryModal v-if="showAddCategory" :category="editingCategory" @save="handleSaveCategory"
       @close="closeModal" />
@@ -58,7 +71,7 @@ import ActionModal from '@/components/ui/ActionModal.vue'
 import { useActionMessage } from '@/composable/useActionMessage'
 import { useGlobalModal } from '@/composable/useValidation'
 import GridCard from '@/components/ui/cards/GridCard.vue'
-
+import { NSpin } from 'naive-ui'
 // Importations Heroicons (choisies pour simuler le style Material)
 import {
   ArrowLeftIcon,
@@ -79,7 +92,7 @@ const router = useRouter()
 const searchQuery = ref('')
 const showAddCategory = ref(false)
 const editingCategory = ref(null)
-
+const loadingCategories = ref(false)
 // Computed properties
 const filteredCategories = computed(() => {
   if (!searchQuery.value) return categoryStore.categories
@@ -189,7 +202,9 @@ const handleViewCategory = (categoryId) => {
 
 onMounted(async () => {
   // Fetch categories from API in real implementation
+  loadingCategories.value = true
   await categoryStore.fetchCategory()
+  loadingCategories.value = false
 })
 </script>
 <style scoped></style>

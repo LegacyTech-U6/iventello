@@ -16,7 +16,7 @@
 
     <div class="flex items-end justify-between">
       <div class="text-3xl font-bold">
-        {{ displayValue }}
+        {{displayValue }}
       </div>
       <div v-if="trend !== null" class="flex items-center text-sm">
         <span :class="{

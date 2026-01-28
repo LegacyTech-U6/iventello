@@ -10,7 +10,7 @@ export const useNotificationStore = defineStore('notification', () => {
   const error = ref(null)
   const socket = ref(null)
 
-  const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+  const unreadCount = computed(() => notifications.value.filter((n) => !n.read).length)
 
   // 🔹 Fetch classique
   async function fetchNotifications() {
@@ -31,7 +31,7 @@ export const useNotificationStore = defineStore('notification', () => {
   async function markAsRead(notificationId) {
     try {
       await markNotificationAsRead(notificationId)
-      const notif = notifications.value.find(n => n.id === notificationId)
+      const notif = notifications.value.find((n) => n.id === notificationId)
       if (notif) notif.read = true
     } catch (err) {
       console.error('Failed to mark notification as read:', err)
@@ -39,17 +39,20 @@ export const useNotificationStore = defineStore('notification', () => {
   }
 
   // 🔹 Connexion Socket.IO pour temps réel
-  function connectSocket(userId) {
+  function connectSocket(userId, entrepriseId) {
     if (socket.value) return // déjà connecté
 
-    socket.value = io(import.meta.env.VITE_API_URL) // URL backend Socket.IO
-
-    // S’abonner aux notifications de l’utilisateur
-    socket.value.emit('subscribe', { userId })
+    const socketUrl = import.meta.env.VITE_API_URL.replace('/api', '')
+    socket.value = io(socketUrl) // URL backend Socket.IO
 
     // Quand une nouvelle notification arrive
     socket.value.on('new-notification', (notif) => {
-      notifications.value.unshift(notif) // ajoute en tête
+      console.log('🔔 Socket: New notification received:', notif)
+
+      // Filtrage par entreprise pour le multi-tenant
+      if (!notif.entreprise_id || notif.entreprise_id === entrepriseId) {
+        notifications.value.unshift(notif)
+      }
     })
   }
 

@@ -11,6 +11,7 @@ async function sendNotification({
   type,
   message,
   user_id = null,
+  entreprise_id = null,
   save = true,
 }) {
   try {
@@ -21,16 +22,18 @@ async function sendNotification({
         type,
         message,
         user_id,
+        entreprise_id,
       });
     }
 
-    // 2️⃣ Emit via Socket.io (✅ ici on appelle la fonction getIo())
+    // 2️⃣ Emit via Socket.io
     getIo().emit("new-notification", {
       id: notificationRecord?.id,
       type,
       message,
       date: new Date(),
       user_id,
+      entreprise_id,
     });
 
     console.log("📣 Notification sent:", message);

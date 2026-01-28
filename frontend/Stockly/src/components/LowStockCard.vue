@@ -77,7 +77,7 @@
         </div>
         <div>
           <p class="text-gray-500 mb-1">Unit Price</p>
-          <p class="text-gray-900 font-semibold">${{ formatCurrency(product.cost_price) }}</p>
+          <p class="text-gray-900 font-semibold">{{ format(product.cost_price) }}</p>
         </div>
         <div>
           <p class="text-gray-500 mb-1">Lead Time</p>
@@ -93,7 +93,7 @@
         </div>
         <div class="flex justify-between items-center">
           <span class="text-sm text-gray-600">Est. Reorder Cost</span>
-          <span class="text-lg font-bold text-gray-900">${{ formatCurrency(reorderCost) }}</span>
+          <span class="text-lg font-bold text-gray-900">{{ format(reorderCost) }}</span>
         </div>
       </div>
 
@@ -120,6 +120,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useCurrency } from '@/composable/useCurrency'
 const props = defineProps({
   product: {
     type: Object,
@@ -127,6 +128,8 @@ const props = defineProps({
   },
   reorderCost: Number,
 })
+
+const {format} = useCurrency()
 const emit = defineEmits(['restock'])
 
 const stockPercentage = computed(

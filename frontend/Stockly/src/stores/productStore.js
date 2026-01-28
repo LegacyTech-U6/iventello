@@ -138,9 +138,21 @@ export const useProductStore = defineStore('product', {
       this.loading = true
       try {
         const data = await LowStock()
+        console.log('Structure reçue:', data)
+
+        // Enriched products data
+        if (data && data.data) {
+          data.data = data.data.map((p) => ({
+            ...p,
+            stockLevel: p.quantity <= p.min_stock_level * 0.2 ? 'critical' : 'warning',
+            category_name: p.category?.name || 'N/A',
+            supplier_name: p.supplierInfo?.supplier_name || 'N/A',
+          }))
+        }
+
         this.lowProducts = data
         this.error = null
-        console.log('✅ Low products loaded:', data)
+        console.log('✅ Low products loaded and enriched:', data)
       } catch (err) {
         this.error = err
         this.lowProducts = []
@@ -172,7 +184,10 @@ export const useProductStore = defineStore('product', {
         const url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.href = url
-        link.setAttribute('download', `produits_iventello_${new Date().toISOString().split('T')[0]}.xlsx`)
+        link.setAttribute(
+          'download',
+          `produits_iventello_${new Date().toISOString().split('T')[0]}.xlsx`,
+        )
         document.body.appendChild(link)
         link.click()
         link.remove()

@@ -16,6 +16,34 @@ const logActivity = require("../utils/activityLogger");
 const { sendNotification } = require("../utils/notification");
 const { supabase } = require("../middleware/supabase");
 
+// Helper pour vérifier les alertes de stock
+const checkStockAlerts = async (product, entrepriseId) => {
+  try {
+    if (product.quantity === 0) {
+      await sendNotification({
+        type: "stock",
+        message: `Rupture de stock : "${product.Prod_name}" est épuisé !`,
+        entreprise_id: entrepriseId,
+      });
+    } else {
+      const settings = await Settings.findOne({
+        where: { entreprise_id: entrepriseId },
+      });
+      const threshold = settings?.stock_alert_threshold || 5;
+
+      if (product.quantity <= threshold) {
+        await sendNotification({
+          type: "stock",
+          message: `Stock faible : "${product.Prod_name}" (${product.quantity} restants)`,
+          entreprise_id: entrepriseId,
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Erreur checkStockAlerts:", error);
+  }
+};
+
 // ===============================
 // 🔹 Récupérer tous les produits
 // ===============================
@@ -184,7 +212,6 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-
 // ===============================
 // 🔹 Update a product
 // ===============================
@@ -315,12 +342,14 @@ exports.createSale = async (req, res) => {
     product.quantity -= quantitySold;
     await product.save();
 
-    // ✅ Send notification
+    // ✅ Send notifications
     await sendNotification({
       type: "sale",
       message: `New sale: ${quantitySold} units of "${product.Prod_name}"`,
       user_id: req.user?.id,
     });
+
+    await checkStockAlerts(product, entreprise_id);
 
     res.status(201).json(sale);
   } catch (err) {
@@ -462,6 +491,8 @@ exports.buyProduct = async (req, res) => {
       entreprise_id: entrepriseId,
     });
 
+    await checkStockAlerts(product, entrepriseId);
+
     res
       .status(200)
       .json({ success: true, message: "Vente enregistrée", product });
@@ -507,6 +538,16 @@ exports.getLowStockProducts = async (req, res) => {
     console.log("====================================");
     console.log(data);
     console.log("====================================");
+
+    if (products.length > 0) {
+      await sendNotification({
+        type: "stock",
+        message: `Alerte : ${products.length} produits sont actuellement en stock faible.`,
+        user_id: req.user?.id,
+        save: false,
+      });
+    }
+
     res.json({ threshold, data });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -535,6 +576,15 @@ exports.getOutOfStockProducts = async (req, res) => {
       }
       return prodJSON;
     });
+
+    if (products.length > 0) {
+      await sendNotification({
+        type: "stock",
+        message: `Rappel : ${products.length} produits sont en rupture de stock.`,
+        user_id: req.user?.id,
+        save: false,
+      });
+    }
 
     res.json(data);
   } catch (err) {

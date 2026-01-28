@@ -30,7 +30,7 @@
           <div class="md:col-span-1 relative flex items-center w-full">
             <MagnifyingGlassIcon class="absolute left-4 w-5 h-5 text-on-surface-variant pointer-events-none" />
             <input v-model="searchQuery" type="text" placeholder="Search products by name or SKU..."
-              class="input-field w-full pl-12 pr-4 py-3 text-base rounded-xl" />
+            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
           </div>
           <select v-model="selectedCategory" class="input-field w-full px-4 py-3 text-base rounded-xl">
             <option value="all">All Categories</option>
