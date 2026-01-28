@@ -560,13 +560,19 @@ exports.getLowStockProducts = async (req, res) => {
 // ===============================
 exports.getOutOfStockProducts = async (req, res) => {
   try {
-    const entrepriseId = req.user.entreprise_id;
+    const Category = db.Category;
+    const Supplier = db.Supplier;
+    const entrepriseId = req.entrepriseId;
 
     const products = await Product.findAll({
       where: { entreprise_id: entrepriseId, quantity: 0 },
       include: [
-        { model: Category, attributes: ["id", "name"] },
-        { model: Supplier, attributes: ["id", "supplier_name"] },
+        { model: Category, as: "category", attributes: ["id", "name"] },
+        {
+          model: Supplier,
+          as: "supplierInfo",
+          attributes: ["id", "supplier_name"],
+        },
       ],
     });
     // Transformer le nom du fichier en URL publique Supabase
@@ -582,15 +588,15 @@ exports.getOutOfStockProducts = async (req, res) => {
       await sendNotification({
         type: "stock",
         message: `Rappel : ${products.length} produits sont en rupture de stock.`,
-        entreprise_id: req.entrepriseId,
+        entreprise_id: entrepriseId,
         user_id: req.user?.id,
         save: true,
       });
     }
     console.log("====================================");
-    console.log( "finished products",data);
+    console.log("finished products count:", data.length);
     console.log("====================================");
-    res.json(data);
+    res.json({ products: data });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
