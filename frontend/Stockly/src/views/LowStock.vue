@@ -34,7 +34,12 @@
       </div>
 
       <!-- Products Grid - 1 col mobile, 2 cols tablet, 2 cols desktop -->
-      <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+      <div v-if="loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-xl">
+        <n-spin size="large" />
+        <p class="text-gray-500 mt-4 animate-pulse">Loading low stock products...</p>
+      </div>
+
+      <div v-else-if="filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
         <LowStockCard v-for="product in filteredProducts" :key="product.id" :product="product" @restock="handleRestock"
           :reorderCost="totalReorderCost" />
       </div>
@@ -57,6 +62,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { NSpin } from 'naive-ui'
 import {
   CubeIcon,
   CurrencyDollarIcon,
@@ -74,6 +81,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/productStore'
 
 const productStore = useProductStore()
+const { loading } = storeToRefs(productStore)
 
 const searchQuery = ref('')
 const stockLevelFilter = ref('all')

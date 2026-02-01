@@ -4,53 +4,32 @@
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-2">
         <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-          />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
         </svg>
         <h2 class="text-lg font-semibold text-gray-800">Top Categories</h2>
       </div>
 
       <!-- Period Selector -->
       <div class="relative">
-        <button
-          @click="toggleDropdown"
-          class="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-        >
+        <button @click="toggleDropdown"
+          class="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           {{ periodLabels[selectedPeriod] }}
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </button>
 
         <!-- Dropdown -->
-        <div
-          v-if="showDropdown"
-          class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
-        >
-          <button
-            v-for="period in periods"
-            :key="period"
-            @click="selectPeriod(period)"
+        <div v-if="showDropdown"
+          class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+          <button v-for="period in periods" :key="period" @click="selectPeriod(period)"
             class="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg transition-colors"
-            :class="{ 'bg-orange-50 text-orange-600': selectedPeriod === period }"
-          >
+            :class="{ 'bg-orange-50 text-orange-600': selectedPeriod === period }">
             {{ periodLabels[period] }}
           </button>
         </div>
@@ -70,36 +49,23 @@
         <div class="relative w-48 h-48">
           <svg viewBox="0 0 200 200" class="transform -rotate-90">
             <circle cx="100" cy="100" r="80" fill="none" stroke="#f3f4f6" stroke-width="40" />
-            <circle
-              v-for="(segment, index) in chartSegments"
-              :key="index"
-              cx="100"
-              cy="100"
-              r="80"
-              fill="none"
-              :stroke="segment.color"
-              stroke-width="40"
-              :stroke-dasharray="`${segment.length} ${circumference}`"
-              :stroke-dashoffset="-segment.offset"
-              class="transition-all duration-500"
-            />
+            <circle v-for="(segment, index) in chartSegments" :key="index" cx="100" cy="100" r="80" fill="none"
+              :stroke="segment.color" stroke-width="40" :stroke-dasharray="`${segment.length} ${circumference}`"
+              :stroke-dashoffset="-segment.offset" class="transition-all duration-500" />
           </svg>
         </div>
 
         <!-- Legend -->
         <div class="flex-1 space-y-4">
-          <div
-            v-for="(category, index) in topCategories"
-            :key="category.category"
-            class="flex items-center justify-between"
-          >
+          <div v-for="(category, index) in topCategories" :key="category.category"
+            class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: colors[index] }"></div>
               <span class="text-sm text-gray-600">{{ category.category }}</span>
             </div>
             <div class="text-right">
-              <div class="text-lg font-semibold text-gray-800">
-                {{ category.total_revenue.toLocaleString() }}
+              <div class="text-sm font-semibold text-gray-800" :style="getDynamicStyle(category.total_revenue)">
+                {{ format(category.total_revenue) }}
               </div>
               <div class="text-xs text-gray-500">Sales</div>
             </div>
@@ -135,18 +101,9 @@
 
     <!-- Empty State -->
     <div v-else class="text-center py-12">
-      <svg
-        class="w-12 h-12 text-gray-300 mx-auto mb-3"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-        />
+      <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
       </svg>
       <p class="text-gray-500 text-sm">No category data available</p>
     </div>
@@ -156,6 +113,9 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useStatisticsStore } from '@/stores/statisticStore'
+import { useCurrency } from '@/composable/useCurrency'
+
+const { format, getDynamicStyle } = useCurrency()
 
 const statisticsStore = useStatisticsStore()
 

@@ -1,0 +1,73 @@
+[93m[4mUnused files[24m[39m (9)
+config/config.js                                                 
+migrations/20251125090046-add-currency-to-entreprises.js         
+migrations/20260128130500-add-entreprise-id-to-notifications.js  
+migrations/20260128173000-add-fields-to-activities.js            
+src/crons/cronCurrencyUpdater.js                                 
+src/middleware/Role.js                                           
+src/models/AllUser.model.js                                      
+src/routes/devise.routes.js                                      
+src/utils/imageHelper.js                                         
+[93m[4mUnused dependencies[24m[39m (11)
+bluebird                   package.json:24:6
+cloudinary                 package.json:25:6
+cookie-parser              package.json:26:6
+helmet                     package.json:32:6
+morgan                     package.json:34:6
+multer-storage-cloudinary  package.json:36:6
+mysql2                     package.json:37:6
+nodemailer                 package.json:41:6
+pg                         package.json:42:6
+pg-hstore                  package.json:43:6
+tslib                      package.json:47:6
+[93m[4mUnlisted dependencies[24m[39m (1)
+node-fetch  src/controller/pdf.controller.js:2:8
+[93m[4mUnlisted binaries[24m[39m (1)
+server  package.json
+[93m[4mUnresolved imports[24m[39m (5)
+../index  src/tests/auths.test.js:2:13   
+../index  src/tests/category.test.js:2:13
+../index  src/tests/product.test.js:2:13 
+../index  src/tests/sales.test.js:2:13   
+../index  src/tests/supplier.test.js:2:13
+[93m[4mUnused exports[24m[39m (40)
+mailjet                    src/config/mail.config.js:81:20                        
+sendMail                   src/config/mail.config.js:81:29                        
+convertAmount              src/utils/currency.service.js:129:3                    
+getAllActivities           src/controller/activity.controller.js:3:9              
+getAllEntreprises          src/controller/entreprise.controller.js:11:9           
+getEntrepriseByUuid        src/controller/entreprise.controller.js:46:9           
+createEntreprise           src/controller/entreprise.controller.js:68:9           
+updateEntreprise           src/controller/entreprise.controller.js:137:9          
+deleteEntreprise           src/controller/entreprise.controller.js:182:9          
+default                    src/controller/facture.controller.js:181:18            
+getAllProducts             src/controller/products.controller.js:50:9             
+getProductById             src/controller/products.controller.js:94:9             
+createProduct              src/controller/products.controller.js:127:9            
+updateProduct              src/controller/products.controller.js:219:9            
+deleteProduct              src/controller/products.controller.js:277:9            
+createSale                 src/controller/products.controller.js:306:9            
+addQuantity                src/controller/products.controller.js:363:9            
+buyProduct                 src/controller/products.controller.js:449:9            
+getLowStockProducts        src/controller/products.controller.js:507:9            
+getOutOfStockProducts      src/controller/products.controller.js:561:9            
+getProductsByCategory      src/controller/products.controller.js:608:9            
+getSales                   src/controller/products.controller.js:664:9            
+getAllRoles                src/controller/roles.controller.js:13:9                
+getRoleById                src/controller/roles.controller.js:29:9                
+createRole                 src/controller/roles.controller.js:41:9                
+updateRole                 src/controller/roles.controller.js:52:9                
+deleteRole                 src/controller/roles.controller.js:63:9                
+getReport                  src/controller/SalesReport.controller.js:136:9         
+mailjet                    src/utils/mailer.js:69:20                              
+testMailjetConnection      src/utils/mailer.js:69:39                              
+getAllWorkers              src/controller/workers.controller.js:11:9              
+getWorkerById              src/controller/workers.controller.js:49:9              
+createWorker               src/controller/workers.controller.js:72:9              
+updateWorker               src/controller/workers.controller.js:113:9             
+deleteWorker               src/controller/workers.controller.js:133:9             
+getDashboardStats          src/controller/statistics/adminStats.controller.js:38:3
+getEnterpriseReport        src/controller/statistics/adminStats.controller.js:39:3
+getGlobalStats             src/models/statistics/adminStats.js:85:3               
+getEnterprisePerformance   src/models/statistics/adminStats.js:86:3               
+getRecentGlobalActivities  src/models/statistics/adminStats.js:87:3               

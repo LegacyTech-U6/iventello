@@ -14,13 +14,20 @@ export const useEntrepriseStore = defineStore('entreprise', {
     currentEntreprise: null,
     totalEntreprise: null,
     activeEntreprise: null,
+    isSwitching: false,
     isLoading: false,
     error: null,
     successMessage: null,
   }),
   actions: {
-    setActiveEntreprise(entreprise) {
+    async setActiveEntreprise(entreprise) {
+      this.isSwitching = true
       this.activeEntreprise = entreprise
+
+      // Simuler un petit délai pour permettre aux autres stores de se vider ou à l'UI de réagir
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      this.isSwitching = false
     },
 
     clearActiveEntreprise() {

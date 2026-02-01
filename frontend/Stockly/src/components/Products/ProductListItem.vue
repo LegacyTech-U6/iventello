@@ -40,7 +40,8 @@
           </div>
           <div class="text-right">
             <p class="text-[10px] text-gray-400 uppercase tracking-tighter">Prix</p>
-            <p class="text-xs font-bold text-blue-600">{{ format(product.selling_price) }}</p>
+            <p class="text-xs font-bold text-blue-600" :style="getDynamicStyle(product.selling_price)">{{
+              format(product.selling_price) }}</p>
           </div>
         </div>
 
@@ -93,11 +94,13 @@
       </div>
 
       <div class="w-24 sm:w-32 text-right hidden sm:block">
-        <p class="text-xs sm:text-sm font-medium text-gray-500">{{ format(product.cost_price) }}</p>
+        <p class="text-xs sm:text-sm font-medium text-gray-500" :style="getDynamicStyle(product.cost_price)">{{
+          format(product.cost_price) }}</p>
       </div>
 
       <div class="w-24 sm:w-32 text-right">
-        <p class="text-xs sm:text-sm font-bold text-gray-900">{{ format(product.selling_price) }}</p>
+        <p class="text-xs sm:text-sm font-bold text-gray-900" :style="getDynamicStyle(product.selling_price)">{{
+          format(product.selling_price) }}</p>
       </div>
 
       <div class="w-8 sm:w-12 flex justify-end">
@@ -114,7 +117,7 @@ import { computed } from 'vue'
 import { EyeIcon, CubeIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import { useCurrency } from '@/composable/useCurrency'
 
-const { format } = useCurrency()
+const { format, getDynamicStyle } = useCurrency()
 
 interface Product {
   id?: string | number

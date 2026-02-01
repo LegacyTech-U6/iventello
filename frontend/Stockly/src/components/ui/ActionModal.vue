@@ -1,14 +1,7 @@
 <template>
-  <n-modal
-    v-model:show="show"
-    preset="dialog"
-    :title="title"
-    :content="message"
-    :positive-text="confirmText"
-    :negative-text="cancelText"
-    @positive-click="handleConfirm"
-    @negative-click="handleCancel"
-  />
+  <n-modal v-model:show="show" preset="dialog" :title="title" :content="message" :positive-text="confirmText"
+    :negative-text="cancelText" :positive-button-props="{ loading: loading }" @positive-click="handleConfirm"
+    @negative-click="handleCancel" />
 </template>
 
 <script setup>
@@ -20,6 +13,7 @@ const props = defineProps({
   confirmText: { type: String, default: 'Yes' },
   cancelText: { type: String, default: 'Cancel' },
   modelValue: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
@@ -32,9 +26,9 @@ watch(
 )
 watch(show, (val) => emit('update:modelValue', val))
 
-const handleConfirm = () => {
+const handleConfirm = (e) => {
+  e.preventDefault()
   emit('confirm')
-  show.value = false
 }
 
 const handleCancel = () => {

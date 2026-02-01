@@ -28,12 +28,10 @@ exports.register = async (req, res) => {
     const existingInWorker = await db.Worker.findOne({ where: { email } });
 
     if (existingInAdmin || existingInWorker) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Cet email est déjà utilisé par un autre compte (admin ou employé).",
-        });
+      return res.status(400).json({
+        message:
+          "Cet email est déjà utilisé par un autre compte (admin ou employé).",
+      });
     }
 
     // 2️⃣ Hacher le mot de passe (à remplacer par bcrypt)
@@ -178,6 +176,14 @@ exports.login = async (req, res) => {
               "currency",
               "logo_url",
               "description",
+              "adresse",
+              "ville",
+              "code_postal",
+              "email_contact",
+              "telephone_contact",
+              "numero_fiscal",
+              "nui",
+              "informations_bancaires",
             ],
           },
         ],
@@ -207,11 +213,22 @@ exports.login = async (req, res) => {
 
     console.log("Token généré:", token); // Log du token généré
 
+    // URL publique pour le logo si worker
+    let finalUser = userDetails;
+    if (
+      userDetails &&
+      userDetails.entreprise &&
+      userDetails.entreprise.logo_url
+    ) {
+      finalUser = userDetails.toJSON ? userDetails.toJSON() : userDetails;
+      finalUser.entreprise.logo_url = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${finalUser.entreprise.logo_url}`;
+    }
+
     // Réponse avec succès et le token généré
     res.status(200).json({
       message: "Connexion réussie",
       token,
-      user: userDetails,
+      user: finalUser,
     });
     console.log("Détails de l'utilisateur:", userDetails); // Log des détails de l'utilisateur
   } catch (err) {
@@ -402,6 +419,14 @@ exports.getProfile = async (req, res) => {
               "currency",
               "logo_url",
               "description",
+              "adresse",
+              "ville",
+              "code_postal",
+              "email_contact",
+              "telephone_contact",
+              "numero_fiscal",
+              "nui",
+              "informations_bancaires",
             ],
           },
         ],
@@ -418,7 +443,12 @@ exports.getProfile = async (req, res) => {
     if (!profile)
       return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-    res.status(200).json(profile);
+    let finalProfile = profile.toJSON ? profile.toJSON() : profile;
+    if (finalProfile.entreprise && finalProfile.entreprise.logo_url) {
+      finalProfile.entreprise.logo_url = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${finalProfile.entreprise.logo_url}`;
+    }
+
+    res.status(200).json(finalProfile);
   } catch (err) {
     console.error("Erreur getProfile:", err);
     res.status(500).json({ message: err.message });

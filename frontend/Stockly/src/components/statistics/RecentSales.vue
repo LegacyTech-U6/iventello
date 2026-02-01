@@ -40,7 +40,8 @@
         </div>
 
         <!-- 🔹 Montant -->
-        <p class="font-semibold" :class="activity.type === 'sale' ? 'text-green-600' : 'text-blue-600'">
+        <p class="font-semibold" :class="activity.type === 'sale' ? 'text-green-600' : 'text-blue-600'"
+          :style="activity.amount ? getDynamicStyle(activity.amount) : {}">
           {{ activity.amount ? format(activity.amount) : '-' }}
         </p>
       </li>
@@ -57,7 +58,7 @@ const activityStore = useActivityStore()
 const { activities, loading } = storeToRefs(activityStore)
 import { useCurrency } from '@/composable/useCurrency'
 
-const { format } = useCurrency()
+const { format, getDynamicStyle } = useCurrency()
 
 const loadActivities = async () => {
   await activityStore.fetchActivities()

@@ -5,16 +5,12 @@
       <div class="flex-1">
         <div class="flex items-center gap-2 mb-2">
           <h3 class="text-lg font-semibold text-gray-900">{{ product.Prod_name }}</h3>
-          <span
-            v-if="product.stockLevel === 'critical'"
-            class="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded"
-          >
+          <span v-if="product.stockLevel === 'critical'"
+            class="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded">
             CRITICAL
           </span>
-          <span
-            v-if="product.stockLevel === 'warning'"
-            class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded"
-          >
+          <span v-if="product.stockLevel === 'warning'"
+            class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded">
             LOW STOCK
           </span>
         </div>
@@ -24,22 +20,14 @@
       <div class="flex gap-2">
         <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
           <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
         </button>
         <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
           <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
         </button>
       </div>
@@ -55,11 +43,8 @@
           </span>
         </div>
         <div class="w-full bg-gray-200 rounded-full h-2">
-          <div
-            :class="product.stockLevel === 'critical' ? 'bg-red-500' : 'bg-amber-500'"
-            class="h-2 rounded-full transition-all"
-            :style="{ width: Math.min(stockPercentage, 100) + '%' }"
-          />
+          <div :class="product.stockLevel === 'critical' ? 'bg-red-500' : 'bg-amber-500'"
+            class="h-2 rounded-full transition-all" :style="{ width: Math.min(stockPercentage, 100) + '%' }" />
         </div>
       </div>
 
@@ -77,7 +62,8 @@
         </div>
         <div>
           <p class="text-gray-500 mb-1">Unit Price</p>
-          <p class="text-gray-900 font-semibold">{{ format(product.cost_price) }}</p>
+          <p class="text-gray-900 font-semibold" :style="getDynamicStyle(product.cost_price)">{{
+            format(product.cost_price) }}</p>
         </div>
         <div>
           <p class="text-gray-500 mb-1">Lead Time</p>
@@ -93,24 +79,19 @@
         </div>
         <div class="flex justify-between items-center">
           <span class="text-sm text-gray-600">Est. Reorder Cost</span>
-          <span class="text-lg font-bold text-gray-900">{{ format(reorderCost) }}</span>
+          <span class="text-lg font-bold text-gray-900" :style="getDynamicStyle(reorderCost)">{{ format(reorderCost)
+            }}</span>
         </div>
       </div>
 
       <div class="text-xs text-gray-500">Last sold: {{ formatDate(product.lastSold) }}</div>
 
       <!-- Action -->
-      <button
-        @click="$emit('restock', product)"
-        class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-      >
+      <button @click="$emit('restock', product)"
+        class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-          />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
         </svg>
         Order Now
       </button>
@@ -129,7 +110,7 @@ const props = defineProps({
   reorderCost: Number,
 })
 
-const {format} = useCurrency()
+const { format, getDynamicStyle } = useCurrency()
 const emit = defineEmits(['restock'])
 
 const stockPercentage = computed(
@@ -137,12 +118,6 @@ const stockPercentage = computed(
 )
 const unitsNeeded = computed(() => props.product.min_stock_level - props.product.quantity)
 
-function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount)
-}
 
 function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString('en-US')

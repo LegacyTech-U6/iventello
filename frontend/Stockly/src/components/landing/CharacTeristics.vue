@@ -38,7 +38,7 @@
         </div>
 
         <div class="pt-4">
-          <button
+          <button @click="navigate()"
             class="bg-[#0C333B] hover:bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
           >
             Discover Features
@@ -51,6 +51,13 @@
 
 <script setup>
 import TechIcon from '@/assets/TechIcon.vue'
+import { useRouter,useRoute } from 'vue-router';
+
+const router = useRouter()
+
+const navigate = () => {
+  router.push('/features')
+}
 </script>
 
 <style scoped>

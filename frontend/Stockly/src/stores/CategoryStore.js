@@ -107,5 +107,11 @@ export const useCategoryStore = defineStore('Category', {
         this.loading = false
       }
     },
+    clearCategories() {
+      this.categories = []
+      this.totalCategory = null
+      this.category = null
+      this.products = []
+    },
   },
 })

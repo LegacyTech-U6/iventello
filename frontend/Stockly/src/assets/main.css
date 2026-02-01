@@ -18,140 +18,204 @@ body {
 :root {
   /* Light Theme - Default */
   --md-primary: #006879;
-  --md-on-primary: #FFFFFF;
-  --md-primary-container: #A8EDFF;
-  --md-on-primary-container: #004E5B;
-  
-  --md-secondary: #4B6268;
-  --md-on-secondary: #FFFFFF;
-  --md-secondary-container: #CEE7EE;
-  --md-on-secondary-container: #334A50;
-  
-  --md-tertiary: #565D7E;
-  --md-on-tertiary: #FFFFFF;
-  --md-tertiary-container: #DDE1FF;
-  --md-on-tertiary-container: #3E4565;
-  
-  --md-error: #BA1A1A;
-  --md-on-error: #FFFFFF;
-  --md-error-container: #FFDAD6;
-  --md-on-error-container: #93000A;
-  
-  --md-background: #F5FAFC;
-  --md-on-background: #171D1E;
-  
-  --md-surface: #F5FAFC;
-  --md-on-surface: #171D1E;
-  --md-surface-variant: #DBE4E7;
-  --md-on-surface-variant: #3F484B;
-  
-  --md-outline: #6F797B;
-  --md-outline-variant: #BFC8CB;
-  
-  --md-inverse-surface: #2B3133;
-  --md-inverse-on-surface: #ECF2F3;
-  --md-inverse-primary: #84D2E5;
-  
+  --md-on-primary: #ffffff;
+  --md-primary-container: #a8edff;
+  --md-on-primary-container: #004e5b;
+
+  --md-secondary: #4b6268;
+  --md-on-secondary: #ffffff;
+  --md-secondary-container: #cee7ee;
+  --md-on-secondary-container: #334a50;
+
+  --md-tertiary: #565d7e;
+  --md-on-tertiary: #ffffff;
+  --md-tertiary-container: #dde1ff;
+  --md-on-tertiary-container: #3e4565;
+
+  --md-error: #ba1a1a;
+  --md-on-error: #ffffff;
+  --md-error-container: #ffdad6;
+  --md-on-error-container: #93000a;
+
+  --md-background: #f5fafc;
+  --md-on-background: #171d1e;
+
+  --md-surface: #f5fafc;
+  --md-on-surface: #171d1e;
+  --md-surface-variant: #dbe4e7;
+  --md-on-surface-variant: #3f484b;
+
+  --md-outline: #6f797b;
+  --md-outline-variant: #bfc8cb;
+
+  --md-inverse-surface: #2b3133;
+  --md-inverse-on-surface: #ecf2f3;
+  --md-inverse-primary: #84d2e5;
+
   /* Primary Palette Shades */
   --md-primary-0: #000000;
   --md-primary-5: #001418;
-  --md-primary-10: #001F26;
-  --md-primary-20: #0F353D;
-  --md-primary-25: #1C4048;
-  --md-primary-30: #284C54;
-  --md-primary-40: #41646C;
-  --md-primary-50: #5A7D86;
-  --md-primary-60: #7396A0;
-  --md-primary-70: #8DB1BB;
-  --md-primary-80: #A8CDD7;
-  --md-primary-90: #C4E9F3;
-  --md-primary-95: #D7F6FF;
-  --md-primary-99: #F8FDFF;
-  --md-primary-100: #FFFFFF;
+  --md-primary-10: #001f26;
+  --md-primary-20: #0f353d;
+  --md-primary-25: #1c4048;
+  --md-primary-30: #284c54;
+  --md-primary-40: #41646c;
+  --md-primary-50: #5a7d86;
+  --md-primary-60: #7396a0;
+  --md-primary-70: #8db1bb;
+  --md-primary-80: #a8cdd7;
+  --md-primary-90: #c4e9f3;
+  --md-primary-95: #d7f6ff;
+  --md-primary-99: #f8fdff;
+  --md-primary-100: #ffffff;
 }
 
 /* Dark Theme */
-[data-theme="dark"],
+[data-theme='dark'],
 html.dark {
-  --md-primary: #84D2E5;
-  --md-on-primary: #00363F;
-  --md-primary-container: #004E5B;
-  --md-on-primary-container: #A8EDFF;
-  
-  --md-secondary: #B2CBD2;
-  --md-on-secondary: #1C3439;
-  --md-secondary-container: #334A50;
-  --md-on-secondary-container: #CEE7EE;
-  
-  --md-tertiary: #BEC5EB;
-  --md-on-tertiary: #272F4D;
-  --md-tertiary-container: #3E4565;
-  --md-on-tertiary-container: #DDE1FF;
-  
-  --md-error: #FFB4AB;
+  --md-primary: #84d2e5;
+  --md-on-primary: #00363f;
+  --md-primary-container: #004e5b;
+  --md-on-primary-container: #a8edff;
+
+  --md-secondary: #b2cbd2;
+  --md-on-secondary: #1c3439;
+  --md-secondary-container: #334a50;
+  --md-on-secondary-container: #cee7ee;
+
+  --md-tertiary: #bec5eb;
+  --md-on-tertiary: #272f4d;
+  --md-tertiary-container: #3e4565;
+  --md-on-tertiary-container: #dde1ff;
+
+  --md-error: #ffb4ab;
   --md-on-error: #690005;
-  --md-error-container: #93000A;
-  --md-on-error-container: #FFDAD6;
-  
-  --md-background: #0F1416;
-  --md-on-background: #DEE3E5;
-  
-  --md-surface: #0F1416;
-  --md-on-surface: #DEE3E5;
-  --md-surface-variant: #3F484B;
-  --md-on-surface-variant: #BFC8CB;
-  
+  --md-error-container: #93000a;
+  --md-on-error-container: #ffdad6;
+
+  --md-background: #0f1416;
+  --md-on-background: #dee3e5;
+
+  --md-surface: #0f1416;
+  --md-on-surface: #dee3e5;
+  --md-surface-variant: #3f484b;
+  --md-on-surface-variant: #bfc8cb;
+
   --md-outline: #899295;
-  --md-outline-variant: #3F484B;
-  
-  --md-inverse-surface: #DEE3E5;
-  --md-inverse-on-surface: #2B3133;
+  --md-outline-variant: #3f484b;
+
+  --md-inverse-surface: #dee3e5;
+  --md-inverse-on-surface: #2b3133;
   --md-inverse-primary: #006879;
 }
 
 /* Utility classes for quick color application */
 
 /* Text Colors */
-.text-primary { color: var(--md-primary); }
-.text-on-primary { color: var(--md-on-primary); }
-.text-secondary { color: var(--md-secondary); }
-.text-on-secondary { color: var(--md-on-secondary); }
-.text-tertiary { color: var(--md-tertiary); }
-.text-on-tertiary { color: var(--md-on-tertiary); }
-.text-error { color: var(--md-error); }
-.text-on-error { color: var(--md-on-error); }
-.text-surface { color: var(--md-surface); }
-.text-on-surface { color: var(--md-on-surface); }
-.text-on-surface-variant { color: var(--md-on-surface-variant); }
+.text-primary {
+  color: var(--md-primary);
+}
+.text-on-primary {
+  color: var(--md-on-primary);
+}
+.text-secondary {
+  color: var(--md-secondary);
+}
+.text-on-secondary {
+  color: var(--md-on-secondary);
+}
+.text-tertiary {
+  color: var(--md-tertiary);
+}
+.text-on-tertiary {
+  color: var(--md-on-tertiary);
+}
+.text-error {
+  color: var(--md-error);
+}
+.text-on-error {
+  color: var(--md-on-error);
+}
+.text-surface {
+  color: var(--md-surface);
+}
+.text-on-surface {
+  color: var(--md-on-surface);
+}
+.text-on-surface-variant {
+  color: var(--md-on-surface-variant);
+}
 
 /* Background Colors */
-.bg-primary { background-color: var(--md-primary); }
-.bg-primary-container { background-color: var(--md-primary-container); }
-.bg-secondary { background-color: var(--md-secondary); }
-.bg-secondary-container { background-color: var(--md-secondary-container); }
-.bg-tertiary { background-color: var(--md-tertiary); }
-.bg-tertiary-container { background-color: var(--md-tertiary-container); }
-.bg-error { background-color: var(--md-error); }
-.bg-error-container { background-color: var(--md-error-container); }
-.bg-surface { background-color: var(--md-surface); }
-.bg-surface-variant { background-color: var(--md-surface-variant); }
-.bg-background { background-color: var(--md-background); }
+.bg-primary {
+  background-color: var(--md-primary);
+}
+.bg-primary-container {
+  background-color: var(--md-primary-container);
+}
+.bg-secondary {
+  background-color: var(--md-secondary);
+}
+.bg-secondary-container {
+  background-color: var(--md-secondary-container);
+}
+.bg-tertiary {
+  background-color: var(--md-tertiary);
+}
+.bg-tertiary-container {
+  background-color: var(--md-tertiary-container);
+}
+.bg-error {
+  background-color: var(--md-error);
+}
+.bg-error-container {
+  background-color: var(--md-error-container);
+}
+.bg-surface {
+  background-color: var(--md-surface);
+}
+.bg-surface-variant {
+  background-color: var(--md-surface-variant);
+}
+.bg-background {
+  background-color: var(--md-background);
+}
 
 /* Border Colors */
-.border-primary { border-color: var(--md-primary); }
-.border-secondary { border-color: var(--md-secondary); }
-.border-tertiary { border-color: var(--md-tertiary); }
-.border-outline { border-color: var(--md-outline); }
-.border-outline-variant { border-color: var(--md-outline-variant); }
+.border-primary {
+  border-color: var(--md-primary);
+}
+.border-secondary {
+  border-color: var(--md-secondary);
+}
+.border-tertiary {
+  border-color: var(--md-tertiary);
+}
+.border-outline {
+  border-color: var(--md-outline);
+}
+.border-outline-variant {
+  border-color: var(--md-outline-variant);
+}
 
 /* Hover States */
-.hover\:bg-primary:hover { background-color: var(--md-primary); }
-.hover\:bg-secondary:hover { background-color: var(--md-secondary); }
-.hover\:bg-tertiary:hover { background-color: var(--md-tertiary); }
+.hover\:bg-primary:hover {
+  background-color: var(--md-primary);
+}
+.hover\:bg-secondary:hover {
+  background-color: var(--md-secondary);
+}
+.hover\:bg-tertiary:hover {
+  background-color: var(--md-tertiary);
+}
 
 /* Focus States */
-.focus\:outline-primary:focus { outline-color: var(--md-primary); }
-.focus\:ring-primary:focus { --tw-ring-color: var(--md-primary); }
+.focus\:outline-primary:focus {
+  outline-color: var(--md-primary);
+}
+.focus\:ring-primary:focus {
+  --tw-ring-color: var(--md-primary);
+}
 
 /* Buttons - Quick Styles */
 .btn-primary {
@@ -281,4 +345,16 @@ html.dark {
 
 .elevation-3 {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure Naive UI messages and notifications are always on top of modals */
+.n-message-container,
+.n-notification-container,
+.n-dialog-container {
+  z-index: 10000 !important;
+}
+
+/* Custom styles for the Validation Modal if needed */
+.v-modal-custom {
+  z-index: 9000 !important;
 }

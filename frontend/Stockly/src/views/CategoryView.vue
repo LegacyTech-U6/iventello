@@ -23,22 +23,22 @@
         <MagnifyingGlassIcon
           class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
         <input v-model="searchQuery" type="text" placeholder="Search categories by name or description..."
-            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
+          class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
       </div>
     </div>
 
-    
 
-    
-     <!-- Loading State -->
-      <div v-if="loadingCategories"
-        class="flex justify-center items-center min-h-[400px] bg-white rounded-lg border border-gray-200 shadow-sm">
-        <div class="flex flex-col items-center gap-6">
-          <n-spin size="large" />
-        </div>
+
+
+    <!-- Loading State -->
+    <div v-if="loadingCategories"
+      class="flex justify-center items-center min-h-[400px] bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div class="flex flex-col items-center gap-6">
+        <n-spin size="large" />
       </div>
+    </div>
 
-      <div v-else-if="filteredCategories.length > 0" class="grid grid-cols-1 p-6 lg:grid-cols-2 gap-6">
+    <div v-else-if="filteredCategories.length > 0" class="grid grid-cols-1 p-6 lg:grid-cols-2 gap-6">
       <CategoryCard v-for="category in filteredCategories" :key="category.id" :category="category"
         @edit="handleEditCategory" @delete="handleDeleteCategory" @view="handleViewCategory" />
     </div>
@@ -51,11 +51,11 @@
 
 
 
-    <AddCategoryModal v-if="showAddCategory" :category="editingCategory" @save="handleSaveCategory"
-      @close="closeModal" />
+    <AddCategoryModal v-if="showAddCategory" :category="editingCategory" :loading="isActionLoading"
+      @save="handleSaveCategory" @close="closeModal" />
     <ActionModal v-model="showDeleteModal" title="Delete Category"
       message="Are you sure you want to delete this category? This action cannot be undone." confirm-text="Delete"
-      cancel-text="Cancel" @confirm="confirmDelete" />
+      cancel-text="Cancel" :loading="isActionLoading" @confirm="confirmDelete" />
   </div>
 </template>
 
@@ -93,6 +93,7 @@ const searchQuery = ref('')
 const showAddCategory = ref(false)
 const editingCategory = ref(null)
 const loadingCategories = ref(false)
+const isActionLoading = ref(false)
 // Computed properties
 const filteredCategories = computed(() => {
   if (!searchQuery.value) return categoryStore.categories
@@ -138,6 +139,7 @@ const handleDeleteCategory = (categoryId) => {
 }
 
 const confirmDelete = async () => {
+  isActionLoading.value = true
   try {
     await categoryStore.Delete(categoryToDelete.value)
     await categoryStore.fetchCategory()
@@ -146,12 +148,14 @@ const confirmDelete = async () => {
     console.error('Error deleting category:', error)
     showError('Failed to delete category')
   } finally {
+    isActionLoading.value = false
     showDeleteModal.value = false
     categoryToDelete.value = null
   }
 }
 
 const handleSaveCategory = async (categoryData) => {
+  isActionLoading.value = true
   try {
     if (categoryData.id) {
       // 🔹 Mise à jour d'une catégorie existante
@@ -185,6 +189,8 @@ const handleSaveCategory = async (categoryData) => {
   } catch (error) {
     console.error('Erreur lors de la sauvegarde de la catégorie :', error)
     toast.error('Erreur lors de la sauvegarde de la catégorie !')
+  } finally {
+    isActionLoading.value = false
   }
 }
 

@@ -57,7 +57,7 @@
       <!-- Empty State -->
       <div v-else class="bg-white rounded-lg border border-gray-200 shadow-sm py-16 px-6">
         <div class="flex flex-col items-center gap-6">
-          <Noclient />
+          
           <div class="text-center">
             <p class="text-lg font-medium text-gray-900 mb-2">
               {{ search ? 'No customers found' : 'No customers yet' }}
@@ -84,35 +84,9 @@
       @close="handleCloseModal" @submit="handleSubmit" />
 
     <!-- Delete Modal -->
-    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      @click.self="showDeleteModal = false">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Delete Customer</h3>
-          <div class="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg flex gap-3">
-            <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clip-rule="evenodd" />
-            </svg>
-            <p class="text-sm text-amber-800">This action cannot be undone</p>
-          </div>
-          <p class="text-sm text-gray-600 mb-6">
-            Are you sure you want to delete <strong class="text-gray-900">{{ selectedClient?.client_name }}</strong>?
-          </p>
-          <div class="flex gap-3 justify-end">
-            <button @click="showDeleteModal = false"
-              class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors">
-              Cancel
-            </button>
-            <button @click="confirmDelete"
-              class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors">
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ActionModal v-model="showDeleteModal" title="Delete Customer"
+      :message="'Are you sure you want to delete ' + (selectedClient?.client_name || 'this customer') + '? This action cannot be undone.'"
+      confirm-text="Delete" cancel-text="Cancel" :loading="loading" @confirm="confirmDelete" />
   </div>
 </template>
 
@@ -125,8 +99,8 @@ import { useClientStore } from '@/stores/clientStore'
 import { useActionMessage } from '@/composable/useActionMessage'
 import FromModal from '../components/clients/FromModal.vue'
 import ClientCard from '../components/clients/ClientCard.vue'
-import Noclient from '@/assets/icon svg/Noclient.vue'
 import ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
+import ActionModal from '@/components/ui/ActionModal.vue'
 
 const { show } = useGlobalModal()
 const { showSuccess } = useActionMessage()
@@ -237,6 +211,7 @@ const handleDeleteClient = (client) => {
 }
 
 const confirmDelete = async () => {
+  loading.value = true
   try {
     await clientStore.deleteclient(selectedClient.value.id)
     show('Customer deleted successfully!', 'success')
@@ -244,6 +219,7 @@ const confirmDelete = async () => {
   } catch (err) {
     show('Failed to delete customer', 'error')
   } finally {
+    loading.value = false
     showDeleteModal.value = false
     selectedClient.value = null
   }

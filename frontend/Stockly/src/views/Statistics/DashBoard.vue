@@ -23,9 +23,9 @@
 
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <GridCard title="Revenu Total" :value="formatCurrency(statsStore.adminStats.totalRevenue)"
+        <GridCard title="Revenu Total" :value="statsStore.adminStats.totalRevenue" is-currency
           :icon="CurrencyDollarIcon" gradientFrom="orange-500" gradientTo="orange-600" />
-        <GridCard title="Bénéfice Net" :value="formatCurrency(statsStore.adminStats.totalProfit)" :icon="BanknotesIcon"
+        <GridCard title="Bénéfice Net" :value="statsStore.adminStats.totalProfit" is-currency :icon="BanknotesIcon"
           gradientFrom="green-500" gradientTo="green-600" />
         <GridCard title="Entreprises" :value="statsStore.adminStats.totalEnterprises" :icon="BuildingOfficeIcon"
           gradientFrom="blue-500" gradientTo="blue-600" />
@@ -73,13 +73,13 @@
                     <td class="px-6 py-4">
                       <span class="text-sm font-bold text-gray-700">{{ ent.sales_count }} sales</span>
                     </td>
-                    <td class="px-6 py-4 text-sm font-bold text-gray-900">
-                      {{ formatCurrency(ent.revenue, ent.currency) }}
+                    <td class="px-6 py-4 text-sm font-bold text-gray-900" :style="getDynamicStyle(ent.revenue)">
+                      {{ format(ent.revenue) }}
                     </td>
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-1.5">
-                        <span class="text-sm font-bold text-green-600">{{ formatCurrency(ent.profit, ent.currency)
-                        }}</span>
+                        <span class="text-sm font-bold text-green-600" :style="getDynamicStyle(ent.profit)">{{
+                          format(ent.profit) }}</span>
                         <ArrowUpRightIcon class="w-3 h-3 text-green-500" />
                       </div>
                     </td>
@@ -163,13 +163,11 @@ import {
   SparklesIcon,
   UserIcon
 } from '@heroicons/vue/24/outline'
+import { useCurrency } from '@/composable/useCurrency'
 
 const statsStore = useStatisticsStore()
 const router = useRouter()
-
-const formatCurrency = (val, currency = 'XAF') => {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(val)
-}
+const { format, getDynamicStyle } = useCurrency()
 
 const formatDate = (date) => {
   return new Date(date).toLocaleString('fr-FR', {

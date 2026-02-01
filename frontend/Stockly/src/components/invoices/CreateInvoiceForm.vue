@@ -11,7 +11,10 @@
       <div class="action-buttons w-full pt-10 px-5">
         <button class="btn btn-secondary" @click="$emit('close')">Close</button>
         <div class="flex space-x-5">
-          <button class="btn btn-primary" @click="downloadPDF">Confirm</button>
+          <button class="btn btn-primary flex items-center gap-2" :disabled="isActionLoading" @click="downloadPDF">
+            <n-spin v-if="isActionLoading" size="small" stroke="white" />
+            <span>{{ isActionLoading ? 'Processing...' : 'Confirm' }}</span>
+          </button>
           <button class="btn" @click="printInvoice">Print</button>
         </div>
       </div>
@@ -19,8 +22,9 @@
         <!-- Action Buttons -->
 
         <div class="p-1">
-          <div v-if="loading" class="text-center py-8">
-            <div class="text-gray-500">Loading invoice data...</div>
+          <div v-if="loading" class="flex flex-col items-center justify-center py-20 gap-4">
+            <n-spin size="large" />
+            <p class="text-gray-500 animate-pulse">Loading invoice data...</p>
           </div>
 
           <div v-else ref="invoiceContent" class="invoice-content">
@@ -54,6 +58,7 @@ import InvoiceItemsTable from './InvoiceItemsTable.vue'
 import InvoiceSummary from './InvoiceSummary.vue'
 import PaymentTerms from './PaymentTerms.vue'
 import { ref, onMounted, computed } from 'vue'
+import { NSpin } from 'naive-ui'
 import { useActionMessage } from '@/composable/useActionMessage'
 import { exportToPDF } from '@/utils/invoicePdfTemplate'
 import { useInvoiceStore } from '@/stores/FactureStore'
@@ -67,6 +72,7 @@ const clientStore = useClientStore()
 const invoiceContent = ref(null)
 const loading = ref(true)
 const invoiceStore = useInvoiceStore()
+const isActionLoading = ref(false)
 const props = defineProps({
   invoice: Object,
 })
@@ -102,6 +108,7 @@ const entrepriseData = computed(() => {
 })
 const emit = defineEmits(['close'])
 async function downloadPDF() {
+  isActionLoading.value = true
   try {
     // Étape 1️⃣ — Créer la facture côté backend
     await invoiceStore.createInvoice(props.invoice)
@@ -118,6 +125,8 @@ async function downloadPDF() {
   } catch (err) {
     console.error(err)
     show(err.message || 'Failed to print invoice', 'error')
+  } finally {
+    isActionLoading.value = false
   }
 }
 

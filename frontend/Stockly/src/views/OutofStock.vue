@@ -45,13 +45,18 @@
       </div>
 
       <!-- Products Grid -->
-      <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-if="loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-xl">
+        <n-spin size="large" />
+        <p class="text-gray-500 mt-4 animate-pulse">Loading out of stock products...</p>
+      </div>
+
+      <div v-else-if="filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <OutOfStockCard v-for="product in filteredProducts" :key="product.id" :product="product"
           @restock="handleRestock" />
       </div>
 
       <!-- Empty State -->
-      <div v-if="filteredProducts.length === 0" class="card text-center p-16 mt-6">
+      <div v-else class="card text-center p-16 mt-6">
         <PartyPopperIcon class="mx-auto mb-4 w-16 h-16 text-tertiary" />
         <h3 class="card-title text-xl mb-2">All Stocked Up!</h3>
         <p class="card-subtitle">No out-of-stock products found. Great inventory management!</p>
@@ -73,6 +78,8 @@
  */
 
 import { ref, computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { NSpin } from 'naive-ui'
 import { OutOfStock } from '@/service/api'
 import GridCard from '@/components/ui/cards/GridCard.vue'
 import OutOfStockCard from '@/components/OutOfStockCard.vue'
@@ -109,6 +116,7 @@ const router = useRouter()
  * Tableau vide au départ (rempli par fetchFinishedProducts)
  */
 const productStore = useProductStore()
+const { loading } = storeToRefs(productStore)
 
 /** Message retourné par l'API */
 const message = computed(() => productStore.finishedProducts?.message || '')

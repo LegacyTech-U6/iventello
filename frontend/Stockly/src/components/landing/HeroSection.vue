@@ -111,9 +111,7 @@ const handleRegister = () => {
           <span class="inline-block transition-transform group-hover:translate-x-1 ml-1">→</span>
         </button>
         
-        <button class="px-8 py-4 border border-gray-600 text-gray-300 rounded-full hover:border-emerald-400 hover:text-white transition-all backdrop-blur-sm bg-white/5 hover:bg-emerald-500/10">
-          Watch Demo
-        </button>
+       
       </div>
 
       <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 pt-8 text-gray-400 text-sm md:text-base">

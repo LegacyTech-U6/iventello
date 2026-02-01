@@ -84,6 +84,7 @@ export const useProductStore = defineStore('product', {
               : null,
           min_stock_level: parseInt(productData.min_stock_level) || 10,
           max_stock_level: parseInt(productData.max_stock_level) || 100,
+          discount: parseFloat(productData.discount) || 0,
         }
 
         console.log('🔧 Store: Processed data:', processedData)
@@ -212,6 +213,12 @@ export const useProductStore = defineStore('product', {
       } finally {
         this.loading = false
       }
+    },
+    clearProducts() {
+      this.products = []
+      this.finishedProducts = null
+      this.lowProducts = null
+      this.totalProducts = null
     },
   },
 })

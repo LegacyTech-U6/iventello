@@ -29,14 +29,16 @@
       </div>
       <div class="flex justify-between">
         <span class="text-on-surface-variant">Selling Price</span>
-        <span class="font-semibold text-tertiary">${{ formatNumber(product.selling_price) }}</span>
+        <span class="font-semibold text-tertiary" :style="getDynamicStyle(product.selling_price)">{{
+          format(product.selling_price) }}</span>
       </div>
     </div>
 
     <!-- Cost Info -->
     <div class="bg-error-container rounded-lg p-3 mb-4 text-center">
       <p class="text-xs text-on-error-container font-semibold uppercase tracking-wider">Reorder Cost</p>
-      <p class="text-2xl font-bold text-on-error-container">${{ formatNumber(product.cost_price) }}</p>
+      <p class="text-2xl font-bold text-on-error-container" :style="getDynamicStyle(product.cost_price)">{{
+        format(product.cost_price) }}</p>
     </div>
 
     <!-- Action Button -->
@@ -50,6 +52,9 @@
 
 <script setup>
 import { QrCodeIcon, SparklesIcon, ArchiveBoxArrowDownIcon } from '@heroicons/vue/24/outline'
+import { useCurrency } from '@/composable/useCurrency'
+
+const { format, getDynamicStyle } = useCurrency()
 
 defineProps({
   product: {
@@ -60,20 +65,6 @@ defineProps({
 
 defineEmits(['restock'])
 
-/**
- * Formats a number into USD currency format.
- * @param {number} num - The number to format.
- * @returns {string} The formatted currency string.
- */
-const formatNumber = (num) => {
-  if (typeof num !== 'number') {
-    return '0.00'
-  }
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(num)
-}
 </script>
 
 <style scoped>

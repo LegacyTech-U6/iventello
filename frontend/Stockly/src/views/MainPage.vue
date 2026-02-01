@@ -238,8 +238,8 @@ const handleEditEnterprise = (enterprise) => {
   showCreateModal.value = true
 }
 
-const handleOpenEnterprise = (enterprise) => {
-  store.setActiveEntreprise(enterprise)
+const handleOpenEnterprise = async (enterprise) => {
+  await store.setActiveEntreprise(enterprise)
   router.push(`/${enterprise.uuid}/dashboard`)
 }
 

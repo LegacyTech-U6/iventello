@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useHead } from '@unhead/vue'
+import { useRouter } from 'vue-router'
 // Importation des Heroicons (Outline version)
 import { 
   BuildingOffice2Icon, 
@@ -28,6 +29,12 @@ useHead({
   ]
 })
 
+const router  = useRouter()
+
+
+const handleRegister = () => {
+  router.push('/register')
+}
 // --- Core Features Data ---
 const coreFeatures = [
   {
@@ -281,7 +288,7 @@ const advantages = [
 
     <section class="py-20 text-center px-4">
       <h2 class="text-3xl md:text-4xl font-bold mb-8">Ready to transform your logistics?</h2>
-      <button class="btn-primary px-10 py-4 rounded-full text-lg font-bold shadow-xl hover:scale-105 transition-transform">
+      <button @click="handleRegister()" class="btn-primary px-10 py-4 rounded-full text-lg font-bold shadow-xl hover:scale-105 transition-transform">
         Start Your Free Trial
       </button>
     </section>

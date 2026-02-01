@@ -47,7 +47,7 @@ onMounted(() => {
     const suffix = statData.value.replace(String(targetValue), '');
 
     // Crée un objet pour animer sa propriété 'value'
-    let counter = { value: 0 };
+    const counter = { value: 0 };
 
     gsap.to(counter, {
       value: targetValue,

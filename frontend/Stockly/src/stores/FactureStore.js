@@ -61,5 +61,9 @@ export const useInvoiceStore = defineStore('invoice', {
         this.loading = false
       }
     },
+    clearInvoices() {
+      this.invoices = []
+      this.selectedInvoice = null
+    },
   },
 })

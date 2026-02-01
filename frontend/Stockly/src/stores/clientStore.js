@@ -134,5 +134,9 @@ export const useClientStore = defineStore('client', {
       this.error = null
       this.submitError = null
     },
+    clearClients() {
+      this.clients = []
+      this.selectedClient = null
+    },
   },
 })

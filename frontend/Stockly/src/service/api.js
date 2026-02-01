@@ -77,10 +77,12 @@ export async function updateProduct(productId, productData) {
   return data
 }
 
+/*
 export async function deleteProduct(productId) {
   const { data } = await API.delete(`/products/${productId}`)
   return data
 }
+*/
 
 export async function createProduct(productData) {
   console.log('🚀 API: Creating product with data:', productData)
@@ -159,6 +161,7 @@ export async function importProducts(formData) {
 // Invoice PDF
 ///////////////////////////////////
 
+/*
 export async function generateInvoicePdf(html) {
   const response = await API.post(
     '/pdf/from-python',
@@ -170,6 +173,7 @@ export async function generateInvoicePdf(html) {
 
   return response.data
 }
+*/
 
 ///////////////////////////////////////
 // Invoice calls
@@ -199,26 +203,25 @@ export async function getInvoiceById(id) {
 ///////////////////////////////////////
 
 // ✅ Ventes : Récupérer toutes les ventes
+/*
 export async function getAllSales() {
   const { data } = await API.get('/sales')
   return data
 }
 
-// ✅ Ventes : Récupérer une vente par ID
 export async function getSaleById(id) {
   const { data } = await API.get(`/sales/${id}`)
   return data
 }
-// ✅ Ventes : Créer une vente
 export async function createSale(saleData) {
   const { data } = await API.post('/sales', saleData)
   return data
 }
-// ✅ Ventes : Supprimer une vente
 export async function deleteSale(saleId) {
   const { data } = await API.delete(`/sales/${saleId}`)
   return data
 }
+*/
 
 /////////////////////////////////////
 // category management
@@ -603,3 +606,26 @@ export async function markAllNotificationsAsRead() {
 }
 
 export const getAdminDashboard = () => API.get('/admin/dashboard')
+
+///////////////////////////////////
+// Expense Management
+///////////////////////////////////
+export async function getExpenses() {
+  const { data } = await API.get('/expenses')
+  return data
+}
+
+export async function createExpense(expenseData) {
+  const { data } = await API.post('/expenses', expenseData)
+  return data
+}
+
+export async function updateExpense(id, expenseData) {
+  const { data } = await API.put(`/expenses/${id}`, expenseData)
+  return data
+}
+
+export async function deleteExpense(id) {
+  const { data } = await API.delete(`/expenses/${id}`)
+  return data
+}

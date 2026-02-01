@@ -143,6 +143,12 @@ const routes: RouteRecordRaw[] = [
         meta: { permission: 'canViewDashboard' },
       },
       {
+        path:'expenses',
+        name:'expenses',
+        component: () => import('../views/ExpenseView.vue'),
+        meta: { permission: 'canManageExpenses' },
+      },
+      {
         path: 'sales',
         name: 'sales',
         component: () => import('../views/SalesInterface.vue'),

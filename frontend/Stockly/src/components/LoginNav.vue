@@ -169,6 +169,22 @@
     </div>
 
     <NotificationPanel v-model:notificationOpen="notificationOpen" @close="notificationOpen = false" />
+
+    <!-- Loading Overlay for Enterprise Switch -->
+    <Transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0"
+      enter-to-class="opacity-100" leave-active-class="transition ease-in duration-200" leave-from-class="opacity-100"
+      leave-to-class="opacity-0">
+      <div v-if="entrepriseStore.isSwitching"
+        class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/60 backdrop-blur-md">
+        <div class="relative">
+          <div class="w-16 h-16 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
+          <img :src="Iventello" alt="Logo" class="absolute inset-0 m-auto w-8 h-8 object-contain animate-pulse" />
+        </div>
+        <p class="mt-4 text-emerald-800 font-bold text-sm tracking-widest uppercase animate-pulse">
+          Chargement de l'entreprise...
+        </p>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -178,6 +194,11 @@ import { useRouter, useRoute } from 'vue-router'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useNotificationStore } from '@/stores/notificationStore'
+import { useInvoiceStore } from '@/stores/FactureStore'
+import { useProductStore } from '@/stores/productStore'
+import { useCategoryStore } from '@/stores/CategoryStore'
+import { useStatisticsStore } from '@/stores/statisticStore'
+import { useClientStore } from '@/stores/clientStore'
 import NotificationPanel from '@/components/ui/NotificationPanel.vue'
 import Iventello from '@/assets/iventello.png'
 
@@ -185,7 +206,7 @@ import Iventello from '@/assets/iventello.png'
 import {
   Squares2X2Icon, CubeIcon, RectangleGroupIcon, ArrowTrendingDownIcon, TagIcon, ShoppingCartIcon, DocumentTextIcon,
   UsersIcon, ChartBarIcon, Bars3Icon, XMarkIcon, BellIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon,
-  ChevronDoubleLeftIcon, ChevronDoubleRightIcon
+  ChevronDoubleLeftIcon, ChevronDoubleRightIcon, BanknotesIcon
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
@@ -229,6 +250,7 @@ const menuStructure = computed(() => [
     items: [
       { label: 'Ventes', icon: ShoppingCartIcon, path: getPath('sales'), permission: 'canMakeSales' },
       { label: 'Factures', icon: DocumentTextIcon, path: getPath('invoices'), permission: 'canViewInvoices' },
+      { label: 'Dépenses', icon: BanknotesIcon, path: getPath('expenses'), permission: 'canViewDashboard' },
       { label: 'Clients', icon: UsersIcon, path: getPath('clients'), permission: 'canMakeSales' },
       { label: 'Rapports', icon: ChartBarIcon, path: getPath('reports'), permission: 'canViewDashboard' },
       { label: 'Audit Trail', icon: ChartBarIcon, path: getPath('AuditTrail'), permission: 'canAccessSettings' }
@@ -240,7 +262,7 @@ const SettingRoute = computed(() => getPath('EntrepriseSettings'))
 
 // Computed Properties
 const pageTitle = computed(() => {
-  const titles = { dashboard: 'Tableau de bord', products: 'Gestion des Produits', categories: 'Catégories', sales: 'Ventes', invoices: 'Facturation', clients: 'Répertoire Clients', reports: 'Rapports & Analytiques', lowStock: 'Alertes Stock Faible', outOfStock: 'Ruptures de Stock', AuditTrail: 'Journal d\'activité' }
+  const titles = { dashboard: 'Tableau de bord', products: 'Gestion des Produits', categories: 'Catégories', sales: 'Ventes', invoices: 'Facturation', clients: 'Répertoire Clients', reports: 'Rapports & Analytiques', lowStock: 'Alertes Stock Faible', outOfStock: 'Ruptures de Stock', AuditTrail: 'Journal d\'activité', expenses: 'Gestion des Dépenses' }
   const key = route.path.split('/').pop()
   return titles[key] || 'Iventello'
 })
@@ -276,6 +298,18 @@ watch(() => authStore.user, (user) => {
     notificationStore.connectSocket(user.id, user.entreprise_id)
   } else {
     notificationStore.disconnectSocket()
+  }
+})
+
+// Vider les stores lors du changement d'entreprise pour éviter le flash d'anciennes données
+watch(() => entrepriseStore.activeEntreprise?.uuid, (newUuid, oldUuid) => {
+  if (newUuid && oldUuid && newUuid !== oldUuid) {
+    console.log('🔄 Entreprise changée, nettoyage des stores...')
+    useInvoiceStore().clearInvoices()
+    useProductStore().clearProducts()
+    useCategoryStore().clearCategories()
+    useStatisticsStore().clearStats()
+    useClientStore().clearClients()
   }
 })
 onUnmounted(() => window.removeEventListener('resize', handleResize))

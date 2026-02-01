@@ -1,22 +1,20 @@
 <template>
-  <div
-    class="rounded-xl p-5 text-white shadow-sm   transition-transform duration-200"
+  <div class="rounded-xl p-5 text-white shadow-sm   transition-transform duration-200"
     :class="bgColor && !isHexOrRgb ? bgColor : (isTailwind ? `bg-linear-to-br from-${gradientFrom} to-${gradientTo}` : '')"
     :style="bgColor && isHexOrRgb
       ? { background: props.bgColor }
       : (!isTailwind
         ? { background: `linear-gradient(to bottom right, ${gradientFrom}, ${gradientTo})` }
         : {})
-    "
-  >
+      ">
     <div class="flex items-center justify-between mb-3">
       <span class="text-sm font-medium opacity-90">{{ title }}</span>
       <component :is="icon" class="w-5 h-5 opacity-80" />
     </div>
 
     <div class="flex items-end justify-between">
-      <div class="text-3xl font-bold">
-        {{displayValue }}
+      <div class="text-3xl font-bold" :style="isCurrency ? getDynamicStyle(Number(value)) : {}">
+        {{ displayValue }}
       </div>
       <div v-if="trend !== null" class="flex items-center text-sm">
         <span :class="{
@@ -37,7 +35,7 @@
 import { computed } from 'vue'
 import { useCurrency } from '@/composable/useCurrency'
 
-const { format } = useCurrency()
+const { format, getDynamicStyle } = useCurrency()
 
 const props = defineProps({
   title: String,

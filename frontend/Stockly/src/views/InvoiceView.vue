@@ -108,7 +108,8 @@
                 <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(invoice.createdAt) }}</td>
                 <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(invoice.dueDate || invoice.createdAt) }}</td>
                 <td class="px-6 py-4">
-                  <span class="text-sm font-semibold text-gray-900">{{ format(invoice.total) }}</span>
+                  <span class="text-sm font-semibold text-gray-900" :style="getDynamicStyle(invoice.total)">{{
+                    format(invoice.total) }}</span>
                 </td>
                 <td class="px-6 py-4">
                   <n-tag :type="getStatusType(invoice.status)" :bordered="false" size="small" round class="px-3">
@@ -187,7 +188,7 @@
       @close="showInvoiceModal = false" />
     <ActionModal v-model="showDeleteModal" title="Delete Invoice"
       message="Are you sure you want to delete this invoice? This action cannot be undone." confirm-text="Delete"
-      cancel-text="Cancel" @confirm="confirmDelete" />
+      cancel-text="Cancel" :loading="isActionLoading" @confirm="confirmDelete" />
   </div>
 </template>
 
@@ -215,7 +216,7 @@ import InvoiceDetailModal from '@/components/invoices/InvoiceDetailModal.vue'
 import ActionModal from '@/components/ui/ActionModal.vue'
 
 
-const { format } = useCurrency()
+const { format, getDynamicStyle } = useCurrency()
 // Stores
 const invoiceStore = useInvoiceStore()
 const entrepriseStore = useEntrepriseStore()
@@ -289,7 +290,7 @@ const visiblePages = computed(() => {
   const pages = []
   const maxVisible = 5
   let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2))
-  let end = Math.min(totalPages.value, start + maxVisible - 1)
+  const end = Math.min(totalPages.value, start + maxVisible - 1)
 
   if (end - start < maxVisible - 1) {
     start = Math.max(1, end - maxVisible + 1)
@@ -330,13 +331,20 @@ const deleteInvoice = (invoice) => {
   showDeleteModal.value = true
 }
 
+const isActionLoading = ref(false)
+
 const confirmDelete = async () => {
   if (!invoiceToDelete.value) return
+  isActionLoading.value = true
   try {
-    alert("invoiceToDelete")
+    // Note: Assuming deleteInvoice API/action might be added later
+    // or handled within the store. For now, we follow the pattern.
+    // await invoiceStore.removeInvoice(invoiceToDelete.value)
+    alert("Delete functionality to be implemented in store/API for invoice #" + invoiceToDelete.value)
   } catch (error) {
     console.error(error)
   } finally {
+    isActionLoading.value = false
     showDeleteModal.value = false
     invoiceToDelete.value = null
   }

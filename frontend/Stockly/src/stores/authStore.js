@@ -3,8 +3,6 @@ import axios from 'axios'
 import router from '@/router'
 import { useEntrepriseStore } from './entrepriseStore'
 
-
-
 // Définition centralisée des permissions
 const ROLE_PERMISSIONS = {
   admin: {
@@ -48,10 +46,9 @@ export const useAuthStore = defineStore('auth', {
     isLoading: false,
     error: null,
     successMessage: null,
-     API_URL : import.meta.env.API_URL ||  "https://stock-management-app-jq0h.onrender.com/api"
-     //||   'http://localhost:3002/api'
+    API_URL: import.meta.env.API_URL || 'https://stock-management-app-jq0h.onrender.com/api',
+    //||   'http://localhost:3002/api'
   }),
-  
 
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -67,8 +64,6 @@ export const useAuthStore = defineStore('auth', {
     permissions(state) {
       return ROLE_PERMISSIONS[this.roleName] || ROLE_PERMISSIONS.default
     },
-
-    
   },
 
   actions: {
@@ -80,7 +75,7 @@ export const useAuthStore = defineStore('auth', {
       this.isLoading = true
       this.error = null
       this.successMessage = null
-      console.log("📝 Registering user:", { username, Last_name, email, telephone })
+      console.log('📝 Registering user:', { username, Last_name, email, telephone })
 
       try {
         const res = await axios.post(`${this.API_URL}/auth/register`, {
@@ -144,7 +139,7 @@ export const useAuthStore = defineStore('auth', {
 
           // ⚡ Définir automatiquement l’entreprise active
           if (this.user.entreprise) {
-            entrepriseStore.setActiveEntreprise(this.user.entreprise)
+            await entrepriseStore.setActiveEntreprise(this.user.entreprise)
           }
         } else if (this.user.type === 'admin') {
           this.user.displayName = this.user.username
@@ -160,32 +155,32 @@ export const useAuthStore = defineStore('auth', {
     /**
      * Déconnexion utilisateur
      */
-logout(mode = 'default') {
-  const entrepriseStore = useEntrepriseStore()
-  const userType = this.user?.type
-  console.log("👤 User type at logout:", userType)
-  console.log("🔁 Logout mode:", mode)
+    logout(mode = 'default') {
+      const entrepriseStore = useEntrepriseStore()
+      const userType = this.user?.type
+      console.log('👤 User type at logout:', userType)
+      console.log('🔁 Logout mode:', mode)
 
-  // 🧩 Cas 1 : Admin veut juste retourner à son tableau de bord admin
-  if (userType === 'admin' && mode === 'backToAdmin') {
-    console.log("➡️ Redirection vers /ad/admin sans déconnexion complète")
-    router.push('/ad/admin')
-    return
-  }
+      // 🧩 Cas 1 : Admin veut juste retourner à son tableau de bord admin
+      if (userType === 'admin' && mode === 'backToAdmin') {
+        console.log('➡️ Redirection vers /ad/admin sans déconnexion complète')
+        router.push('/ad/admin')
+        return
+      }
 
-  // 🧩 Cas 2 : Déconnexion complète (admin ou worker)
-  entrepriseStore.clearActiveEntreprise()
-  localStorage.removeItem('token')
-  localStorage.removeItem('entreprise')
-  this.user = null
-  this.token = null
+      // 🧩 Cas 2 : Déconnexion complète (admin ou worker)
+      entrepriseStore.clearActiveEntreprise()
+      localStorage.removeItem('token')
+      localStorage.removeItem('entreprise')
+      this.user = null
+      this.token = null
 
-  // Attendre un peu pour que le router ait le temps de se mettre à jour
-  setTimeout(() => {
-    console.log("🚪 Déconnexion complète → redirection /login")
-    router.push('/login')
-  }, 100)
-},
+      // Attendre un peu pour que le router ait le temps de se mettre à jour
+      setTimeout(() => {
+        console.log('🚪 Déconnexion complète → redirection /login')
+        router.push('/login')
+      }, 100)
+    },
     /**
      * Mot de passe oublié
      */

@@ -241,5 +241,20 @@ export const useStatisticsStore = defineStore('statistics', {
         this.loading = false
       }
     },
+    clearStats() {
+      this.productSales = []
+      this.salesReport = []
+      this.bestSellingProduct = null
+      this.bestCategory = null
+      this.bestByCategory = {}
+      this.revenue = { total: 0, history: [] }
+      this.profit = { total: 0, history: [] }
+      this.salesComparison = null
+      this.quarterlySales = []
+      this.salesTrend = []
+      this.revenueByCategory = []
+      this.topProducts = []
+      this.client = []
+    },
   },
 })

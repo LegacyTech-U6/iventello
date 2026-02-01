@@ -3,23 +3,9 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-4">
-        <button
-          @click="$router.back()"
-          class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
+        <button @click="$router.back()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
         </button>
         <div>
@@ -29,43 +15,19 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <button
-          @click="printInvoice"
-          class="bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-            />
+        <button @click="printInvoice"
+          class="bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
           </svg>
           Print
         </button>
-        <button
-          @click="downloadPDF"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
+        <button @click="downloadPDF"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           Download PDF
         </button>
@@ -77,14 +39,20 @@
       <div class="bg-white rounded-2xl border border-gray-200 p-8">
         <!-- Classic Invoice Header -->
         <div class="border-b-2 border-black pb-6 mb-6">
-          <div class="flex justify-between items-end">
-            <div>
-              <h1 class="text-4xl font-bold text-black mb-2">INVOICE</h1>
-              <div class="text-sm text-gray-600">
-                <div>123 Business Street</div>
-                <div>City, State 12345</div>
-                <div>Phone: (555) 123-4567</div>
-                <div>Email: hello@company.com</div>
+          <div class="flex justify-between items-start">
+            <div class="flex gap-4">
+              <!-- Logo optionally -->
+              <div v-if="entreprise.logo_url" class="w-20 h-20 bg-gray-50 rounded-lg overflow-hidden border">
+                <img :src="entreprise.logo_url" class="w-full h-full object-contain" :alt="entreprise.name" />
+              </div>
+              <div>
+                <h1 class="text-4xl font-bold text-black mb-2 uppercase">{{ entreprise.name || 'INVOICE' }}</h1>
+                <div class="text-sm text-gray-600">
+                  <div v-if="entreprise.adresse">{{ entreprise.adresse }}</div>
+                  <div v-if="entreprise.ville">{{ entreprise.ville }} {{ entreprise.code_postal }}</div>
+                  <div v-if="entreprise.telephone_contact">Phone: {{ entreprise.telephone_contact }}</div>
+                  <div v-if="entreprise.email_contact">Email: {{ entreprise.email_contact }}</div>
+                </div>
               </div>
             </div>
             <div class="text-right">
@@ -131,9 +99,7 @@
                 <th class="border border-gray-300 px-4 py-3 text-left font-bold text-sm uppercase">
                   Description
                 </th>
-                <th
-                  class="border border-gray-300 px-4 py-3 text-center font-bold text-sm uppercase"
-                >
+                <th class="border border-gray-300 px-4 py-3 text-center font-bold text-sm uppercase">
                   Qty
                 </th>
                 <th class="border border-gray-300 px-4 py-3 text-right font-bold text-sm uppercase">
@@ -154,11 +120,13 @@
                   </div>
                 </td>
                 <td class="border border-gray-300 px-4 py-3 text-center">{{ item.quantity }}</td>
-                <td class="border border-gray-300 px-4 py-3 text-right font-mono">
-                  ${{ item.selling_price.toFixed(2) }}
+                <td class="border border-gray-300 px-4 py-3 text-right font-mono"
+                  :style="getDynamicStyle(item.selling_price)">
+                  {{ format(item.selling_price) }}
                 </td>
-                <td class="border border-gray-300 px-4 py-3 text-right font-mono font-semibold">
-                  ${{ (item.quantity * item.selling_price).toFixed(2) }}
+                <td class="border border-gray-300 px-4 py-3 text-right font-mono font-semibold"
+                  :style="getDynamicStyle(item.quantity * item.selling_price)">
+                  {{ format(item.quantity * item.selling_price) }}
                 </td>
               </tr>
             </tbody>
@@ -170,22 +138,21 @@
           <div class="w-80 border border-gray-300">
             <div class="flex justify-between px-4 py-3 border-b border-gray-300">
               <span class="font-semibold">Subtotal:</span>
-              <span class="font-mono">${{ calculateSubtotal().toFixed(2) }}</span>
+              <span class="font-mono" :style="getDynamicStyle(calculateSubtotal())">{{ format(calculateSubtotal())
+                }}</span>
             </div>
-            <div
-              v-if="invoice.discount > 0"
-              class="flex justify-between px-4 py-3 border-b border-gray-300"
-            >
+            <div v-if="invoice.discount > 0" class="flex justify-between px-4 py-3 border-b border-gray-300">
               <span class="font-semibold">Discount ({{ invoice.discount }}%):</span>
-              <span class="font-mono text-red-600">- ${{ calculateDiscount().toFixed(2) }}</span>
+              <span class="font-mono text-red-600" :style="getDynamicStyle(-calculateDiscount())">- {{
+                format(calculateDiscount()) }}</span>
             </div>
             <div class="flex justify-between px-4 py-3 border-b border-gray-300">
               <span class="font-semibold">Tax ({{ invoice.tva }}%):</span>
-              <span class="font-mono">${{ calculateTax().toFixed(2) }}</span>
+              <span class="font-mono" :style="getDynamicStyle(calculateTax())">{{ format(calculateTax()) }}</span>
             </div>
             <div class="flex justify-between px-4 py-3 bg-gray-100 font-bold">
               <span>TOTAL:</span>
-              <span class="font-mono">${{ invoice.total.toFixed(2) }}</span>
+              <span class="font-mono" :style="getDynamicStyle(invoice.total)">{{ format(invoice.total) }}</span>
             </div>
           </div>
         </div>
@@ -211,13 +178,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useInvoiceStore } from '@/stores/FactureStore'
+import { useEntrepriseStore } from '@/stores/entrepriseStore'
+import { useCurrency } from '@/composable/useCurrency'
 
 const route = useRoute()
 const router = useRouter()
 const invoiceStore = useInvoiceStore()
+const entrepriseStore = useEntrepriseStore()
+const { format, getDynamicStyle } = useCurrency()
+
+const entreprise = computed(() => entrepriseStore.activeEntreprise || {})
 const invoice = ref({
   id: '',
   date: '',
@@ -304,12 +277,15 @@ function printInvoice() {
   .bg-gray-50 {
     background: white !important;
   }
+
   .p-6 {
     padding: 0 !important;
   }
+
   .mb-8 {
     margin-bottom: 1rem !important;
   }
+
   button {
     display: none !important;
   }

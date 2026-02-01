@@ -24,7 +24,8 @@
           <h3 class="font-bold text-gray-900 text-sm truncate mb-0.5">
             {{ product.Prod_name || product.name }}
           </h3>
-          <p class="text-xs font-black text-primary uppercase tracking-widest">{{ format(product.selling_price) }}</p>
+          <p class="text-xs font-black text-primary uppercase tracking-widest"
+            :style="getDynamicStyle(product.selling_price)">{{ format(product.selling_price) }}</p>
         </div>
 
         <!-- Sales Info -->
@@ -42,7 +43,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useStatisticsStore } from '@/stores/statisticStore'
 import { useCurrency } from '@/composable/useCurrency'
 
-const { format } = useCurrency()
+const { format, getDynamicStyle } = useCurrency()
 const statisticStore = useStatisticsStore()
 const selectedPeriod = ref('month')
 

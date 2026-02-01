@@ -30,8 +30,9 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center items-center h-64">
-        <div class="loader"></div>
+      <div v-if="loading" class="flex flex-col justify-center items-center h-64 gap-4">
+        <n-spin size="large" />
+        <p class="text-gray-500 animate-pulse">Loading reports...</p>
       </div>
 
       <!-- Reports Table -->
@@ -80,12 +81,13 @@
                 <div class="text-sm text-gray-900">{{ report.total_items_sold }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-semibold text-green-600">
+                <div class="text-sm font-semibold text-green-600" :style="getDynamicStyle(report.total_sales)">
                   {{ format(report.total_sales) }}
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ format(report.average_sale) }}</div>
+                <div class="text-sm text-gray-900" :style="getDynamicStyle(report.average_sale)">{{
+                  format(report.average_sale) }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button @click.stop="openDetail(report)" class="text-blue-600 hover:text-blue-900">
@@ -101,7 +103,8 @@
       <div v-if="filteredReports.length > 0" class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
         <div class="bg-white rounded-lg shadow-sm p-4">
           <p class="text-sm text-gray-600">Total Sales</p>
-          <p class="text-2xl font-bold text-green-600 mt-1">{{ format(totalSales) }}</p>
+          <p class="text-2xl font-bold text-green-600 mt-1" :style="getDynamicStyle(totalSales)">{{ format(totalSales)
+            }}</p>
         </div>
         <div class="bg-white rounded-lg shadow-sm p-4">
           <p class="text-sm text-gray-600">Total Items Sold</p>
@@ -113,7 +116,8 @@
         </div>
         <div class="bg-white rounded-lg shadow-sm p-4">
           <p class="text-sm text-gray-600">Average per Day</p>
-          <p class="text-2xl font-bold text-orange-600 mt-1">{{ format(averagePerDay) }}</p>
+          <p class="text-2xl font-bold text-orange-600 mt-1" :style="getDynamicStyle(averagePerDay)">{{
+            format(averagePerDay) }}</p>
         </div>
       </div>
     </div>
@@ -125,11 +129,12 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { NSpin } from 'naive-ui'
 import { useActivityStore } from '@/stores/activityStore'
 import SalesReportDetailModal from '@/components/reports/SalesReportDetailModal.vue'
 import { useCurrency } from '@/composable/useCurrency'
 
-const { format } = useCurrency()
+const { format, getDynamicStyle } = useCurrency()
 const activityStore = useActivityStore()
 const reports = ref([])
 const filteredReports = ref([])
@@ -137,10 +142,6 @@ const selectedDate = ref('')
 const selectedReport = ref(null)
 const loading = ref(true)
 
-const formatCurrency = (value) => {
-  if (typeof value !== 'number') return value
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
-}
 
 const formatDisplayDate = (dateStr) => {
   if (!dateStr) return ''
@@ -196,24 +197,3 @@ const openDetail = (report) => {
   selectedReport.value = report
 }
 </script>
-
-<style scoped>
-.loader {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #3b82f6;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>

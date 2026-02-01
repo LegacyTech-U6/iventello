@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.FLOAT,
         allowNull: false,
       },
+      discount: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
+      },
       Prod_Description: {
         type: DataTypes.TEXT,
       },
@@ -52,10 +56,10 @@ module.exports = (sequelize, DataTypes) => {
       indexes: [
         {
           unique: true,
-          fields: ['Prod_name', 'entreprise_id'],
+          fields: ["Prod_name", "entreprise_id"],
         },
       ],
-    }
+    },
   );
 
   return Product;

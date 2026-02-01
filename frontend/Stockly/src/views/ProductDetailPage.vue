@@ -92,7 +92,8 @@
                   <input v-model.number="editForm.selling_price" type="number" step="0.01"
                     class="w-24 font-bold border-b border-green-300 focus:outline-none" />
                 </div>
-                <span v-else class="text-lg font-bold text-green-600">{{ format(product.selling_price) }}</span>
+                <span v-else class="text-lg font-bold text-green-600" :style="getDynamicStyle(product.selling_price)">{{
+                  format(product.selling_price) }}</span>
               </div>
               <div class="p-2 bg-green-50 rounded-lg text-green-600">
                 <TagIcon class="w-5 h-5" />
@@ -107,10 +108,26 @@
                   <input v-model.number="editForm.cost_price" type="number" step="0.01"
                     class="w-24 font-bold border-b border-amber-300 focus:outline-none" />
                 </div>
-                <span v-else class="text-lg font-bold text-gray-900">{{ format(product.cost_price) }}</span>
+                <span v-else class="text-lg font-bold text-gray-900" :style="getDynamicStyle(product.cost_price)">{{
+                  format(product.cost_price) }}</span>
               </div>
               <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
                 <ArrowTrendingDownIcon class="w-5 h-5" />
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] uppercase tracking-wider font-bold text-gray-400 block mb-1">Discount
+                  (%)</span>
+                <div v-if="isEditing">
+                  <input v-model.number="editForm.discount" type="number" step="0.1" min="0" max="100"
+                    class="w-20 font-bold border-b border-purple-300 focus:outline-none" />
+                </div>
+                <span v-else class="text-lg font-bold text-purple-600">{{ product.discount }}%</span>
+              </div>
+              <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
+                <TagIcon class="w-5 h-5" />
               </div>
             </div>
           </div>
@@ -195,11 +212,12 @@
                   <div class="space-y-4">
                     <div>
                       <span class="text-xs opacity-80 block">Valeur à l'achat</span>
-                      <p class="text-xl font-bold">{{ format(total) }}</p>
+                      <p class="text-xl font-bold" :style="getDynamicStyle(total)">{{ format(total) }}</p>
                     </div>
                     <div>
                       <span class="text-xs opacity-80 block">CA Potentiel</span>
-                      <p class="text-xl font-bold text-green-300">{{ format(totalSellingValue) }}</p>
+                      <p class="text-xl font-bold text-green-300" :style="getDynamicStyle(totalSellingValue)">{{
+                        format(totalSellingValue) }}</p>
                     </div>
                   </div>
                 </div>
@@ -251,12 +269,14 @@ import { useActionMessage } from '@/composable/useActionMessage'
 import { useCurrency } from '@/composable/useCurrency'
 import { useGlobalModal } from '@/composable/useValidation'
 import ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
+import { useProductStore } from '@/stores/productStore'
 
-const { format } = useCurrency()
+const { format, getDynamicStyle } = useCurrency()
 const router = useRouter()
 const route = useRoute()
 const { show } = useGlobalModal()
 const { showSuccess, showError } = useActionMessage()
+const productStore = useProductStore()
 
 // Interfaces
 interface Category { id: string | number; name: string }
@@ -273,6 +293,7 @@ interface Product {
   supplier_name: string
   Prod_image?: string
   min_stock_level: number
+  discount: number
 }
 
 // State
@@ -303,7 +324,8 @@ onMounted(async () => {
         selling_price: parseFloat(data.selling_price) || 0,
         min_stock_level: parseInt(data.min_stock_level) || 0,
         Prod_image: data.Prod_image || `https://picsum.photos/400/400?random=${data.id}`,
-        Prod_Description: data.Prod_Description || 'Aucune description disponible.'
+        Prod_Description: data.Prod_Description || 'Aucune description disponible.',
+        discount: parseFloat(data.discount) || 0
       }
     }
   } catch (error) {
@@ -328,7 +350,7 @@ const cancelEdit = () => isEditing.value = false
 const handleSaveEdit = async () => {
   try {
     saving.value = true
-    await new Promise(resolve => setTimeout(resolve, 800)) // Simu API
+    await productStore.updateProduct(product.value?.id, editForm.value)
     product.value = JSON.parse(JSON.stringify(editForm.value))
     showSuccess('Produit mis à jour')
     isEditing.value = false

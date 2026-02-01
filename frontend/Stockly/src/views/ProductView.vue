@@ -85,7 +85,7 @@
 
     <div class="px-4 py-6 sm:px-8">
       <div v-if="loading" class="flex flex-col justify-center items-center py-32 gap-4">
-        <ArrowPathIcon class="w-10 h-10 text-green-600 animate-spin" />
+        <n-spin size="large" />
         <p class="text-gray-500 animate-pulse">Chargement de l'inventaire...</p>
       </div>
 
@@ -168,6 +168,7 @@ import {
 
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted } from 'vue'
+import { NSpin } from 'naive-ui'
 import { useProductStore } from '@/stores/productStore'
 import ProductListItem from '@/components/Products/ProductListItem.vue'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'

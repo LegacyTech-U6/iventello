@@ -54,16 +54,24 @@
 
       </div>
 
+      <!-- Loading State -->
+      <div v-if="isLoading && filteredWorkers.length === 0"
+        class="flex flex-col items-center justify-center py-20 bg-white rounded-xl">
+        <n-spin size="large" />
+        <p class="text-gray-500 mt-4 animate-pulse">Loading workers...</p>
+      </div>
+
       <!-- Workers Grid -->
-      <div v-if="filteredWorkers.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div v-else-if="filteredWorkers.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <WorkersCard v-for="worker in filteredWorkers" :key="worker.id" :worker="worker" @edit="handleEditWorker"
           @delete="handleDeleteWorker" />
       </div>
 
       <!-- Empty State -->
       <div v-else class="text-center py-16 bg-white rounded-xl">
-        <UsersIcon class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <p class="text-gray-500 text-base">No workers found matching your search</p>
+        <UsersIcon v-if="!isLoading" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+        <p class="text-gray-500 text-base">{{ isLoading ? 'Fetching data...' : 'No workers found matching your search'
+          }}</p>
       </div>
     </div>
 
@@ -74,7 +82,7 @@
     <!-- Delete Confirmation Modal -->
     <ActionModal v-model="showDeleteModal" title="Delete Worker"
       message="Are you sure you want to delete this worker? This action cannot be undone." confirm-text="Delete"
-      cancel-text="Cancel" @confirm="confirmDelete" />
+      cancel-text="Cancel" :loading="isLoading" @confirm="confirmDelete" />
   </div>
 </template>
 
@@ -102,6 +110,7 @@
 // ========================================
 
 import { ref, computed, onMounted } from 'vue'
+import { NSpin } from 'naive-ui'
 
 /** Icônes Heroicons pour l'interface utilisateur */
 import {

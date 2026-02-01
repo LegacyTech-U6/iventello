@@ -1,50 +1,50 @@
 <template>
-  <div class="p-4 md:p-8 lg:p-7 space-y-8 min-h-screen bg-gray-50/50">
+  <n-spin :show="loading" size="large">
+    <div class="p-4 md:p-8 lg:p-7 space-y-8 min-h-screen bg-gray-50/50">
 
-    <div class="hidden md:block w-full  flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-      <div class="flex flex-1 w-full sm:w-auto space-x-4">
-        <WelcomeCard :user="authStore.user?.username || 'User'" :enterprise="entrepriseStore.activeEntreprise?.name"
-          :image="mascot" />
-        <Logo :logo="entrepriseStore.activeEntreprise?.logo_url" class="hidden sm:block" />
+      <div class="hidden md:block w-full  flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div class="flex flex-1 w-full sm:w-auto space-x-4">
+          <WelcomeCard :user="authStore.user?.username || 'User'" :enterprise="entrepriseStore.activeEntreprise?.name"
+            :image="mascot" />
+          <Logo :logo="entrepriseStore.activeEntreprise?.logo_url" class="hidden sm:block" />
+        </div>
       </div>
-    </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-      <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
-        :is-currency="stat.isCurrency" :bgColor="stat.bgColor" :trend="stat.trend" />
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-      <MetricCard v-for="stat in statsTable" :key="stat.id" :disabled="stat.disabled" :is-currency="stat.isCurrency"
-        :icon="stat.icon" :value="stat.value" :label="stat.label" :trend="stat.trend" :viewLink="stat.viewLink"
-        :icon-bg="stat.iconBg" :icon-color="stat.iconColor" :period="stat.period" />
-    </div>
-
-    <div class="w-full">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <SalesChart />
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
+          :is-currency="stat.isCurrency" :bgColor="stat.bgColor" :trend="stat.trend" />
       </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <MetricCard v-for="stat in statsTable" :key="stat.id" :disabled="stat.disabled" :is-currency="stat.isCurrency"
+          :icon="stat.icon" :value="stat.value" :label="stat.label" :trend="stat.trend" :viewLink="stat.viewLink"
+          :icon-bg="stat.iconBg" :icon-color="stat.iconColor" :period="stat.period" />
+      </div>
+
+      <div class="w-full">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <SalesChart />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+        <TopSellingProducts class="xl:col-span-1" />
+        <RevenueCatgeory class="xl:col-span-1" />
+        <RecentSales class="lg:col-span-2 xl:col-span-3" />
+      </div>
+
     </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-      <TopSellingProducts class="xl:col-span-1" />
-      <RevenueCatgeory class="xl:col-span-1" />
-      <LowStockAlertsPanel class="xl:col-span-1" />
-
-      <RecentSales class="lg:col-span-2 xl:col-span-3" />
-    </div>
-
-  </div>
+  </n-spin>
 </template>
 
 <script setup>
 import { computed, ref, onMounted } from 'vue'
+import { NSpin } from 'naive-ui'
 import { useHead } from '@unhead/vue' // Import pour le SEO
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import { useProductStore } from '@/stores/productStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useStatisticsStore } from '@/stores/statisticStore'
-import { LowStock, OutOfStock } from '@/service/api'
 
 // Components
 import WelcomeCard from '@/components/ui/WelcomeCard.vue'
@@ -84,8 +84,6 @@ onMounted(async () => {
       statisticStore.fetchProductSales('day'),
       statisticStore.fetchProfit('day'),
       statisticStore.fetclient('day'),
-      fetchLowStockProducts(),
-      fetchFinishedProducts()
     ])
   } finally {
     loading.value = false
@@ -185,20 +183,6 @@ const topStats = computed(() => [
     isCurrency: true,
   },
 ])
-
-// Alert Fetching
-const lowStockProducts = ref([])
-const finishedProducts = ref([])
-
-async function fetchLowStockProducts() {
-  const data = await LowStock().catch(() => ({ products: [] }))
-  lowStockProducts.value = data.products || []
-}
-
-async function fetchFinishedProducts() {
-  const data = await OutOfStock().catch(() => ({ products: [] }))
-  finishedProducts.value = data.products || []
-}
 </script>
 
 <style scoped>
