@@ -14,6 +14,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActionModal: typeof import('./src/components/ui/ActionModal.vue')['default']
     AddCategoryModal: typeof import('./src/components/AddCategoryModal.vue')['default']
+    AdvancedAnalytics: typeof import('./src/components/statistics/AdvancedAnalytics.vue')['default']
     AlertCard: typeof import('./src/components/AlertCard.vue')['default']
     BaseButton: typeof import('./src/components/BaseButton.vue')['default']
     BillTo: typeof import('./src/components/invoices/BillTo.vue')['default']
@@ -122,6 +123,7 @@ declare module 'vue' {
 declare global {
   const ActionModal: typeof import('./src/components/ui/ActionModal.vue')['default']
   const AddCategoryModal: typeof import('./src/components/AddCategoryModal.vue')['default']
+  const AdvancedAnalytics: typeof import('./src/components/statistics/AdvancedAnalytics.vue')['default']
   const AlertCard: typeof import('./src/components/AlertCard.vue')['default']
   const BaseButton: typeof import('./src/components/BaseButton.vue')['default']
   const BillTo: typeof import('./src/components/invoices/BillTo.vue')['default']

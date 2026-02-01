@@ -307,7 +307,12 @@ const clientLoading = ref(false)
 const clientError = ref(null)
 // Computed values
 const subtotal = computed(() =>
-  saleItems.value.reduce((sum, item) => sum + item.selling_price * item.quantity, 0),
+  saleItems.value.reduce((sum, item) => {
+    const itemTotal = item.selling_price * item.quantity;
+    // item.discount is now the calculated AMOUNT from CartItem
+    const discountAmount = item.discount || 0
+    return sum + (itemTotal - discountAmount);
+  }, 0),
 )
 async function submitCreateClient() {
   try {
@@ -353,9 +358,14 @@ function closeCreateClientModal() {
 }
 
 function addToSale(product) {
+  // Calculate initial discount AMOUNT if product has a default percentage discount
+  const initialDiscountAmount = product.discount
+    ? (product.selling_price * 1 * (product.discount / 100))
+    : 0;
+
   const existing = saleItems.value.find((item) => item.id === product.id)
   if (existing) existing.quantity++
-  else saleItems.value.push({ ...product, quantity: 1 })
+  else saleItems.value.push({ ...product, quantity: 1, discount: initialDiscountAmount })
 
   localStorage.setItem('salesItem', JSON.stringify(existing))
 

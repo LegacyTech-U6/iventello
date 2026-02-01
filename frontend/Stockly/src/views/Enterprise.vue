@@ -8,29 +8,49 @@
             :image="mascot" />
           <Logo :logo="entrepriseStore.activeEntreprise?.logo_url" class="hidden sm:block" />
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
-          :is-currency="stat.isCurrency" :bgColor="stat.bgColor" :trend="stat.trend" />
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <MetricCard v-for="stat in statsTable" :key="stat.id" :disabled="stat.disabled" :is-currency="stat.isCurrency"
-          :icon="stat.icon" :value="stat.value" :label="stat.label" :trend="stat.trend" :viewLink="stat.viewLink"
-          :icon-bg="stat.iconBg" :icon-color="stat.iconColor" :period="stat.period" />
-      </div>
-
-      <div class="w-full">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <SalesChart />
+        <!-- Toggle Advanced Analytics -->
+        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+          <span class="text-sm font-bold text-gray-600" :class="{ 'text-indigo-600': showAdvancedAnalytics }">Advanced
+            Analytics</span>
+          <button @click="showAdvancedAnalytics = !showAdvancedAnalytics"
+            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            :class="showAdvancedAnalytics ? 'bg-indigo-600' : 'bg-gray-200'">
+            <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+              :class="showAdvancedAnalytics ? 'translate-x-6' : 'translate-x-1'" />
+          </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-        <TopSellingProducts class="xl:col-span-1" />
-        <RevenueCatgeory class="xl:col-span-1" />
-        <RecentSales class="lg:col-span-2 xl:col-span-3" />
+      <!-- Advanced Analytics View -->
+      <div v-if="showAdvancedAnalytics">
+        <AdvancedAnalytics />
+      </div>
+
+      <!-- Default Dashboard View -->
+      <div v-else class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
+            :is-currency="stat.isCurrency" :bgColor="stat.bgColor" :trend="stat.trend" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <MetricCard v-for="stat in statsTable" :key="stat.id" :disabled="stat.disabled" :is-currency="stat.isCurrency"
+            :icon="stat.icon" :value="stat.value" :label="stat.label" :trend="stat.trend" :viewLink="stat.viewLink"
+            :icon-bg="stat.iconBg" :icon-color="stat.iconColor" :period="stat.period" />
+        </div>
+
+        <div class="w-full">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <SalesChart />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+          <TopSellingProducts class="xl:col-span-1" />
+          <RevenueCatgeory class="xl:col-span-1" />
+          <RecentSales class="lg:col-span-2 xl:col-span-3" />
+        </div>
       </div>
 
     </div>
@@ -57,8 +77,9 @@ import RecentSales from '@/components/statistics/RecentSales.vue'
 import RevenueCatgeory from '@/components/statistics/RevenueCatgeory.vue'
 
 // Icons
-import { CubeIcon, CurrencyDollarIcon, UsersIcon, Square3Stack3DIcon, ArrowPathIcon, WalletIcon } from '@heroicons/vue/24/outline'
+import { CubeIcon, CurrencyDollarIcon, UsersIcon, Square3Stack3DIcon, ArrowPathIcon, WalletIcon, ChartBarSquareIcon } from '@heroicons/vue/24/outline'
 import mascot from '@/assets/image/professional.png'
+import AdvancedAnalytics from '@/components/statistics/AdvancedAnalytics.vue'
 
 // SEO & Head
 useHead({
@@ -73,6 +94,7 @@ const entrepriseStore = useEntrepriseStore()
 const productStore = useProductStore()
 const statisticStore = useStatisticsStore()
 const loading = ref(false)
+const showAdvancedAnalytics = ref(false)
 
 // Lifecycle
 onMounted(async () => {
