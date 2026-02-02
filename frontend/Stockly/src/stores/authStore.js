@@ -297,5 +297,22 @@ export const useAuthStore = defineStore('auth', {
         router.push('/login')
       }
     },
+
+    async completeOnboarding() {
+      try {
+        await axios.put(
+          `${this.API_URL}/auth/complete-onboarding`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${this.token}` },
+          },
+        )
+        if (this.user) {
+          this.user.onboarding_completed = true
+        }
+      } catch (err) {
+        console.error('Failed to complete onboarding:', err)
+      }
+    },
   },
 })

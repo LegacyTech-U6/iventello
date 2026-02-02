@@ -24,6 +24,17 @@
 // Import du composant NavBar (contient tous les menus admin)
 import NavbarAdmin from '@/components/layout/NavbarAdmin.vue'
 import ValidationModal from '@/components/ui/ValidationModal.vue'
+import { useOnboarding } from '@/composables/useOnboarding'
+import { onMounted } from 'vue'
+
+const { startTour } = useOnboarding()
+
+onMounted(() => {
+  setTimeout(() => {
+    startTour()
+  }, 1000) // Small delay to ensure DOM is ready
+})
+
 </script>
 <style>
 /* ========================================

@@ -96,13 +96,13 @@ const handleLogin = async () => {
   }
 
   isLoading.value = true;
-  try {
-    await authStore.login(loginData.value.email, loginData.value.password);
-  } catch (error) {
-    loginError.value = error.message || "Échec de connexion.";
-  } finally {
-    isLoading.value = false;
+  await authStore.login(loginData.value.email, loginData.value.password);
+
+  if (authStore.error) {
+    loginError.value = authStore.error;
   }
+
+  isLoading.value = false;
 };
 </script>
 

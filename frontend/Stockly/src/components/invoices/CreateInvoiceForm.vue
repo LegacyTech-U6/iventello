@@ -1,25 +1,33 @@
 <template>
   <Teleport to="body">
-    <div
-      class="fixed inset-0 z-50 bg-white/80 bg-opacity-50 flex flex-col justify-center items-center overflow-auto mb-5"
-      style="
-      background-color: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(4px);
-      inset: 0px;
-      margin-bottom: -1px;
-    ">
-      <div class="action-buttons w-full pt-10 px-5">
-        <button class="btn btn-secondary" @click="$emit('close')">Close</button>
-        <div class="flex space-x-5">
-          <button class="btn btn-primary flex items-center gap-2" :disabled="isActionLoading" @click="downloadPDF">
-            <n-spin v-if="isActionLoading" size="small" stroke="white" />
-            <span>{{ isActionLoading ? 'Processing...' : 'Confirm' }}</span>
+    <div class="absolute inset-0 w-full h-full z-50 backdrop-blur-sm overflow-y-auto flex justify-center py-10"
+      style="background-color: rgba(0, 0, 0, 0.85);">
+      <div class="absolute top-4 left-0 w-full px-6 flex justify-between items-start z-[60] pointer-events-none">
+        <button @click="$emit('close')"
+          class="pointer-events-auto bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-red-500 hover:text-white transition-colors shadow-lg">
+          <XMarkIcon class="h-6 w-6" />
+        </button>
+
+        <div class="pointer-events-auto flex items-center gap-2 backdrop-blur-md p-2 rounded-lg border shadow-xl"
+          style="background-color: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2);">
+
+
+          <button @click="printInvoice"
+            class="bg-white text-gray-800 px-4 py-2 rounded-md font-bold flex items-center gap-2 hover:bg-gray-200 transition-colors text-sm">
+            <PrinterIcon class="h-4 w-4" />
+            Print
           </button>
-          <button class="btn" @click="printInvoice">Print</button>
+
+          <button @click="downloadPDF" :disabled="isActionLoading"
+            class="text-white px-4 py-2 rounded-md font-bold flex items-center justify-center gap-2 transition-colors text-sm shadow-lg min-w-[80px] bg-black hover:bg-gray-800">
+            <n-spin v-if="isActionLoading" size="small" stroke="white" />
+            <CheckCircleIcon v-if="!isActionLoading" class="h-4 w-4" />
+            <span>{{ isActionLoading ? 'Creating...' : 'Confirm' }}</span>
+          </button>
         </div>
       </div>
-      <div class="bg-white rounded shadow max-w-3xl w-full relative">
-        <!-- Action Buttons -->
+      <div class="max-w-[210mm]">
+
 
         <div class="p-1">
           <div v-if="loading" class="flex flex-col items-center justify-center py-20 gap-4">
@@ -66,6 +74,7 @@ import { exportToPDF } from '@/utils/invoicePdfTemplate'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import { useClientStore } from '@/stores/clientStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
+import { XMarkIcon, PrinterIcon, ArrowDownTrayIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
 const { showSuccess, showError } = useActionMessage()
 import { useGlobalModal } from '@/composable/useValidation'
 const { show } = useGlobalModal()

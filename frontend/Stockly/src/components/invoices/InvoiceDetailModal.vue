@@ -12,7 +12,7 @@
         <div class="pointer-events-auto flex items-center gap-2 backdrop-blur-md p-2 rounded-lg border shadow-xl"
           style="background-color: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2);">
 
-          <button v-if="invoice.status !== 'payée'" @click="markAsPaid" :disabled="isActionLoading"
+          <button v-if="invoice.status !== 'payee'" @click="markAsPaid" :disabled="isActionLoading"
             class="bg-blue-600 text-white px-4 py-2 rounded-md font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors text-sm shadow-md">
             <CheckCircleIcon class="h-4 w-4" />
             <span>Mark as Paid</span>
@@ -133,30 +133,34 @@ function printInvoice() {
   }, 500)
 }
 
+import { useDialog, useMessage } from 'naive-ui'
+
 const invoiceStore = useInvoiceStore()
-const emit = defineEmits(['close', 'update']) // Added update emit
+const emit = defineEmits(['close', 'update'])
+const dialog = useDialog()
+const message = useMessage()
 
-async function markAsPaid() {
-  if (!confirm('Are you sure you want to mark this invoice as Paid? This will deduct stock and record the sale.')) return
-
-  isActionLoading.value = true
-  try {
-    await invoiceStore.updateStatus(props.invoice.id, 'payée')
-    // Ideally emit an event to refresh parent list, but store update usually handles reactivity if shared state
-    // But since props.invoice might be a clone or from parent list, updating store should reflect if using list from store.
-    // We can also emit update to parent.
-    emit('update')
-    // Close modal or just show success? 
-    // Let's keep modal open but update status visually - prop update might be needed if not reactive from store
-    // Since we mutate store, if parent uses store, it updates.
-    alert('Invoice marked as Paid successfully!')
-    emit('close')
-  } catch (error) {
-    console.error('Error updating status:', error)
-    alert('Failed to update status: ' + error.message)
-  } finally {
-    isActionLoading.value = false
-  }
+function markAsPaid() {
+  dialog.warning({
+    title: 'Confirm Payment',
+    content: 'Are you sure you want to mark this invoice as Paid? This will deduct stock and record the sale.',
+    positiveText: 'Mark as Paid',
+    negativeText: 'Cancel',
+    onPositiveClick: async () => {
+      isActionLoading.value = true
+      try {
+        await invoiceStore.updateStatus(props.invoice.id, 'payee')
+        message.success('Invoice marked as Paid successfully!')
+        emit('update')
+        emit('close')
+      } catch (error) {
+        console.error('Error updating status:', error)
+        message.error('Failed to update status: ' + (error.message || 'Unknown error'))
+      } finally {
+        isActionLoading.value = false
+      }
+    }
+  })
 }
 
 async function downloadPDF() {

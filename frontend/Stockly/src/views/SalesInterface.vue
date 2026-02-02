@@ -97,12 +97,29 @@
                   <span class="font-medium text-gray-800">{{ format(taxAmount) }}</span>
                 </div>
 
+                <!-- Status Selection -->
+                <div class="flex justify-between items-center bg-gray-50 p-2 rounded-md">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-medium text-gray-700">{{ $t('sales.status') }}</span>
+                    <span class="text-xs text-gray-500">{{ isPaid ? $t('invoices.status.paid') :
+                      $t('invoices.status.pending') }}</span>
+                  </div>
+                  <n-switch v-model:value="isPaid" size="medium">
+                    <template #checked>
+                      {{ $t('invoices.status.paid') }}
+                    </template>
+                    <template #unchecked>
+                      {{ $t('invoices.status.pending') }}
+                    </template>
+                  </n-switch>
+                </div>
+
                 <n-divider class="my-3" />
 
                 <div class="flex justify-between items-center mb-6">
                   <span class="text-lg font-bold text-gray-900">{{ $t('sales.total') }}</span>
                   <span class="text-2xl font-black text-primary" :style="getDynamicStyle(total)">{{ format(total)
-                  }}</span>
+                    }}</span>
                 </div>
 
                 <n-button type="primary" block size="large" @click="createInvoice"
@@ -190,6 +207,7 @@ const invoice = ref(null)      // Added missing ref
 const showProductModal = ref(false)
 const showCartModal = ref(false)
 const processing = ref(false)
+const isPaid = ref(true) // Default to Paid for POS
 
 // Logic
 const subtotal = computed(() => {
@@ -313,6 +331,7 @@ async function createInvoice() {
       reduction_type: 'amount',
       date: new Date(),
       date: new Date(),
+      status: isPaid.value ? 'payee' : 'en_attente',
       date_echeance: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // Default 30 days
     };
 

@@ -27,8 +27,12 @@ export default defineConfig({
 
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       workbox: {
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6MB
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,vue,txt,woff2}'],
+        navigateFallback: '/index.html',
+        cleanupOutdatedCaches: true,
       },
       manifest: {
         name: 'Iventello',
@@ -36,19 +40,24 @@ export default defineConfig({
         description: 'Modern multi enterprise stock magement app',
         theme_color: '#4DBA87',
         background_color: '#ffffff',
-        display: 'standalone', // plein écran
+        display: 'standalone',
+        orientation: 'portrait',
         scope: '/',
-        start_url: '/login',
+        start_url: '/',
+        id: '/',
+        categories: ['business', 'productivity', 'utilities'],
         icons: [
           {
             src: '/iventello.png',
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any maskable',
           },
           {
             src: '/iventello.png',
             sizes: '512x512',
             type: 'image/png',
+            purpose: 'any maskable',
           },
         ],
       },

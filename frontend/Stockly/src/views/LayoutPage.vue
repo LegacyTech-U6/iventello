@@ -8,8 +8,19 @@
 -->
 <script setup lang="ts">
 // Import du navbar spécifique aux pages de login
+// Import du navbar spécifique aux pages de login
 import LoginNav from '@/components/layout/LoginNav.vue'
 import ValidationModal from '@/components/ui/ValidationModal.vue'
+import { useOnboarding } from '@/composables/useOnboarding'
+import { onMounted } from 'vue'
+
+const { startTour } = useOnboarding()
+
+onMounted(() => {
+  setTimeout(() => {
+    startTour()
+  }, 1000)
+})
 </script>
 
 <!-- Template: Enveloppe toutes les pages d'auth -->

@@ -20,10 +20,10 @@
 
       <div
         class="relative flex flex-col md:flex-row items-center md:items-start gap-3 cursor-pointer p-4 rounded-xl border transition-all duration-200"
-        :class="selectedStatus === 'payée'
+        :class="selectedStatus === 'payee'
           ? 'bg-white border-blue-200 shadow-sm ring-1 ring-blue-500/20'
-          : 'bg-white border-gray-100 hover:border-gray-200 text-gray-500'" @click="selectedStatus = 'payée'">
-        <div class="p-2 rounded-lg" :class="selectedStatus === 'payée' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100'">
+          : 'bg-white border-gray-100 hover:border-gray-200 text-gray-500'" @click="selectedStatus = 'payee'">
+        <div class="p-2 rounded-lg" :class="selectedStatus === 'payee' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100'">
           <CheckCircle class="w-5 h-5" />
         </div>
         <div class="flex flex-col items-center md:items-start">
@@ -212,7 +212,7 @@ const invoices = computed(() => invoiceStore.invoices || [])
 const entreprise = computed(() => entrepriseStore.activeEntreprise || {})
 
 const paidCount = computed(() =>
-  invoices.value.filter(i => i.status === 'payée').length
+  invoices.value.filter(i => i.status === 'payee').length
 )
 
 const pendingCount = computed(() =>
@@ -290,14 +290,14 @@ const formatDate = (date: string | Date) => {
 }
 
 const getStatusType = (status: string) => {
-  if (status === 'payée') return 'success'
+  if (status === 'payee') return 'success'
   if (status === 'en_attente') return 'warning'
   if (status === 'overdue') return 'error'
   return 'default'
 }
 
 const getStatusLabel = (status: string) => {
-  if (status === 'payée') return t('invoices.status.paid')
+  if (status === 'payee') return t('invoices.status.paid')
   if (status === 'en_attente') return t('invoices.status.pending')
   if (status === 'overdue') return t('invoices.status.overdue')
   return status
