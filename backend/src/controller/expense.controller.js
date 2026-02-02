@@ -6,7 +6,7 @@ const queryParser = sequelizeQuery(db);
 exports.createExpense = async (req, res) => {
   try {
     const { title, amount, date, category, description } = req.body;
-    const entreprise_id = req.entrepriseId;
+    const entreprise_id = req.entrepriseId || null;
     const user_id = req.user?.id;
 
     const expense = await Expense.create({
@@ -28,7 +28,8 @@ exports.createExpense = async (req, res) => {
 exports.getExpenses = async (req, res) => {
   try {
     const query = await queryParser.parse(req);
-    query.where = { ...query.where, entreprise_id: req.entrepriseId };
+    const entreprise_id = req.entrepriseId || null;
+    query.where = { ...query.where, entreprise_id };
 
     const expenses = await Expense.findAll({
       ...query,
@@ -46,7 +47,7 @@ exports.getExpenses = async (req, res) => {
 exports.deleteExpense = async (req, res) => {
   try {
     const { id } = req.params;
-    const entreprise_id = req.entrepriseId;
+    const entreprise_id = req.entrepriseId || null;
 
     const expense = await Expense.findOne({
       where: { id, entreprise_id },
@@ -66,7 +67,7 @@ exports.deleteExpense = async (req, res) => {
 exports.updateExpense = async (req, res) => {
   try {
     const { id } = req.params;
-    const entreprise_id = req.entrepriseId;
+    const entreprise_id = req.entrepriseId || null;
 
     const expense = await Expense.findOne({
       where: { id, entreprise_id },

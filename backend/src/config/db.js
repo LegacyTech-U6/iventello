@@ -19,9 +19,8 @@ if (process.env.NODE_ENV === "development") {
       port: process.env.LOCAL_DB_PORT,
       dialect: "postgres",
       logging: false,
-    }
+    },
   );
-
 } else {
   // Production => Supabase
   console.log("🔵 Mode production: connexion à Supabase");
@@ -55,15 +54,14 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-
-
-
-
 // ===============================
 // IMPORT MODELS
 // ===============================
 db.Notification = require("../models/Notification.model")(sequelize, DataTypes);
-db.DailyPurchaseReport = require("../models/DailyPurchaseReport.model")(sequelize, DataTypes);
+db.DailyPurchaseReport = require("../models/DailyPurchaseReport.model")(
+  sequelize,
+  DataTypes,
+);
 db.Purchase = require("../models/Purchase.model")(sequelize, DataTypes);
 db.PurchaseItem = require("../models/PurchaseItem.model")(sequelize, DataTypes);
 db.salesReport = require("../models/SalesReport.model")(sequelize, DataTypes);
@@ -83,6 +81,7 @@ db.activities = require("../models/activity.model")(sequelize, DataTypes);
 db.Entreprise = require("../models/enterprise.model")(sequelize, DataTypes);
 
 db.roles = require("../models/role.model")(sequelize, DataTypes);
+db.Expense = require("../models/expense.model")(sequelize, DataTypes);
 
 // =============================================================
 // 🔗 RELATIONS ENTRE LES MODÈLES (Stockly)
@@ -106,7 +105,6 @@ db.Worker.belongsTo(db.User, {
   as: "user",
 });
 
-
 // Un utilisateur peut créer plusieurs factures
 db.User.hasMany(db.Invoice, { as: "invoices", foreignKey: "user_id" });
 db.Invoice.belongsTo(db.User, {
@@ -121,13 +119,18 @@ db.activities.belongsTo(db.User, {
   as: "user",
 });
 
+// Un utilisateur peut avoir plusieurs dépenses
+db.User.hasMany(db.Expense, { as: "expenses", foreignKey: "user_id" });
+db.Expense.belongsTo(db.User, {
+  foreignKey: "user_id",
+  as: "user",
+});
+
 db.Worker.hasMany(db.activities, { as: "activities", foreignKey: "worker_id" });
 db.activities.belongsTo(db.Worker, {
   foreignKey: "worker_id",
   as: "worker",
 });
-
-
 
 // =======================
 // 🏢 ENTREPRISE RELATIONS
@@ -145,7 +148,6 @@ db.Worker.belongsTo(db.Entreprise, {
   foreignKey: "entreprise_id",
   as: "entreprise",
 });
-
 
 // Une entreprise peut avoir plusieurs clients
 db.Entreprise.hasMany(db.Client, {
@@ -217,6 +219,16 @@ db.Entreprise.hasMany(db.activities, {
   foreignKey: "entreprise_id",
 });
 db.activities.belongsTo(db.Entreprise, {
+  foreignKey: "entreprise_id",
+  as: "entreprise",
+});
+
+// Une entreprise peut avoir plusieurs dépenses
+db.Entreprise.hasMany(db.Expense, {
+  as: "expenses",
+  foreignKey: "entreprise_id",
+});
+db.Expense.belongsTo(db.Entreprise, {
   foreignKey: "entreprise_id",
   as: "entreprise",
 });
@@ -296,7 +308,6 @@ db.Sales.belongsTo(db.Product, { foreignKey: "product_id", as: "product" });
 db.Product.hasMany(db.Order, { as: "orders", foreignKey: "product_id" });
 db.Order.belongsTo(db.Product, { foreignKey: "product_id", as: "product" });
 
-
 db.activities.belongsTo(db.Product, {
   foreignKey: "entity_id",
   as: "product",
@@ -321,7 +332,6 @@ db.Setting.belongsTo(db.Entreprise, {
   foreignKey: "entreprise_id",
   as: "entreprise",
 });
-
 
 // ===============================
 // EXPORT
