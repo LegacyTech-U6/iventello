@@ -10,20 +10,19 @@
                 </div>
             </div>
 
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-4 tracking-tight">Accès non autorisé</h2>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-4 tracking-tight">{{ $t('errors.401.title') }}</h2>
             <p class="text-gray-500 mb-10 font-medium leading-relaxed">
-                Vous n'avez pas les permissions nécessaires pour accéder à cette ressource. Veuillez vous connecter avec
-                un compte approprié.
+                {{ $t('errors.401.message') }}
             </p>
 
             <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
                 <button @click="handleLogout"
                     class="w-full sm:w-auto px-8 py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95">
-                    Se déconnecter
+                    {{ $t('sidebar.logout') }}
                 </button>
                 <router-link to="/"
                     class="w-full sm:w-auto px-8 py-3 bg-red-500 text-white font-bold rounded-2xl shadow-lg shadow-red-100 hover:bg-red-600 transition-all active:scale-95">
-                    Tableau de bord
+                    {{ $t('sidebar.dashboard') }}
                 </router-link>
             </div>
         </div>
@@ -34,7 +33,9 @@
 import { LockClosedIcon } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 

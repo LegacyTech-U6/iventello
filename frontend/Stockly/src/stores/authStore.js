@@ -75,7 +75,7 @@ export const useAuthStore = defineStore('auth', {
       this.isLoading = true
       this.error = null
       this.successMessage = null
-      console.log('📝 Registering user:', { username, Last_name, email, telephone })
+      // console.log('📝 Registering user:', { username, Last_name, email, telephone })
 
       try {
         const res = await axios.post(`${this.API_URL}/auth/register`, {
@@ -158,12 +158,12 @@ export const useAuthStore = defineStore('auth', {
     logout(mode = 'default') {
       const entrepriseStore = useEntrepriseStore()
       const userType = this.user?.type
-      console.log('👤 User type at logout:', userType)
-      console.log('🔁 Logout mode:', mode)
+      // console.log('👤 User type at logout:', userType)
+      // console.log('🔁 Logout mode:', mode)
 
       // 🧩 Cas 1 : Admin veut juste retourner à son tableau de bord admin
       if (userType === 'admin' && mode === 'backToAdmin') {
-        console.log('➡️ Redirection vers /ad/admin sans déconnexion complète')
+        // console.log('➡️ Redirection vers /ad/admin sans déconnexion complète')
         router.push('/ad/admin')
         return
       }
@@ -177,7 +177,7 @@ export const useAuthStore = defineStore('auth', {
 
       // Attendre un peu pour que le router ait le temps de se mettre à jour
       setTimeout(() => {
-        console.log('🚪 Déconnexion complète → redirection /login')
+        // console.log('🚪 Déconnexion complète → redirection /login')
         router.push('/login')
       }, 100)
     },
@@ -282,7 +282,7 @@ export const useAuthStore = defineStore('auth', {
     async redirectAfterLogin() {
       const entrepriseStore = useEntrepriseStore()
       if (!this.user) return
-      console.log(this.user.entrepriseUuid)
+      // console.log(this.user.entrepriseUuid)
 
       // Worker: Redirect directly to company dashboard
       if (this.user.type === 'worker' && entrepriseStore.activeEntreprise?.uuid) {

@@ -4,7 +4,11 @@
 
 
     <!-- Section droite (formulaire) -->
-    <div class="flex items-center justify-center p-8 lg:px-10 py-12">
+    <div class="flex items-center justify-center p-8 lg:px-10 py-12 relative">
+      <!-- Language Switcher -->
+      <div class="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <div class="w-full max-w-lg space-y-8">
         <div class="text-start space-y-4">
           <router-link to="/">
@@ -12,108 +16,79 @@
           </router-link>
 
           <h1 class="text-4xl font-extrabold text-gray-900">
-            Sign up
+            {{ $t('auth.register.title') }}
           </h1>
         </div>
 
 
         <!-- Formulaire -->
-        <form @submit.prevent="handleRegister" class="space-y-2">
+        <n-form ref="formRef" :model="user" :show-label="true">
 
           <!-- Names -->
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="text-gray-700 text-sm font-medium">First Name</label>
-              <input v-model="user.username" placeholder="John"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-            </div>
+          <n-grid :cols="2" :x-gap="12">
+            <n-form-item-gi :label="$t('auth.register.first_name')">
+              <n-input v-model:value="user.username" :placeholder="$t('auth.register.first_name')" size="large" />
+            </n-form-item-gi>
 
-            <div>
-              <label class="text-gray-700 text-sm font-medium">Last Name</label>
-              <input v-model="user.Last_name" placeholder="Doe"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-            </div>
-          </div>
+            <n-form-item-gi :label="$t('auth.register.last_name')">
+              <n-input v-model:value="user.Last_name" :placeholder="$t('auth.register.last_name')" size="large" />
+            </n-form-item-gi>
+          </n-grid>
 
           <!-- Email -->
-          <div>
-            <label class="text-gray-700 text-sm font-medium">Email</label>
-            <input type="email" v-model="user.email" placeholder="john@example.com"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-          </div>
+          <n-form-item :label="$t('auth.register.email')" path="email">
+            <n-input v-model:value="user.email" :placeholder="$t('auth.register.email')" size="large" />
+          </n-form-item>
 
-
-          <!-- Role + Phone -->
-          <div class="">
-            <div>
-              <label class="text-gray-700 text-sm font-medium">Phone</label>
-              <input v-model="user.telephone" placeholder="+237 675 453 456"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-            </div>
-          </div>
+          <!-- Phone -->
+          <n-form-item :label="$t('auth.register.phone')" path="telephone">
+            <n-input v-model:value="user.telephone" placeholder="+237 675 453 456" size="large" />
+          </n-form-item>
 
           <!-- Password -->
-          <div>
-            <label class="text-gray-700 text-sm font-medium">Password</label>
-            <div class="relative">
-              <input :type="showPassword ? 'text' : 'password'" v-model="user.password" placeholder="Create a password"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-
-              <button type="button" @click="showPassword = !showPassword"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                <EyeIcon v-if="!showPassword" class="w-5 h-5" />
-                <EyeSlashIcon v-else class="w-5 h-5" />
-              </button>
-
-            </div>
-          </div>
+          <n-form-item :label="$t('auth.register.password')" path="password">
+            <n-input type="password" show-password-on="click" v-model:value="user.password"
+              :placeholder="$t('auth.register.password')" size="large" />
+          </n-form-item>
 
           <!-- Confirm Password -->
-          <div>
-            <label class="text-gray-700 text-sm font-medium">Confirm Password</label>
-            <div class="relative">
-              <input :type="showConfirmPassword ? 'text' : 'password'" v-model="confirmPassword"
-                placeholder="Confirm password"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-
-              <button type="button" @click="showConfirmPassword = !showConfirmPassword"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                <EyeIcon v-if="!showConfirmPassword" class="w-5 h-5" />
-                <EyeSlashIcon v-else class="w-5 h-5" />
-              </button>
-
-            </div>
-          </div>
+          <n-form-item :label="$t('auth.register.confirm_password')">
+            <n-input type="password" show-password-on="click" v-model:value="confirmPassword"
+              :placeholder="$t('auth.register.confirm_password')" size="large" />
+          </n-form-item>
 
           <!-- Terms -->
-          <div class="flex items-start gap-2">
-            <input type="checkbox" v-model="user.accept_terms" class="mt-1" />
-            <label class="text-gray-600 text-sm">
-              I agree to the
-              <span class="text-emerald-600 hover:underline cursor-pointer">Terms</span>
-              and
-              <span class="text-emerald-600 hover:underline cursor-pointer">Privacy Policy</span>
-            </label>
+          <div class="flex items-start gap-2 mb-4">
+            <n-checkbox v-model:checked="user.accept_terms">
+              <span class="text-gray-600 text-sm">
+                I agree to the
+                <router-link to="/terms" class="text-emerald-600 hover:underline font-medium">Terms of
+                  Service</router-link>
+                and
+                <router-link to="/privacy" class="text-emerald-600 hover:underline font-medium">Privacy
+                  Policy</router-link>
+              </span>
+            </n-checkbox>
           </div>
 
           <!-- Error -->
-          <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div v-if="error" class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mb-4">
             {{ error }}
           </div>
 
-          <ValidationButton text="Create Account" loadingText="Loading…" color="#0C333B" size="large" width="100%"
-            :icon="null" :asyncClick="handleRegister" :loading="loading"
+          <ValidationButton :text="$t('auth.register.submit')" :loadingText="$t('auth.register.loading')"
+            color="#0C333B" size="large" width="100%" :icon="null" :asyncClick="handleRegister" :loading="loading"
             class="py-3 text-white font-semibold rounded-full hover:bg-emerald-600 transition disabled:opacity-50" />
 
 
           <!-- Already have account -->
           <p class="text-center mt-6 text-sm text-gray-600">
-            Already have an account?
+            {{ $t('auth.register.has_account') }}
             <router-link to="/login" class="text-emerald-600 font-medium hover:underline">
-              Sign in
+              {{ $t('auth.register.login_link') }}
             </router-link>
           </p>
-        </form>
+        </n-form>
       </div>
     </div>
     <!-- Section gauche (texte + image) -->
@@ -137,8 +112,11 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useHead } from '@unhead/vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
-import { EyeIcon, EyeSlashIcon, CheckIcon } from "@heroicons/vue/24/outline"
+import { CheckIcon } from "@heroicons/vue/24/outline"
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue';
 import Iventello from "@/assets/iventello.png";
+import ValdiationButton from '@/components/ui/buttons/ValidationButton.vue' // ensure correct path/name, file viewed says ValidationButton
+import { NInput, NForm, NFormItem, NCheckbox, NGrid, NFormItemGi } from 'naive-ui'
 useHead({
   title: 'Register'
 })
@@ -150,8 +128,6 @@ const router = useRouter()
 const authStore = useAuthStore()
 const loading = ref(false)
 
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
 const marketingOptIn = ref(false)
 const imageSlideClass = ref('')
 

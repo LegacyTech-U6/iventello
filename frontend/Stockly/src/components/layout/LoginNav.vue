@@ -92,7 +92,9 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-4 md:gap-6">
+          <LanguageSwitcher />
+
           <n-badge :value="unreadCount" :max="99">
             <n-button circle quaternary @click="toggleNotificationPanel">
               <template #icon><n-icon size="24" class="text-gray-500">
@@ -118,7 +120,7 @@
       </n-layout-header>
 
       <n-layout-content class="flex-1" content-style="padding: 1rem;" :native-scrollbar="false">
-        <div class="w-full mx-auto animate-fade-in-up lg:p-2">
+        <div class="w-full h-full flex flex-col mx-auto animate-fade-in-up lg:p-2">
           <slot></slot>
         </div>
       </n-layout-content>
@@ -153,7 +155,9 @@ import { useCategoryStore } from '@/stores/CategoryStore'
 import { useStatisticsStore } from '@/stores/statisticStore'
 import { useClientStore } from '@/stores/clientStore'
 import NotificationPanelContent from '@/components/ui/NotificationPanel.vue'
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue'
 import Iventello from '@/assets/iventello.png'
+import { useI18n } from 'vue-i18n'
 
 import { NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NMenu, NButton, NIcon, NBadge, NAvatar, NDrawer, NDrawerContent, NSpin, NDropdown, NTooltip } from 'naive-ui'
 import {
@@ -166,6 +170,7 @@ const route = useRoute()
 const entrepriseStore = useEntrepriseStore()
 const authStore = useAuthStore()
 const notificationStore = useNotificationStore()
+const { t } = useI18n()
 
 const collapsed = ref(false)
 const mobileMenuOpen = ref(false)
@@ -184,34 +189,33 @@ function renderIcon(icon) {
 const menuOptions = computed(() => {
   const list = []
   if (authStore.can('canViewDashboard')) {
-    list.push({ label: 'Tableau de bord', key: getPath('dashboard'), icon: renderIcon(Squares2X2Icon) })
+    list.push({ label: t('sidebar.dashboard'), key: getPath('dashboard'), icon: renderIcon(Squares2X2Icon) })
   }
-  list.push({
-    key: 'inventory-group', type: 'group', label: 'Inventaire',
-    children: [
-      authStore.can('canManageStock') ? { label: 'Produits', key: getPath('products'), icon: renderIcon(CubeIcon) } : null,
-      authStore.can('canManageStock') ? { label: 'Catégories', key: getPath('categories'), icon: renderIcon(RectangleGroupIcon) } : null,
-      authStore.can('canManageStock') ? { label: 'Stock faible', key: getPath('lowStock'), icon: renderIcon(ArrowTrendingDownIcon) } : null,
-      authStore.can('canManageStock') ? { label: 'Rupture', key: getPath('outOfStock'), icon: renderIcon(TagIcon) } : null,
-    ].filter(Boolean)
-  })
-  list.push({
-    key: 'commercial-group', type: 'group', label: 'Commercial',
-    children: [
-      authStore.can('canMakeSales') ? { label: 'Ventes', key: getPath('sales'), icon: renderIcon(ShoppingCartIcon) } : null,
-      authStore.can('canViewInvoices') ? { label: 'Factures', key: getPath('invoices'), icon: renderIcon(DocumentTextIcon) } : null,
-      authStore.can('canViewDashboard') ? { label: 'Dépenses', key: getPath('expenses'), icon: renderIcon(BanknotesIcon) } : null,
-      authStore.can('canMakeSales') ? { label: 'Clients', key: getPath('clients'), icon: renderIcon(UsersIcon) } : null,
-      authStore.can('canViewDashboard') ? { label: 'Rapports', key: getPath('reports'), icon: renderIcon(ChartBarIcon) } : null,
-      authStore.can('canAccessSettings') ? { label: 'Journal d\'activité', key: getPath('AuditTrail'), icon: renderIcon(ChartBarIcon) } : null,
-    ].filter(Boolean)
-  })
+
+  // Inventory Items (Flattened)
+  list.push(...[
+    authStore.can('canManageStock') ? { label: t('sidebar.products'), key: getPath('products'), icon: renderIcon(CubeIcon) } : null,
+    authStore.can('canManageStock') ? { label: t('sidebar.categories'), key: getPath('categories'), icon: renderIcon(RectangleGroupIcon) } : null,
+    authStore.can('canManageStock') ? { label: t('sidebar.low_stock'), key: getPath('lowStock'), icon: renderIcon(ArrowTrendingDownIcon) } : null,
+    authStore.can('canManageStock') ? { label: t('sidebar.out_of_stock'), key: getPath('outOfStock'), icon: renderIcon(TagIcon) } : null,
+  ].filter(Boolean))
+
+  // Commercial Items (Flattened)
+  list.push(...[
+    authStore.can('canMakeSales') ? { label: t('sidebar.sales'), key: getPath('sales'), icon: renderIcon(ShoppingCartIcon) } : null,
+    authStore.can('canViewInvoices') ? { label: t('sidebar.invoices'), key: getPath('invoices'), icon: renderIcon(DocumentTextIcon) } : null,
+    authStore.can('canViewDashboard') ? { label: t('sidebar.expenses'), key: getPath('expenses'), icon: renderIcon(BanknotesIcon) } : null,
+    authStore.can('canMakeSales') ? { label: t('sidebar.clients'), key: getPath('clients'), icon: renderIcon(UsersIcon) } : null,
+    authStore.can('canViewDashboard') ? { label: t('sidebar.reports'), key: getPath('reports'), icon: renderIcon(ChartBarIcon) } : null,
+    authStore.can('canAccessSettings') ? { label: t('sidebar.audit_trail'), key: getPath('AuditTrail'), icon: renderIcon(ChartBarIcon) } : null,
+  ].filter(Boolean))
+
   return list
 })
 
 const userOptions = computed(() => [
-  authStore.can('canAccessSettings') ? { label: 'Paramètres', key: getPath('EntrepriseSettings'), icon: renderIcon(Cog6ToothIcon) } : null,
-  { label: 'Déconnexion', key: 'logout', icon: renderIcon(ArrowRightOnRectangleIcon) }
+  authStore.can('canAccessSettings') ? { label: t('sidebar.settings'), key: getPath('EntrepriseSettings'), icon: renderIcon(Cog6ToothIcon) } : null,
+  { label: t('sidebar.logout'), key: 'logout', icon: renderIcon(ArrowRightOnRectangleIcon) }
 ].filter(Boolean))
 
 const handleMenuClick = (key) => {
@@ -255,7 +259,20 @@ const userInitials = computed(() => ((authStore.user?.username?.[0] || '') + (au
 const userRoleDisplay = computed(() => authStore.isAdmin ? 'Administrateur' : (authStore.user?.roleName || 'Membre'))
 
 const pageTitle = computed(() => {
-  const titles = { dashboard: 'Tableau de bord', products: 'Gestion des Produits', categories: 'Catégories', sales: 'Ventes', invoices: 'Facturation', clients: 'Répertoire Clients', reports: 'Rapports & Analytiques', lowStock: 'Alertes Stock Faible', outOfStock: 'Ruptures de Stock', AuditTrail: 'Journal d\'activité', expenses: 'Gestion des Dépenses', EntrepriseSettings: 'Paramètres' }
+  const titles = {
+    dashboard: t('sidebar.dashboard'),
+    products: t('sidebar.products'),
+    categories: t('sidebar.categories'),
+    sales: t('sidebar.sales'),
+    invoices: t('sidebar.invoices'),
+    clients: t('sidebar.clients'),
+    reports: t('sidebar.reports'),
+    lowStock: t('sidebar.low_stock'),
+    outOfStock: t('sidebar.out_of_stock'),
+    AuditTrail: t('sidebar.audit_trail'),
+    expenses: t('sidebar.expenses'),
+    EntrepriseSettings: t('sidebar.settings')
+  }
   const key = route.path.split('/').pop()
   return titles[key] || 'Iventello'
 })

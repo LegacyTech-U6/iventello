@@ -1,14 +1,13 @@
 <template>
-  <div class="w-40 h-40 flex items-center justify-center bg-white rounded-xl shadow-md overflow-hidden">
-    <img 
-      :src="logo" 
-      :alt="altText" 
-      class="max-w-full max-h-full object-contain"
-    />
-  </div>
+  <n-card class="w-40 h-40 shadow-md rounded-xl overflow-hidden" :bordered="false"
+    content-style="padding: 0; display: flex; align-items: center; justify-content: center; height: 100%;">
+    <img :src="logo" :alt="altText" class="max-w-full max-h-full object-contain" />
+  </n-card>
 </template>
 
 <script setup>
+import { NCard } from 'naive-ui'
+
 defineProps({
   logo: {
     type: String,

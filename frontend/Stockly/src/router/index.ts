@@ -74,6 +74,16 @@ const routes: RouteRecordRaw[] = [
     name: 'reset-password',
     component: () => import('../views/auth/ResetPassword.vue'),
   },
+  {
+    path: '/terms',
+    name: 'terms-conditions',
+    component: () => import('@/views/legal/TermsAndConditions.vue'),
+  },
+  {
+    path: '/privacy',
+    name: 'privacy-policy',
+    component: () => import('@/views/legal/PrivacyPolicy.vue'),
+  },
 
   // ===================== ADMIN =====================
   {

@@ -7,22 +7,25 @@
       <button @click="showAddCategory = true"
         class="btn-primary px-5 py-2.5 rounded-full text-sm flex items-center gap-2 elevation-1">
         <PlusIcon class="w-4 h-4" />
-        Add Category
+        {{ $t('categories.add_button') }}
       </button>
     </div>
 
 
     <div class="grid grid-cols-1 p-5 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-      <GridCard title="Total Categories" :value="totalCategories || 0" :icon="ListBulletIcon" bgColor="bg-primary" />
-      <GridCard title="Total Products" :value="totalProducts" :icon="CubeIcon" bgColor="bg-secondary" />
-      <GridCard title="Avg Products/Cat." :value="averageProducts" :icon="ArrowTrendingUpIcon" bgColor="bg-tertiary" />
+      <GridCard :title="$t('categories.stats.total')" :value="totalCategories || 0" :icon="ListBulletIcon"
+        bgColor="bg-primary" />
+      <GridCard :title="$t('categories.stats.products')" :value="totalProducts" :icon="CubeIcon"
+        bgColor="bg-secondary" />
+      <GridCard :title="$t('categories.stats.avg')" :value="averageProducts" :icon="ArrowTrendingUpIcon"
+        bgColor="bg-tertiary" />
     </div>
 
     <div class="mb-6 bg-surface p-6 rounded-xl elevation-1">
       <div class="relative  flex-1">
         <MagnifyingGlassIcon
           class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
-        <input v-model="searchQuery" type="text" placeholder="Search categories by name or description..."
+        <input v-model="searchQuery" type="text" :placeholder="$t('categories.search_placeholder')"
           class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
       </div>
     </div>
@@ -45,17 +48,17 @@
 
     <div v-else class="card text-center p-16 mt-6">
       <FolderMinusIcon class="mx-auto mb-4 w-16 h-16 text-primary" />
-      <h3 class="card-title text-xl mb-2">No Categories Found</h3>
-      <p class="card-subtitle">Your search did not match any existing categories.</p>
+      <h3 class="card-title text-xl mb-2">{{ $t('categories.empty.title') }}</h3>
+      <p class="card-subtitle">{{ $t('categories.empty.subtitle') }}</p>
     </div>
 
 
 
     <AddCategoryModal v-if="showAddCategory" :category="editingCategory" :loading="isActionLoading"
       @save="handleSaveCategory" @close="closeModal" />
-    <ActionModal v-model="showDeleteModal" title="Delete Category"
-      message="Are you sure you want to delete this category? This action cannot be undone." confirm-text="Delete"
-      cancel-text="Cancel" :loading="isActionLoading" @confirm="confirmDelete" />
+    <ActionModal v-model="showDeleteModal" :title="$t('categories.delete_modal.title')"
+      :message="$t('categories.delete_modal.message')" confirm-text="Delete" cancel-text="Cancel"
+      :loading="isActionLoading" @confirm="confirmDelete" />
   </div>
 </template>
 
@@ -82,6 +85,11 @@ import {
   MagnifyingGlassIcon,
   FolderMinusIcon
 } from '@heroicons/vue/24/outline'
+
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 
 const { show } = useGlobalModal()
 const { showSuccess, showError } = useActionMessage()

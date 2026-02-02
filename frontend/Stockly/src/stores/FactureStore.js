@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { createInvoice, getAllInvoices, getInvoiceById } from '../service/api'
+import { createInvoice, getAllInvoices, getInvoiceById, updateInvoiceStatus } from '../service/api'
 
 export const useInvoiceStore = defineStore('invoice', {
   state: () => ({
@@ -57,6 +57,28 @@ export const useInvoiceStore = defineStore('invoice', {
       } catch (error) {
         this.error = error.message || 'Erreur lors de la création de la facture'
         console.error('❌ Erreur lors de la création de la facture:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+    async updateStatus(id, status) {
+      this.loading = true
+      this.error = null
+      try {
+        const updatedInvoice = await updateInvoiceStatus(id, status)
+        // Update local state
+        const index = this.invoices.findIndex((i) => i.id === id)
+        if (index !== -1) {
+          this.invoices[index].status = status
+        }
+        if (this.selectedInvoice && this.selectedInvoice.id === id) {
+          this.selectedInvoice.status = status
+        }
+        return updatedInvoice
+      } catch (err) {
+        this.error = err.message || 'Erreur lors de la mise à jour du statut'
+        console.error('❌ Error updating invoice status:', err)
+        throw err
       } finally {
         this.loading = false
       }

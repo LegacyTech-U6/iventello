@@ -4,9 +4,9 @@
 html,
 body {
   font-size: 14px;
-  font-family: 'Nunito', sans-serif;
-  color: #1f2937; /* Optional: neutral gray for better readability */
-  background-color: white; /* Optional clean background */
+  font-family: 'Poppins', sans-serif !important;
+  color: var(--md-on-background);
+  background-color: var(--md-background);
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -16,11 +16,11 @@ body {
    Use these CSS variables for dynamic theme switching */
 
 :root {
-  /* Light Theme - Default */
-  --md-primary: #006879;
+  /* Light Theme - Default (Emerald) */
+  --md-primary: #059669;
   --md-on-primary: #ffffff;
-  --md-primary-container: #a8edff;
-  --md-on-primary-container: #004e5b;
+  --md-primary-container: #d1fae5;
+  --md-on-primary-container: #064e3b;
 
   --md-secondary: #4b6268;
   --md-on-secondary: #ffffff;
@@ -50,7 +50,7 @@ body {
 
   --md-inverse-surface: #2b3133;
   --md-inverse-on-surface: #ecf2f3;
-  --md-inverse-primary: #84d2e5;
+  --md-inverse-primary: #34d399;
 
   /* Primary Palette Shades */
   --md-primary-0: #000000;
@@ -73,10 +73,10 @@ body {
 /* Dark Theme */
 [data-theme='dark'],
 html.dark {
-  --md-primary: #84d2e5;
-  --md-on-primary: #00363f;
-  --md-primary-container: #004e5b;
-  --md-on-primary-container: #a8edff;
+  --md-primary: #34d399;
+  --md-on-primary: #00382e;
+  --md-primary-container: #064e3b;
+  --md-on-primary-container: #d1fae5;
 
   --md-secondary: #b2cbd2;
   --md-on-secondary: #1c3439;
@@ -106,7 +106,7 @@ html.dark {
 
   --md-inverse-surface: #dee3e5;
   --md-inverse-on-surface: #2b3133;
-  --md-inverse-primary: #006879;
+  --md-inverse-primary: #059669;
 }
 
 /* Utility classes for quick color application */

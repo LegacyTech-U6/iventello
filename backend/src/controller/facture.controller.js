@@ -7,7 +7,7 @@ const queryParser = sequelizeQuery(db);
 const { sendNotification } = require("../utils/notification");
 
 const InvoiceController = {
-  // 🔹 Create an invoice
+  // 🔹 Create an invoice (Without impacting stock/sales yet)
   async createInvoice(req, res) {
     try {
       const entreprise_id = req.entrepriseId;
@@ -18,6 +18,7 @@ const InvoiceController = {
         reduction_type,
         notes,
         mode_paiement,
+        payment_method,
         date_echeance,
         tax = 0,
       } = req.body;
@@ -44,7 +45,7 @@ const InvoiceController = {
         general_total,
         notes,
         status: "en_attente",
-        mode_paiement,
+        payment_method: payment_method || mode_paiement || "espece",
         date_echeance,
       });
 
@@ -61,58 +62,101 @@ const InvoiceController = {
           product_id: item.id,
           quantity: item.quantity,
           unit_price: item.selling_price,
-          tva: item.tva || 0, // Frontend might not send this, default to 0
+          tva: item.tva || 0,
           discount: item.discount || 0,
-        });
-
-        // Update stock and create sale
-        const product = await Product.findOne({
-          where: { id: item.id, entreprise_id },
-        });
-        if (!product) throw new Error(`Product not found: ${item.id}`);
-
-        product.quantity -= item.quantity;
-        await product.save();
-
-        const itemDiscount = Number(item.discount) || 0;
-        const finalItemTotal =
-          Number(item.selling_price) * Number(item.quantity) - itemDiscount;
-
-        const sale = await Sales.create({
-          product_id: item.id,
-          quantity_sold: item.quantity,
-          total_price: finalItemTotal,
-          total_profit:
-            finalItemTotal - Number(product.cost_price) * Number(item.quantity),
-          entreprise_id,
-        });
-
-        const entreprise = await Entreprise.findByPk(entreprise_id);
-        const user_id = req.user?.id || null;
-
-        // Log the sale activity
-        await logActivity({
-          user: req.user,
-          action: "Sale",
-          entity_type: "Product",
-          entity_id: product.id,
-          description: `Sold ${item.quantity} units of "${product.Prod_name}"`,
-          quantity: item.quantity,
-          amount: finalItemTotal,
-          ip_address: req.ip,
-          user_agent: req.headers["user-agent"],
-          entreprise_id,
-        });
-
-        // ✅ Send notification for sale
-        await sendNotification({
-          type: "sale",
-          message: `New sale: ${item.quantity} units of "${product.Prod_name}"`,
-          user_id,
         });
       }
 
       res.status(201).json(invoice);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message });
+    }
+  },
+
+  // 🔹 Update Invoice Status (Handle Stock & Sales on Payment)
+  async updateStatus(req, res) {
+    try {
+      const entreprise_id = req.entrepriseId;
+      const { id } = req.params;
+      const { status } = req.body;
+
+      const invoice = await Invoice.findOne({
+        where: { id, entreprise_id },
+        include: [{ model: InvoiceItem, as: "items" }],
+      });
+
+      if (!invoice)
+        return res.status(404).json({ message: "Facture non trouvée" });
+
+      if (invoice.status === "payée" && status === "payée") {
+        return res.status(400).json({ message: "Facture déjà payée" });
+      }
+
+      // If transition to PAID -> Process Stock & Sales
+      if (status === "payée" && invoice.status !== "payée") {
+        const items = invoice.items;
+
+        for (const item of items) {
+          // Check & Update Stock
+          const product = await Product.findOne({
+            where: { id: item.product_id, entreprise_id },
+          });
+
+          if (!product)
+            throw new Error(`Product not found: ${item.product_id}`);
+          if (product.quantity < item.quantity) {
+            throw new Error(
+              `Insufficient stock for product: ${product.Prod_name}`,
+            );
+          }
+
+          product.quantity -= item.quantity;
+          await product.save();
+
+          // Create Sale Record
+          const itemDiscount = Number(item.discount) || 0;
+          const finalItemTotal =
+            Number(item.unit_price) * Number(item.quantity) - itemDiscount;
+
+          await Sales.create({
+            product_id: item.product_id,
+            quantity_sold: item.quantity,
+            total_price: finalItemTotal,
+            total_profit:
+              finalItemTotal -
+              Number(product.cost_price) * Number(item.quantity),
+            entreprise_id,
+          });
+
+          // Log Activity
+          await logActivity({
+            user: req.user,
+            action: "Sale",
+            entity_type: "Product",
+            entity_id: product.id,
+            description: `Sold ${item.quantity} units of "${product.Prod_name}" (Invoice #${invoice.id})`,
+            quantity: item.quantity,
+            amount: finalItemTotal,
+            ip_address: req.ip,
+            user_agent: req.headers["user-agent"],
+            entreprise_id,
+          });
+
+          // Send Notification
+          await sendNotification({
+            type: "sale",
+            message: `New sale: ${item.quantity} units of "${product.Prod_name}"`,
+            user_id: req.user?.id,
+          });
+        }
+      }
+
+      // Update Status
+      invoice.status = status;
+      await invoice.save();
+
+      res.status(200).json({ message: "Statut mis à jour", invoice });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: err.message });

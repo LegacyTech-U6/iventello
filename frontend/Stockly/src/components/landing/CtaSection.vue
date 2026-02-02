@@ -3,7 +3,7 @@
     <div class="grid lg:grid-cols-2 gap-10 max-w-7xl w-full items-center relative z-10">
       <!-- 📝 Text content -->
       <div class="flex flex-col gap-6">
-        <div class="text-green-800">
+        <div class="text-emerald-600">
           <!-- ArrowRightIcon -->
           <ArrowRightIcon class="h-8 w-8" />
         </div>
@@ -15,11 +15,11 @@
         </p>
         <div class="flex gap-4 mt-4">
           <button @click="login"
-            class="bg-green-500 text-white px-6 py-3 rounded-lg border border-green-500 font-medium hover:bg-gray-900 hover:border hover:text-green-500 hover:border-green-500 transition">
+            class="bg-emerald-600 text-white px-6 py-3 rounded-lg border border-emerald-600 font-medium hover:bg-emerald-700 hover:border-emerald-700 transition shadow-lg">
             Get Started
           </button>
           <button
-            class="border border-green-500 text-green-500 px-6 py-3 rounded-lg font-medium hover:bg-green-500 hover:text-white transition">
+            class="border border-emerald-600 text-emerald-500 px-6 py-3 rounded-lg font-medium hover:bg-emerald-600/10 transition">
             Contact Us
           </button>
         </div>

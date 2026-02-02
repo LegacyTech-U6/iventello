@@ -24,9 +24,11 @@
       <!-- Search and Filter Toolbar - Intégré dans le header -->
       <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
         <div class="flex-1 relative">
-          <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input v-model="search" type="text" placeholder="Search customers..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
+          <n-input v-model:value="search" placeholder="Search customers..." size="large" clearable>
+            <template #prefix>
+              <n-icon :component="MagnifyingGlassIcon" />
+            </template>
+          </n-input>
         </div>
 
       </div>
@@ -57,7 +59,7 @@
       <!-- Empty State -->
       <div v-else class="bg-white rounded-lg border border-gray-200 shadow-sm py-16 px-6">
         <div class="flex flex-col items-center gap-6">
-          
+
           <div class="text-center">
             <p class="text-lg font-medium text-gray-900 mb-2">
               {{ search ? 'No customers found' : 'No customers yet' }}
@@ -65,15 +67,13 @@
             <p class="text-sm text-gray-500 mb-6">
               {{ search ? 'Try adjusting your search terms' : 'Get started by adding your first customer' }}
             </p>
-            <button v-if="!search" @click="handleAddClient"
-              class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center gap-2 mx-auto transition-colors">
-              <PlusIcon class="w-5 h-5" />
+            <n-button v-if="!search" @click="handleAddClient" type="primary" size="large">
+              <template #icon><n-icon :component="PlusIcon" /></template>
               Add Your First Customer
-            </button>
-            <button v-else @click="search = ''"
-              class="px-6 py-3 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg font-medium transition-colors">
+            </n-button>
+            <n-button v-else @click="search = ''" secondary size="large">
               Clear Search
-            </button>
+            </n-button>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { MagnifyingGlassIcon, PlusIcon, ArrowPathIcon } from '@heroicons/vue/24/outline'
-import { NSpin } from 'naive-ui'
+import { NSpin, NInput, NButton, NIcon } from 'naive-ui'
 import { useGlobalModal } from '@/composable/useValidation'
 import { useClientStore } from '@/stores/clientStore'
 import { useActionMessage } from '@/composable/useActionMessage'

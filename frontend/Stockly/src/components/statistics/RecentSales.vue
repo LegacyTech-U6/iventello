@@ -1,20 +1,21 @@
 <template>
-  <div class="bg-white rounded-xl shadow p-6">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-semibold text-gray-800">Recent Activity</h2>
-      <button @click="loadActivities" class="text-sm text-blue-600 hover:underline">Refresh</button>
+  <n-card class="h-full rounded-xl shadow-sm border-gray-100" :bordered="false" content-style="padding: 1.5rem;">
+    <template #header>
+      <span class="text-lg font-semibold text-gray-800 dark:text-gray-100">Recent Activity</span>
+    </template>
+    <template #header-extra>
+      <n-button text type="primary" @click="loadActivities">Refresh</n-button>
+    </template>
+
+    <div v-if="loading" class="flex justify-center py-4">
+      <n-spin size="small" />
     </div>
 
-    <div v-if="loading" class="text-gray-500 text-sm">Loading...</div>
+    <n-empty v-else-if="activities.length === 0" description="No recent activity found" class="py-8" />
 
-    <div v-else-if="activities.length === 0" class="text-gray-500 text-sm">
-      No recent activity found.
-    </div>
-
-    <ul v-else class="divide-y divide-gray-100">
-      <li v-for="(activity, index) in recentActivities" :key="index" class="flex justify-between items-center py-3">
-        <div class="flex items-center space-x-3">
-          <!-- 🔹 Petite icône selon le type -->
+    <n-list v-else hoverable clickable>
+      <n-list-item v-for="(activity, index) in recentActivities" :key="index">
+        <template #prefix>
           <div :class="[
             'w-10 h-10 rounded-full flex items-center justify-center',
             activity.action === 'sale'
@@ -27,26 +28,18 @@
             <ArrowDownLeftIcon v-else-if="activity.action === 'purchase'" class="w-5 h-5" />
             <BellIcon v-else class="w-5 h-5" />
           </div>
-
-          <!-- 🔹 Détails -->
-          <div>
-            <p class="font-medium text-gray-800">
-              {{ activity.description || 'Transaction' }}
-            </p>
-            <p class="text-sm text-gray-500">
-              {{ formatDate(activity.createdAt) }}
-            </p>
-          </div>
-        </div>
-
-        <!-- 🔹 Montant -->
-        <p class="font-semibold" :class="activity.type === 'sale' ? 'text-green-600' : 'text-blue-600'"
-          :style="activity.amount ? getDynamicStyle(activity.amount) : {}">
-          {{ activity.amount ? format(activity.amount) : '-' }}
-        </p>
-      </li>
-    </ul>
-  </div>
+        </template>
+        <n-thing :title="activity.description || 'Transaction'" :title-extra="formatDate(activity.createdAt)">
+          <template #description>
+            <span class="font-semibold" :class="activity.type === 'sale' ? 'text-green-600' : 'text-blue-600'"
+              :style="activity.amount ? getDynamicStyle(activity.amount) : {}">
+              {{ activity.amount ? format(activity.amount) : '-' }}
+            </span>
+          </template>
+        </n-thing>
+      </n-list-item>
+    </n-list>
+  </n-card>
 </template>
 
 <script setup>
@@ -54,9 +47,11 @@ import { onMounted, computed } from 'vue'
 import { useActivityStore } from '@/stores/activityStore'
 import { storeToRefs } from 'pinia'
 import { ArrowUpRightIcon, ArrowDownLeftIcon, BellIcon } from '@heroicons/vue/24/outline'
+import { NCard, NButton, NList, NListItem, NThing, NSpin, NEmpty } from 'naive-ui'
+import { useCurrency } from '@/composable/useCurrency'
+
 const activityStore = useActivityStore()
 const { activities, loading } = storeToRefs(activityStore)
-import { useCurrency } from '@/composable/useCurrency'
 
 const { format, getDynamicStyle } = useCurrency()
 

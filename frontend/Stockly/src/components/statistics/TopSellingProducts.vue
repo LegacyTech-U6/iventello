@@ -1,12 +1,11 @@
 <template>
-  <div class="bg-white rounded-xl border border-gray-200 h-full">
-    <!-- Header -->
-    <div class="flex items-center justify-between p-6 border-b border-gray-200">
-      <h2 class="text-lg font-semibold text-gray-800">Best Seller</h2>
-      <button class="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
-        View All
-      </button>
-    </div>
+  <n-card class="h-full rounded-xl shadow-sm border-gray-100" :bordered="false" content-style="padding: 0;">
+    <template #header>
+      <span class="text-lg font-semibold text-gray-800 dark:text-gray-100">Best Seller</span>
+    </template>
+    <template #header-extra>
+      <n-button text type="primary">View All</n-button>
+    </template>
 
     <!-- Carousel Section -->
     <div class="p-6">
@@ -21,7 +20,7 @@
 
             <!-- Product Info -->
             <div class="text-center w-full">
-              <h3 class="font-bold text-gray-900 text-base mb-1 truncate px-4">
+              <h3 class="font-bold text-gray-900 dark:text-gray-100 text-base mb-1 truncate px-4">
                 {{ product.Prod_name || product.name }}
               </h3>
 
@@ -33,10 +32,9 @@
               </div>
 
               <!-- Sales Data -->
-              <div
-                class="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-bold ring-1 ring-green-600/20">
-                <span>{{ product.total_sold }} Sales</span>
-              </div>
+              <n-tag type="success" round size="small" :bordered="false">
+                {{ product.total_sold }} Sales
+              </n-tag>
             </div>
           </div>
         </n-carousel-item>
@@ -47,14 +45,14 @@
         No best sellers found
       </div>
     </div>
-  </div>
+  </n-card>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useStatisticsStore } from '@/stores/statisticStore'
 import { useCurrency } from '@/composable/useCurrency'
-import { NCarousel, NCarouselItem } from 'naive-ui'
+import { NCarousel, NCarouselItem, NCard, NButton, NTag } from 'naive-ui'
 
 const { format, getDynamicStyle } = useCurrency()
 const statisticStore = useStatisticsStore()

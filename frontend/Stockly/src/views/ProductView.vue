@@ -4,81 +4,68 @@
       <div class="px-4 py-4 sm:px-8 sm:py-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Inventaire</h1>
-            <p class="text-xs sm:text-sm text-gray-500 mt-1">Gérez et suivez votre base de produits</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $t('inventory.title') }}</h1>
+            <p class="text-xs sm:text-sm text-gray-500 mt-1">{{ $t('inventory.subtitle') }}</p>
           </div>
 
           <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 sm:overflow-visible">
-            <div class="hidden xs:flex items-center border border-gray-200 rounded-lg bg-white p-1">
-              <button @click="viewMode = 'grid'"
-                :class="viewMode === 'grid' ? 'bg-gray-100 text-blue-600' : 'text-gray-500'"
-                class="p-1.5 rounded-md transition-all">
-                <Squares2X2Icon class="w-5 h-5" />
-              </button>
-              <button @click="viewMode = 'list'"
-                :class="viewMode === 'list' ? 'bg-gray-100 text-blue-600' : 'text-gray-500'"
-                class="p-1.5 rounded-md transition-all">
-                <ListBulletIcon class="w-5 h-5" />
-              </button>
+            <div
+              class="hidden xs:flex items-center border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 p-1">
+              <n-button size="small" :type="viewMode === 'grid' ? 'primary' : 'default'" @click="viewMode = 'grid'">
+                <template #icon><n-icon :component="Squares2X2Icon" /></template>
+              </n-button>
+              <n-button size="small" :type="viewMode === 'list' ? 'primary' : 'default'" @click="viewMode = 'list'">
+                <template #icon><n-icon :component="ListBulletIcon" /></template>
+              </n-button>
             </div>
 
-            <button @click="productStore.exportProducts()" :disabled="productStore.loading"
-              class="flex-shrink-0 p-2 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium">
-              <ArrowDownTrayIcon class="w-5 h-5" :class="{ 'animate-bounce': productStore.loading }" />
-              <span class="hidden sm:inline">Export</span>
-            </button>
+            <n-button @click="productStore.exportProducts()" :loading="productStore.loading" secondary>
+              <template #icon><n-icon :component="ArrowDownTrayIcon" /></template>
+              {{ $t('inventory.actions.export') }}
+            </n-button>
 
-            <button @click="isImportModalOpen = true"
-              class="flex-shrink-0 p-2 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium">
-              <ArrowUpTrayIcon class="w-5 h-5" />
-              <span class="hidden sm:inline">Import</span>
-            </button>
+            <n-button @click="isImportModalOpen = true" secondary>
+              <template #icon><n-icon :component="ArrowUpTrayIcon" /></template>
+              {{ $t('inventory.actions.import') }}
+            </n-button>
 
-            <button @click="handleAddProduct"
-              class="flex-shrink-0 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg shadow-sm shadow-green-200 transition-all flex items-center gap-2">
-              <PlusIcon class="w-5 h-5" />
-              <span>Ajouter</span>
-            </button>
+            <n-button @click="handleAddProduct" type="primary">
+              <template #icon><n-icon :component="PlusIcon" /></template>
+              {{ $t('inventory.actions.add') }}
+            </n-button>
           </div>
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <GridCard title="Total Produits" :value="productStore.totalProducts || 0" :icon="CubeIcon"
+          <GridCard :title="$t('inventory.stats.total')" :value="productStore.totalProducts || 0" :icon="CubeIcon"
             bgColor="#0f172a" />
-          <GridCard title="En Stock" :value="inStockCount" :icon="CheckCircleIcon" bgColor="#16a34a" />
-          <GridCard title="Stock Faible" :value="lowStockCount" :icon="ExclamationTriangleIcon" bgColor="#ea580c" />
-          <GridCard title="Catégories" :value="categories.length" :icon="Square3Stack3DIcon" bgColor="#2563eb" />
+          <GridCard :title="$t('inventory.stats.in_stock')" :value="inStockCount" :icon="CheckCircleIcon"
+            bgColor="#16a34a" />
+          <GridCard :title="$t('inventory.stats.low_stock')" :value="lowStockCount" :icon="ExclamationTriangleIcon"
+            bgColor="#ea580c" />
+          <GridCard :title="$t('inventory.stats.categories')" :value="categories.length" :icon="Square3Stack3DIcon"
+            bgColor="#2563eb" />
         </div>
       </div>
     </div>
 
-    <div class="px-4 py-4 sm:px-8 bg-white border-b border-gray-200 shadow-sm">
+    <div class="px-4 py-4 sm:px-8 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
       <div class="flex flex-col lg:flex-row gap-3">
         <div class="relative flex-1">
-          <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input v-model="searchQuery" type="text" placeholder="Rechercher un produit ou code-barres..."
-            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all" />
+          <n-input v-model:value="searchQuery" :placeholder="$t('inventory.filters.search_placeholder')" clearable
+            size="large">
+            <template #prefix>
+              <n-icon :component="MagnifyingGlassIcon" />
+            </template>
+          </n-input>
         </div>
 
         <div class="flex gap-2">
-          <select v-model="selectedCategory"
-            class="flex-1 lg:flex-none px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20">
-            <option value="">Toutes catégories</option>
-            <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
-          </select>
+          <n-select v-model:value="selectedCategory" :options="categoryOptions"
+            :placeholder="$t('inventory.filters.all_categories')" clearable class="w-48" />
 
-          <select v-model="selectedStock"
-            class="flex-1 lg:flex-none px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20">
-            <option value="">Tous les stocks</option>
-            <option value="in-stock">En Stock (>10)</option>
-            <option value="low-stock">Faible (1-10)</option>
-            <option value="out-of-stock">Rupture (0)</option>
-          </select>
-
-          <button v-if="searchQuery || selectedCategory || selectedStock" @click="clearFilters"
-            class="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-colors">
-            <XMarkIcon class="w-5 h-5" />
-          </button>
+          <n-select v-model:value="selectedStock" :options="stockOptions"
+            :placeholder="$t('inventory.filters.all_stocks')" clearable class="w-48" />
         </div>
       </div>
     </div>
@@ -94,11 +81,11 @@
         <div class="w-20 h-20 bg-gray-50 rounded-full mx-auto mb-4 flex items-center justify-center">
           <MagnifyingGlassMinusIcon class="w-10 h-10 text-gray-300" />
         </div>
-        <h3 class="text-lg font-bold text-gray-900 mb-1">Aucun produit trouvé</h3>
-        <p class="text-gray-500 mb-6 max-w-xs mx-auto text-sm">Essayez de modifier vos filtres ou le terme de recherche.
+        <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $t('inventory.empty.title') }}</h3>
+        <p class="text-gray-500 mb-6 max-w-xs mx-auto text-sm">{{ $t('inventory.empty.subtitle') }}
         </p>
         <button @click="clearFilters" class="px-6 py-2 bg-gray-900 text-white rounded-full text-sm font-medium">
-          Effacer les filtres
+          {{ $t('inventory.empty.button') }}
         </button>
       </div>
 
@@ -108,28 +95,8 @@
           :display-mode="viewMode" @view="handleViewProduct" />
       </div>
 
-      <div v-else class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-gray-50 border-b border-gray-200 hidden sm:table-header-group">
-              <tr
-                class="flex items-center gap-3 sm:gap-4 px-4 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                <th class="w-10 sm:w-12 border-none"></th>
-                <th class="flex-1 border-none text-left">Produit</th>
-                <th class="w-32 hidden sm:block border-none text-left">Catégorie</th>
-                <th class="w-32 hidden md:block border-none text-left">Code-barres</th>
-                <th class="w-16 sm:w-24 border-none text-center">Stock</th>
-                <th class="w-24 sm:w-32 border-none text-right">P. Achat</th>
-                <th class="w-24 sm:w-32 border-none text-right">P. Vente</th>
-                <th class="w-8 sm:w-12 border-none"></th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 block sm:table-row-group">
-              <ProductListItem v-for="product in filteredProducts" :key="product.id" :product="product"
-                :display-mode="viewMode" @view="handleViewProduct" />
-            </tbody>
-          </table>
-        </div>
+      <div v-else class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm">
+        <n-data-table :columns="columns" :data="filteredProducts" :pagination="{ pageSize: 10 }" :bordered="false" />
       </div>
     </div>
 
@@ -167,14 +134,71 @@ import {
  */
 
 import { useRouter } from 'vue-router'
-import { ref, computed, onMounted } from 'vue'
-import { NSpin } from 'naive-ui'
+import { ref, computed, onMounted, h } from 'vue'
+import { NSpin, NDataTable, NButton, NInput, NSelect, NIcon, NSpace, NTag, NTooltip } from 'naive-ui'
 import { useProductStore } from '@/stores/productStore'
 import ProductListItem from '@/components/Products/ProductListItem.vue'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import GridCard from '@/components/ui/cards/GridCard.vue'
 import ValidationModal from '@/components/ui/ValidationModal.vue'
 import ExcelProductUpload from '@/components/Products/ExcelProductUpload.vue'
+import { useI18n } from 'vue-i18n'
+import { useCurrency } from '@/composable/useCurrency' // Import currency formatter
+
+const { t } = useI18n()
+const { format } = useCurrency()
+
+// Columns for NDataTable
+const columns = [
+  {
+    title: t('inventory.table.product'),
+    key: 'Prod_name',
+    render(row) {
+      return h('div', { class: 'font-medium' }, [
+        h('div', row.Prod_name),
+        h('div', { class: 'text-xs text-gray-500' }, row.code_bar)
+      ])
+    }
+  },
+  {
+    title: t('inventory.table.category'),
+    key: 'category_id',
+    render(row) {
+      return h(NTag, { type: 'default', size: 'small' }, { default: () => row.category.name || 'N/A' })
+    }
+  },
+  {
+    title: t('inventory.table.stock'),
+    key: 'quantity',
+    render(row) {
+      const qty = typeof row.quantity === 'string' ? parseInt(row.quantity) : row.quantity
+      let type = 'success'
+      if (qty <= 0) type = 'error'
+      else if (qty <= 10) type = 'warning'
+
+      return h(NTag, { type, bordered: false }, { default: () => qty })
+    }
+  },
+  {
+    title: t('inventory.table.buy_price'),
+    key: 'buying_price',
+    render(row) { return format(row.cost_price) }
+  },
+  {
+    title: t('inventory.table.sell_price'),
+    key: 'selling_price',
+    render(row) { return format(row.selling_price) }
+  },
+  {
+    key: 'actions',
+    render(row) {
+      return h(NButton, {
+        size: 'small',
+        onClick: () => handleViewProduct(row)
+      }, { default: () => 'View' })
+    }
+  }
+]
 
 // ========================================
 // INITIALISATION DES STORES ET ROUTER
@@ -227,6 +251,14 @@ const categories = computed(() => {
   const cats = new Set(productStore.products.map((p) => p.category_id))
   return Array.from(cats).filter(Boolean)
 })
+
+const categoryOptions = computed(() => categories.value.map(c => ({ label: c, value: c })))
+
+const stockOptions = [
+  { label: t('inventory.filters.in_stock_label'), value: 'in-stock' },
+  { label: t('inventory.filters.low_stock_label'), value: 'low-stock' },
+  { label: t('inventory.filters.out_of_stock_label'), value: 'out-of-stock' }
+]
 
 /**
  * Filtre les produits selon les critères sélectionnés

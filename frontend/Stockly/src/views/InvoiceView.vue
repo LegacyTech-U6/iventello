@@ -12,7 +12,8 @@
           <FileText class="w-5 h-5" />
         </div>
         <div class="flex flex-col items-center md:items-start">
-          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">Total</span>
+          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">{{ $t('invoices.stats.total')
+            }}</span>
           <span class="text-lg font-bold text-gray-800">{{ invoices.length }}</span>
         </div>
       </div>
@@ -26,7 +27,8 @@
           <CheckCircle class="w-5 h-5" />
         </div>
         <div class="flex flex-col items-center md:items-start">
-          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">Paid</span>
+          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">{{ $t('invoices.stats.paid')
+            }}</span>
           <span class="text-lg font-bold text-gray-800">{{ paidCount }}</span>
         </div>
       </div>
@@ -41,7 +43,8 @@
           <Hourglass class="w-5 h-5" />
         </div>
         <div class="flex flex-col items-center md:items-start">
-          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">Pending</span>
+          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">{{ $t('invoices.stats.pending')
+            }}</span>
           <span class="text-lg font-bold text-gray-800">{{ pendingCount }}</span>
         </div>
       </div>
@@ -55,7 +58,8 @@
           <AlertCircle class="w-5 h-5" />
         </div>
         <div class="flex flex-col items-center md:items-start">
-          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">Overdue</span>
+          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">{{ $t('invoices.stats.overdue')
+            }}</span>
           <span class="text-lg font-bold text-gray-800">{{ overdueCount }}</span>
         </div>
       </div>
@@ -64,7 +68,7 @@
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
       <div class="relative w-full sm:w-64">
         <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-[18px] h-[18px]" />
-        <input v-model="searchQuery" type="text" placeholder="Search client, ID..."
+        <input v-model="searchQuery" type="text" :placeholder="$t('invoices.search_placeholder')"
           class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" />
       </div>
     </div>
@@ -78,8 +82,8 @@
               <div class="w-48 h-48 text-gray-200 mb-4">
                 <FileText class="w-16 h-16 mx-auto opacity-20" />
               </div>
-              <h3 class="text-lg font-semibold text-gray-900">No invoices found</h3>
-              <p class="text-gray-500 mt-2">Try adjusting your search or filters.</p>
+              <h3 class="text-lg font-semibold text-gray-900">{{ $t('invoices.empty.title') }}</h3>
+              <p class="text-gray-500 mt-2">{{ $t('invoices.empty.subtitle') }}</p>
             </div>
           </template>
         </n-data-table>
@@ -112,6 +116,10 @@ import { useInvoiceStore } from '@/stores/FactureStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import InvoiceDetailModal from '@/components/invoices/InvoiceDetailModal.vue'
 import ActionModal from '@/components/ui/ActionModal.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 
 const { format, getDynamicStyle } = useCurrency()
 // Stores
@@ -137,14 +145,14 @@ const rowProps = (row) => {
   }
 }
 
-const columns = [
+const columns = computed(() => [
   {
-    title: 'ID',
+    title: t('invoices.table.id'),
     key: 'id',
     render: (row) => h('span', { class: 'font-mono text-xs font-medium text-gray-500' }, { default: () => `#${row.id}` })
   },
   {
-    title: 'Client',
+    title: t('invoices.table.client'),
     key: 'client',
     render(row) {
       return h('div', { class: 'flex flex-col' }, [
@@ -154,17 +162,17 @@ const columns = [
     }
   },
   {
-    title: 'Date',
+    title: t('invoices.table.date'),
     key: 'createdAt',
     render: (row) => formatDate(row.createdAt)
   },
   {
-    title: 'Due Date',
+    title: t('invoices.table.due_date'),
     key: 'dueDate',
     render: (row) => formatDate(row.dueDate || row.createdAt)
   },
   {
-    title: 'Amount',
+    title: t('invoices.table.amount'),
     key: 'total',
     render(row) {
       return h('span', {
@@ -174,7 +182,7 @@ const columns = [
     }
   },
   {
-    title: 'Status',
+    title: t('invoices.table.status'),
     key: 'status',
     render(row) {
       return h(NTag, {
@@ -187,7 +195,7 @@ const columns = [
     }
   },
   {
-    title: 'Actions',
+    title: t('invoices.table.actions'),
     key: 'actions',
     render(row) {
       return h('div', { class: 'flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity' }, [
@@ -197,7 +205,7 @@ const columns = [
       ])
     }
   }
-]
+])
 
 // Computed
 const invoices = computed(() => invoiceStore.invoices || [])
@@ -289,9 +297,9 @@ const getStatusType = (status: string) => {
 }
 
 const getStatusLabel = (status: string) => {
-  if (status === 'payée') return 'Paid'
-  if (status === 'en_attente') return 'Pending'
-  if (status === 'overdue') return 'Overdue'
+  if (status === 'payée') return t('invoices.status.paid')
+  if (status === 'en_attente') return t('invoices.status.pending')
+  if (status === 'overdue') return t('invoices.status.overdue')
   return status
 }
 

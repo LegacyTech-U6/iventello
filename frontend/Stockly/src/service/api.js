@@ -177,6 +177,12 @@ export async function getInvoiceById(id) {
   const { data } = await API.get(`/factures/${id}`)
   return data
 }
+
+// ✅ Factures : Mettre à jour le statut d'une facture
+export async function updateInvoiceStatus(id, status) {
+  const { data } = await API.put(`/factures/${id}/status`, { status })
+  return data
+}
 ///////////////////////////////////////
 // Sales calls
 ///////////////////////////////////////

@@ -2,8 +2,8 @@
   <div class="p-6 max-w-7xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Paramètres</h1>
-      <p class="text-gray-500">Gérez vos préférences et les informations de votre entreprise.</p>
+      <h1 class="text-2xl font-bold text-gray-900">{{ $t('settings.title') }}</h1>
+      <p class="text-gray-500">{{ $t('settings.subtitle') }}</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -12,160 +12,161 @@
       <div class="md:col-span-1 space-y-6">
 
         <!-- SECTION 1: PROFIL UTILISATEUR -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <n-card class="shadow-sm rounded-xl" :bordered="false">
           <div class="flex items-center gap-4 mb-6">
-            <div
-              class="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold border-2 border-white shadow-sm">
+            <n-avatar :size="64" class="bg-blue-100 text-blue-600 font-bold border-2 border-white shadow-sm">
               {{ userInitials }}
-            </div>
+            </n-avatar>
             <div>
-              <h2 class="text-lg font-semibold text-gray-900">{{ userProfile.name }}</h2>
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+              <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ userProfile.name }}</h2>
+              <n-tag type="info" size="small" round class="mt-1">
                 {{ userProfile.role }}
-              </span>
+              </n-tag>
             </div>
           </div>
 
           <div class="space-y-4">
             <div>
-              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Email</label>
-              <div class="text-gray-900 font-medium break-all">{{ userProfile.email }}</div>
+              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">{{ $t('settings.profile.email')
+                }}</label>
+              <div class="text-gray-900 dark:text-gray-300 font-medium break-all">{{ userProfile.email }}</div>
             </div>
             <div>
-              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Téléphone</label>
-              <div class="text-gray-900">{{ userProfile.phone }}</div>
+              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">{{ $t('settings.profile.phone')
+                }}</label>
+              <div class="text-gray-900 dark:text-gray-300">{{ userProfile.phone }}</div>
             </div>
           </div>
 
-          <div class="mt-6 pt-6 border-t border-gray-100">
-            <button disabled
-              class="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-50 cursor-not-allowed flex justify-center items-center gap-2">
-              <PencilIcon class="w-4 h-4" />
-              Modifier le profil
-            </button>
+          <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
+            <n-button disabled block secondary>
+              <template #icon><n-icon :component="PencilIcon" /></template>
+              {{ $t('settings.profile.edit') }}
+            </n-button>
           </div>
-        </div>
+        </n-card>
 
         <!-- SECTION 4: SÉCURITÉ -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Sécurité</h3>
+        <n-card class="shadow-sm rounded-xl" :bordered="false">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ $t('settings.security.title') }}
+          </h3>
           <div class="space-y-3">
-            <button disabled
-              class="w-full flex items-center justify-between p-3 text-left border border-gray-200 rounded-lg text-gray-400 hover:bg-gray-50 transition-colors cursor-not-allowed">
-              <span class="text-sm font-medium">Changer le mot de passe</span>
-              <LockClosedIcon class="w-4 h-4" />
-            </button>
+            <n-button disabled block class="justify-between" icon-placement="right">
+              <template #icon><n-icon :component="LockClosedIcon" /></template>
+              {{ $t('settings.security.change_password') }}
+            </n-button>
 
-            <button @click="handleLogout"
-              class="w-full flex items-center justify-between p-3 text-left border border-red-200 rounded-lg text-red-600 hover:bg-red-50 transition-colors group">
-              <span class="text-sm font-medium">Déconnexion</span>
-              <ArrowRightOnRectangleIcon class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            <n-button @click="handleLogout" block type="error" ghost class="justify-between" icon-placement="right">
+              <template #icon><n-icon :component="ArrowRightOnRectangleIcon" /></template>
+              {{ $t('settings.security.logout') }}
+            </n-button>
           </div>
-        </div>
+        </n-card>
       </div>
 
       <!-- COLONNE DROITE : ENTREPRISE & PRÉFÉRENCES -->
       <div class="md:col-span-2 space-y-6">
 
         <!-- SECTION 2: ENTREPRISE -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <n-card class="shadow-sm rounded-xl" :bordered="false">
           <div class="flex justify-between items-start mb-6">
             <div>
-              <h3 class="text-lg font-semibold text-gray-900">Information de l'entreprise</h3>
-              <p class="text-sm text-gray-500">Ces détails apparaissent sur vos factures et documents.</p>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $t('settings.company.title') }}</h3>
+              <p class="text-sm text-gray-500">{{ $t('settings.company.subtitle') }}</p>
             </div>
-            <div
-              class="h-14 w-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center overflow-hidden">
-              <img v-if="companySettings.logo" :src="companySettings.logo" alt="Logo"
-                class="h-full w-full object-contain" />
-              <BuildingOfficeIcon v-else class="w-6 h-6 text-gray-400" />
-            </div>
+            <n-avatar shape="square" :size="56" :src="companySettings.logo" class="bg-gray-50 border border-gray-200">
+              <template #fallback>
+                <n-icon :component="BuildingOfficeIcon" class="text-gray-400" />
+              </template>
+            </n-avatar>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="sm:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Nom de l'entreprise</label>
-              <input type="text" v-model="companySettings.name" readonly
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 focus:outline-none cursor-default" />
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{
+                $t('settings.company.name')
+                }}</label>
+              <n-input v-model:value="companySettings.name" readonly placeholder="Company Name" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Numéro Fiscal / TVA</label>
-              <input type="text" v-model="companySettings.vatNumber" readonly
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 focus:outline-none cursor-default" />
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{
+                $t('settings.company.vat')
+                }}</label>
+              <n-input v-model:value="companySettings.vatNumber" readonly />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Devise</label>
-              <input type="text" v-model="companySettings.currency" readonly
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 focus:outline-none cursor-default" />
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{
+                $t('settings.company.currency') }}</label>
+              <n-input v-model:value="companySettings.currency" readonly />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Pays</label>
-              <input type="text" v-model="companySettings.country" readonly
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 focus:outline-none cursor-default" />
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{
+                $t('settings.company.country')
+                }}</label>
+              <n-input v-model:value="companySettings.country" readonly />
             </div>
           </div>
-        </div>
+        </n-card>
 
         <!-- SECTION 3: PRÉFÉRENCES -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <n-card class="shadow-sm rounded-xl" :bordered="false">
           <div class="flex items-start justify-between mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">Préférences de l'application</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $t('settings.preferences.title') }}
+            </h3>
 
-
-            <div class="space-y-6">
+            <div class="w-full max-w-sm space-y-6">
               <!-- Langue -->
               <div class="flex items-center justify-between">
                 <div>
-                  <label class="block text-sm font-medium text-gray-900">Langue</label>
-                  <p class="text-sm text-gray-500">Langue de l'interface utilisateur</p>
+                  <label class="block text-sm font-medium text-gray-900 dark:text-gray-100">{{
+                    $t('settings.preferences.language.label') }}</label>
+                  <p class="text-sm text-gray-500">{{ $t('settings.preferences.language.desc') }}</p>
                 </div>
-                <select v-model="preferences.language"
-                  class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white text-sm min-w-[140px]">
-                  <option value="fr">Français</option>
-                  <option value="en">English</option>
-                  <option value="es">Español</option>
-                </select>
+                <n-select v-model:value="preferences.language" class="w-40" :options="[
+                  { label: 'Français', value: 'fr' },
+                  { label: 'English', value: 'en' },
+                  { label: 'Español', value: 'es' }
+                ]" />
               </div>
 
               <!-- Thème -->
-              <div class="border-t border-gray-100 pt-6 flex items-center justify-between">
+              <div class="border-t border-gray-100 dark:border-gray-700 pt-6 flex items-center justify-between">
                 <div>
-                  <label class="block text-sm font-medium text-gray-900">Thème</label>
-                  <p class="text-sm text-gray-500">Apparence de l'application</p>
+                  <label class="block text-sm font-medium text-gray-900 dark:text-gray-100">{{
+                    $t('settings.preferences.theme.label') }}</label>
+                  <p class="text-sm text-gray-500">{{ $t('settings.preferences.theme.desc') }}</p>
                 </div>
-                <div class="flex bg-gray-100 p-1 rounded-lg">
-                  <button @click="preferences.theme = 'light'"
-                    class="px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2"
-                    :class="preferences.theme === 'light' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
-                    <SunIcon class="w-4 h-4" /> Clair
-                  </button>
-                  <button @click="preferences.theme = 'dark'"
-                    class="px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2"
-                    :class="preferences.theme === 'dark' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
-                    <MoonIcon class="w-4 h-4" /> Sombre
-                  </button>
+                <!-- Theme Toggler using NButton group concept or just buttons -->
+                <div class="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                  <n-button size="small" :type="preferences.theme === 'light' ? 'default' : 'tertiary'"
+                    @click="preferences.theme = 'light'" class="text-xs">
+                    <template #icon><n-icon :component="SunIcon" /></template>
+                    {{ $t('settings.preferences.theme.light') }}
+                  </n-button>
+                  <n-button size="small" :type="preferences.theme === 'dark' ? 'default' : 'tertiary'"
+                    @click="preferences.theme = 'dark'" class="text-xs">
+                    <template #icon><n-icon :component="MoonIcon" /></template>
+                    {{ $t('settings.preferences.theme.dark') }}
+                  </n-button>
                 </div>
               </div>
 
               <!-- Fuseau horaire -->
-              <div class="border-t border-gray-100 pt-6 flex items-center justify-between">
+              <div class="border-t border-gray-100 dark:border-gray-700 pt-6 flex items-center justify-between">
                 <div>
-                  <label class="block text-sm font-medium text-gray-900">Fuseau horaire</label>
-                  <p class="text-sm text-gray-500">Pour l'affichage des dates et heures</p>
+                  <label class="block text-sm font-medium text-gray-900 dark:text-gray-100">{{
+                    $t('settings.preferences.timezone.label') }}</label>
+                  <p class="text-sm text-gray-500">{{ $t('settings.preferences.timezone.desc') }}</p>
                 </div>
-                <select v-model="preferences.timezone"
-                  class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white text-sm min-w-[140px]">
-                  <option value="Africa/Douala">Africa/Douala</option>
-                  <option value="Europe/Paris">Europe/Paris</option>
-                  <option value="UTC">UTC</option>
-                </select>
+                <n-select v-model:value="preferences.timezone" class="w-40" :options="[
+                  { label: 'Africa/Douala', value: 'Africa/Douala' },
+                  { label: 'Europe/Paris', value: 'Europe/Paris' },
+                  { label: 'UTC', value: 'UTC' }
+                ]" />
               </div>
             </div>
           </div>
-
-        </div>
+        </n-card>
       </div>
     </div>
   </div>
@@ -184,7 +185,10 @@ import {
   SunIcon,
   MoonIcon
 } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
+import { NCard, NAvatar, NButton, NIcon, NInput, NSelect, NTag, NDivider, NSwitch } from 'naive-ui'
 
+const { t } = useI18n()
 
 const router = useRouter();
 const authStore = useAuthStore();

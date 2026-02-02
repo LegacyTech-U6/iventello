@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { NCard } from 'naive-ui'
 import il3Image from '@/assets/image/il-3.png'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -18,27 +19,6 @@ const statsGridRef = ref(null)
 
 onMounted(() => {
   if (!sectionRef.value || !statsGridRef.value) return
-
-  ScrollTrigger.matchMedia({
-    '(min-width: 768px)': () => {
-      const gridWidth =
-        statsGridRef.value.scrollWidth - statsGridRef.value.offsetWidth
-
-      gsap.to(statsGridRef.value, {
-        x: -gridWidth,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.value,
-          start: 'top top',
-          end: () => `+=${gridWidth}`,
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true
-        }
-      })
-    }
-  })
 
   // Counter animation
   gsap.utils.toArray('.stat-value').forEach((el: any, index) => {
@@ -68,19 +48,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <section 
-    ref="sectionRef"
-    class="relative py-16 px-6 bg-primary text-on-primary overflow-hidden md:min-h-[50vh] md:flex md:items-center"
-  >
+  <section ref="sectionRef"
+    class="relative py-16 px-6 bg-primary text-on-primary overflow-hidden md:min-h-[50vh] md:flex md:items-center">
     <div class="relative max-w-7xl mx-auto z-10 flex flex-col md:flex-row items-center gap-14 md:gap-20">
 
       <!-- Left Illustration -->
       <div class="flex-none relative md:w-1/2 lg:w-1/4 flex justify-center">
-        <img 
-          :src="il3Image" 
-          alt="decorative"
-          class="w-56 sm:w-64 md:w-full h-auto object-contain"
-        />
+        <img :src="il3Image" alt="decorative" class="w-56 sm:w-64 md:w-full h-auto object-contain" />
       </div>
 
       <!-- Text + stats -->
@@ -90,29 +64,24 @@ onMounted(() => {
         </h2>
 
         <p class="text-base sm:text-lg md:text-xl font-light mb-8 sm:mb-10 text-on-primary/90">
-          Join the companies that have 
-          <span class="text-on-primary font-medium">transformed</span> 
-          their management with 
+          Join the companies that have
+          <span class="text-on-primary font-medium">transformed</span>
+          their management with
           <span class="text-on-primary font-semibold">Iventello</span>.
         </p>
 
         <!-- Stats -->
-        <div 
-          ref="statsGridRef" 
-          class="flex flex-row gap-4 sm:gap-6 overflow-x-auto scroll-smooth no-scrollbar pb-4"
-        >
-          <div 
-            v-for="stat in stats" 
-            :key="stat.label"
-            class="card bg-surface text-on-surface p-4 sm:p-6 text-center flex-shrink-0 min-w-[130px] sm:min-w-[160px]"
-          >
+        <div ref="statsGridRef" class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
+          <n-card v-for="stat in stats" :key="stat.label" :bordered="false"
+            class="card p-4 sm:p-6 text-center bg-surface text-on-surface hover:shadow-lg transition-transform hover:-translate-y-1 duration-300"
+            content-style="padding: 0;">
             <div class="stat-value text-2xl sm:text-3xl md:text-4xl font-light text-primary mb-1">
               {{ stat.value }}
             </div>
-            <div class="text-xs sm:text-sm text-on-surface-variant">
+            <div class="text-xs sm:text-sm text-on-surface-variant leading-tight">
               {{ stat.label }}
             </div>
-          </div>
+          </n-card>
         </div>
 
       </div>
@@ -124,9 +93,13 @@ onMounted(() => {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.stat-value { will-change: transform; }
+
+.stat-value {
+  will-change: transform;
+}
 </style>

@@ -12,14 +12,14 @@
   <div class="p-4 lg:p-8 space-y-6">
     <div class="flex justify-between items-center">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900">Employés</h1>
-        <p class="text-gray-500">Gérez vos employés et leurs accès.</p>
+        <h1 class="text-3xl font-bold text-gray-900">{{ $t('workers.title') }}</h1>
+        <p class="text-gray-500">{{ $t('workers.subtitle') }}</p>
       </div>
       <n-button type="primary" size="large" @click="create">
         <template #icon><n-icon>
             <PlusIcon />
           </n-icon></template>
-        Ajouter un employé
+        {{ $t('workers.add_button') }}
       </n-button>
     </div>
 
@@ -27,7 +27,7 @@
     <n-grid x-gap="12" cols="1 s:2 m:4" responsive="screen" :y-gap="12">
       <n-gi>
         <n-card :bordered="false" class="rounded-xl shadow-sm">
-          <n-statistic label="Total Employés" :value="stats.total">
+          <n-statistic :label="$t('workers.stats.total')" :value="stats.total">
             <template #prefix><n-icon class="text-purple-500">
                 <UsersIcon />
               </n-icon></template>
@@ -36,7 +36,7 @@
       </n-gi>
       <n-gi>
         <n-card :bordered="false" class="rounded-xl shadow-sm">
-          <n-statistic label="Actifs" :value="stats.active">
+          <n-statistic :label="$t('workers.stats.active')" :value="stats.active">
             <template #prefix><n-icon class="text-teal-500">
                 <UserIcon />
               </n-icon></template>
@@ -45,7 +45,7 @@
       </n-gi>
       <n-gi>
         <n-card :bordered="false" class="rounded-xl shadow-sm">
-          <n-statistic label="Inactifs" :value="stats.inactive">
+          <n-statistic :label="$t('workers.stats.inactive')" :value="stats.inactive">
             <template #prefix><n-icon class="text-slate-500">
                 <UserMinusIcon />
               </n-icon></template>
@@ -54,7 +54,7 @@
       </n-gi>
       <n-gi>
         <n-card :bordered="false" class="rounded-xl shadow-sm">
-          <n-statistic label="Nouveaux" :value="stats.newJoiners">
+          <n-statistic :label="$t('workers.stats.new')" :value="stats.newJoiners">
             <template #prefix><n-icon class="text-blue-500">
                 <UserPlusIcon />
               </n-icon></template>
@@ -65,42 +65,42 @@
 
     <n-card :bordered="false" class="rounded-xl shadow-sm">
       <div class="flex flex-col sm:flex-row gap-4 mb-6">
-        <n-input v-model:value="searchTerm" placeholder="Rechercher un employé..." class="max-w-xs">
+        <n-input v-model:value="searchTerm" :placeholder="$t('workers.search_placeholder')" class="max-w-xs">
           <template #prefix><n-icon>
               <MagnifyingGlassIcon />
             </n-icon></template>
         </n-input>
-        <n-select v-model:value="filterDepartment" :options="departmentOptions" placeholder="Filtrer par Département"
-          clearable class="w-64" />
+        <n-select v-model:value="filterDepartment" :options="departmentOptions"
+          :placeholder="$t('workers.filter_department')" clearable class="w-64" />
       </div>
 
       <n-data-table :columns="columns" :data="filteredWorkers" :loading="isLoading" :pagination="{ pageSize: 10 }" />
     </n-card>
 
     <!-- Modal for Create/Edit -->
-    <n-modal v-model:show="showModal" preset="card" :title="isEditing ? 'Modifier l\'employé' : 'Nouvel employé'"
-      class="max-w-lg">
+    <n-modal v-model:show="showModal" preset="card"
+      :title="isEditing ? $t('workers.modal.edit_title') : $t('workers.modal.create_title')" class="max-w-lg">
       <n-form ref="formRef" :model="formModel" :rules="rules" label-placement="top">
-        <n-form-item label="Nom complet" path="name">
+        <n-form-item :label="$t('workers.modal.name')" path="name">
           <n-input v-model:value="formModel.name" placeholder="John Doe" />
         </n-form-item>
         <n-form-item label="Email" path="email">
           <n-input v-model:value="formModel.email" placeholder="john@example.com" />
         </n-form-item>
-        <n-form-item label="Entreprise" path="entreprise_id" v-if="!isEditing">
+        <n-form-item :label="$t('workers.modal.company')" path="entreprise_id" v-if="!isEditing">
           <!-- Assuming enterprise selection on creation -->
           <n-select v-model:value="formModel.entreprise_id" :options="enterpriseOptions"
-            placeholder="Sélectionner une entreprise" />
+            :placeholder="$t('workers.modal.company')" />
         </n-form-item>
         <!-- Add Password field for creation if needed, logic depends on backend -->
-        <n-form-item label="Mot de passe" path="password" v-if="!isEditing">
+        <n-form-item :label="$t('workers.modal.password')" path="password" v-if="!isEditing">
           <n-input type="password" v-model:value="formModel.password" show-password-on="click" />
         </n-form-item>
 
         <div class="flex justify-end gap-2 mt-4">
-          <n-button @click="closeModal">Annuler</n-button>
+          <n-button @click="closeModal">{{ $t('workers.modal.cancel') }}</n-button>
           <n-button type="primary" :loading="isSubmitting" @click="handleFormSubmit">
-            {{ isEditing ? 'Mettre à jour' : 'Créer' }}
+            {{ isEditing ? $t('workers.modal.update') : $t('workers.modal.create') }}
           </n-button>
         </div>
       </n-form>
@@ -117,6 +117,10 @@ import { useMessage, useDialog, NButton, NIcon, NGrid, NGi, NCard, NStatistic, N
 import {
   UsersIcon, UserIcon, UserMinusIcon, UserPlusIcon, MagnifyingGlassIcon, PlusIcon, PencilIcon, TrashIcon
 } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 
 const workerStore = useWorkerStore()
 const entrepriseStore = useEntrepriseStore()
@@ -183,19 +187,19 @@ const enterpriseOptions = computed(() => {
   return entrepriseStore.entreprises.map(e => ({ label: e.name, value: e.id }))
 })
 
-const columns = [
-  { title: 'Nom', key: 'name', sorter: 'default' },
-  { title: 'Email', key: 'email' },
-  { title: 'Entreprise', key: 'entreprise.name' },
+const columns = computed(() => [
+  { title: t('workers.table.name'), key: 'name', sorter: 'default' },
+  { title: t('workers.table.email'), key: 'email' },
+  { title: t('workers.table.company'), key: 'entreprise.name' },
   {
-    title: 'Statut',
+    title: t('workers.table.status'),
     key: 'status',
     render(row) {
       return h(NTag, { type: row.status === 'active' ? 'success' : 'error', size: 'small' }, { default: () => row.status })
     }
   },
   {
-    title: 'Actions',
+    title: t('workers.table.actions'),
     key: 'actions',
     render(row) {
       return h('div', { class: 'flex gap-2' }, [
@@ -204,7 +208,7 @@ const columns = [
       ])
     }
   }
-]
+])
 
 const create = () => {
   isEditing.value = false
@@ -254,13 +258,13 @@ const handleFormSubmit = (e) => {
 
 const confirmDelete = (row) => {
   dialog.warning({
-    title: 'Confirmer la suppression',
-    content: `Êtes-vous sûr de vouloir supprimer ${row.name} ?`,
-    positiveText: 'Supprimer',
-    negativeText: 'Annuler',
+    title: t('workers.delete_modal.title'),
+    content: t('workers.delete_modal.message', { name: row.name }),
+    positiveText: t('workers.delete_modal.confirm'),
+    negativeText: t('workers.delete_modal.cancel'),
     onPositiveClick: async () => {
       await workerStore.removeWorker(row.id)
-      message.success('Employé supprimé')
+      message.success(t('common.success'))
     }
   })
 }

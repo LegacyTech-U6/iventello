@@ -1,0 +1,324 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "actions": "Actions",
+    "welcome_back": "Welcome back,"
+  },
+  "landing": {
+    "hero": {
+      "title_prefix": "Modern & Smart",
+      "title_suffix": "Inventory Management",
+      "subtitle": "Automate your inventory, sales, and customer management with an all-in-one platform. Track stock levels in real-time.",
+      "cta": "Start Free Trial",
+      "benefits": [
+        "Multi-warehouse support – manage all locations",
+        "Real-time inventory tracking – avoid stockouts",
+        "Detailed sales analytics – make data-driven decisions"
+      ],
+       "dynamic_words": ["Multi Enterprise", "Multi Stock", "Multi Client", "Multi User"]
+    }
+  },
+  "expenses": {
+    "title": "Expenses",
+    "subtitle": "Manage and track your company expenses",
+    "add_button": "Add Expense",
+    "total_expenses": "Total Expenses",
+    "expense_count": "Expense Count",
+    "loading": "Loading expenses...",
+    "empty": {
+        "title": "No expenses found",
+        "subtitle": "Start tracking your expenses by adding a new record."
+    },
+    "table": {
+        "title": "Title",
+        "category": "Category",
+        "date": "Date",
+        "amount": "Amount",
+        "description": "Description",
+        "actions": "Actions"
+    },
+    "delete_confirm": "Are you sure you want to delete this expense?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "advanced_analytics": "Advanced Analytics",
+    "stats": {
+      "total_profit": "Total Profit",
+      "total_customers": "Total Customers",
+      "total_returns": "Total Returns",
+      "total_expenses": "Total Expenses",
+      "total_products": "Total Products",
+      "stock_value": "Stock Value",
+      "total_sales": "Total Sales",
+      "total_purchase": "Total Purchase"
+    }
+  },
+  "inventory": {
+    "title": "Inventory",
+    "subtitle": "Manage and track your product base",
+    "actions": {
+      "export": "Export",
+      "import": "Import",
+      "add": "Add"
+    },
+    "stats": {
+      "total": "Total Products",
+      "in_stock": "In Stock",
+      "low_stock": "Low Stock",
+      "categories": "Categories"
+    },
+    "filters": {
+      "search_placeholder": "Search product or barcode...",
+      "all_categories": "All categories",
+      "all_stocks": "All stocks",
+      "in_stock_label": "In Stock (>10)",
+      "low_stock_label": "Low (1-10)",
+      "out_of_stock_label": "Out of Stock (0)",
+      "clear": "Clear filters"
+    },
+    "empty": {
+      "title": "No products found",
+      "subtitle": "Try adjusting your filters or search term.",
+      "button": "Clear filters"
+    },
+    "table": {
+      "product": "Product",
+      "category": "Category",
+      "barcode": "Barcode",
+      "stock": "Stock",
+      "buy_price": "Buy Price",
+      "sell_price": "Sell Price"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your preferences and company information.",
+    "profile": {
+      "email": "Email",
+      "phone": "Phone",
+      "edit": "Edit Profile"
+    },
+    "security": {
+      "title": "Security",
+      "change_password": "Change Password",
+      "logout": "Logout"
+    },
+    "company": {
+      "title": "Company Information",
+      "subtitle": "These details appear on your invoices and documents.",
+      "name": "Company Name",
+      "vat": "Tax ID / VAT",
+      "currency": "Currency",
+      "country": "Country"
+    },
+    "preferences": {
+      "title": "Application Preferences",
+      "language": {
+        "label": "Language",
+        "desc": "User interface language"
+      },
+      "theme": {
+        "label": "Theme",
+        "desc": "Application appearance",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "timezone": {
+        "label": "Timezone",
+        "desc": "For date and time display"
+      }
+    }
+  },
+  "sales": {
+    "title": "Sales POS",
+    "section_products": "Products",
+    "browse_all": "Browse All",
+    "mobile_instruction": "Tap \"Browse All\" to select products",
+    "current_order": "Current Order",
+    "empty_cart": "Empty Cart",
+    "payment_summary": "Payment Summary",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "tax": "Tax",
+    "total": "Total",
+    "complete_payment": "Complete Payment",
+    "checkout": "Checkout",
+    "modals": {
+      "select_products": "Select Products",
+      "cart": "Cart"
+    }
+  },
+  "invoices": {
+    "stats": {
+      "total": "Total",
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
+    "search_placeholder": "Search client, ID...",
+    "table": {
+      "id": "ID",
+      "client": "Client",
+      "date": "Date",
+      "due_date": "Due Date",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "No invoices found",
+      "subtitle": "Try adjusting your search or filters."
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    }
+  },
+  "categories": {
+    "add_button": "Add Category",
+    "stats": {
+      "total": "Total Categories",
+      "products": "Total Products",
+      "avg": "Avg Products/Cat."
+    },
+    "search_placeholder": "Search categories by name or description...",
+    "empty": {
+      "title": "No Categories Found",
+      "subtitle": "Your search did not match any existing categories."
+    },
+    "delete_modal": {
+      "title": "Delete Category",
+      "message": "Are you sure you want to delete this category? This action cannot be undone."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Access your space",
+      "email": "Email",
+      "password": "Password",
+      "forgot_password": "Forgotten password?",
+      "submit": "Sign in",
+      "loading": "Signing in...",
+      "no_account": "You don't have an account?",
+      "register_link": "Sign up here"
+    },
+    "register": {
+      "title": "Sign up",
+      "subtitle": "Join Iventello",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "password": "Password",
+      "confirm_password": "Confirm Password",
+      "terms": "I agree to the {terms} and {privacy}",
+      "terms_link": "Terms of Service",
+      "privacy_link": "Privacy Policy",
+      "submit": "Create Account",
+      "loading": "Loading...",
+      "has_account": "Already have an account?",
+      "login_link": "Sign in"
+    },
+    "reset": {
+      "title": "Reset Password",
+      "subtitle": "Choose a new secure password.",
+      "password": "New Password",
+      "confirm_password": "Confirm Password",
+      "submit": "Change Password",
+      "validation": {
+        "required": "Password required",
+        "confirm_required": "Confirmation required",
+        "mismatch": "Passwords do not match"
+      }
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "inventory": "Inventory",
+    "products": "Products",
+    "categories": "Categories",
+    "low_stock": "Low Stock",
+    "out_of_stock": "Out of Stock",
+    "commercial": "Commercial",
+    "sales": "Sales",
+    "invoices": "Invoices",
+    "expenses": "Expenses",
+    "clients": "Clients",
+    "reports": "Reports",
+    "audit_trail": "Audit Trail",
+    "settings": "Settings",
+    "logout": "Logout",
+    "companies": "Companies",
+    "workers": "Employees"
+  },
+  "errors": {
+    "401": {
+      "title": "Access Denied",
+      "message": "You do not have permission to access this resource. Please login with an appropriate account."
+    }
+  },
+  "workers": {
+    "title": "Employees",
+    "subtitle": "Manage your employees and their access.",
+    "add_button": "Add Employee",
+    "stats": {
+      "total": "Total Employees",
+      "active": "Active",
+      "inactive": "Inactive",
+      "new": "New Joiners"
+    },
+    "search_placeholder": "Search an employee...",
+    "filter_department": "Filter by Department",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "company": "Company",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "modal": {
+      "create_title": "New Employee",
+      "edit_title": "Edit Employee",
+      "name": "Full Name",
+      "company": "Company",
+      "password": "Password",
+      "cancel": "Cancel",
+      "create": "Create",
+      "update": "Update"
+    },
+    "delete_modal": {
+      "title": "Confirm Deletion",
+      "message": "Are you sure you want to delete {name}?",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "reports": {
+    "title": "Enterprise Reports",
+    "subtitle": "Detailed performance analysis of each entity.",
+    "revenue": "Revenue",
+    "profit": "Profit",
+    "total_sales": "Total Sales",
+    "view_dashboard": "View Dashboard"
+  },
+  "activities": {
+    "title": "Global Audit Trail",
+    "subtitle": "History of all activities on the platform.",
+    "search_placeholder": "Search action, user...",
+    "filter_all": "All Enterprises",
+    "table": {
+      "user": "User",
+      "action": "Action",
+      "company": "Company",
+      "date": "Date"
+    }
+  }
+}

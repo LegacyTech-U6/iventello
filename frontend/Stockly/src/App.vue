@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { NConfigProvider, NGlobalStyle, NMessageProvider, NDialogProvider, NNotificationProvider } from 'naive-ui'
+import { NConfigProvider, NGlobalStyle, NMessageProvider, NDialogProvider, NNotificationProvider, type GlobalThemeOverrides } from 'naive-ui'
+import { useThemeStore } from '@/stores/themeStore'
+
+const themeStore = useThemeStore()
+themeStore.initTheme()
+
+const themeOverrides: GlobalThemeOverrides = {
+  common: {
+    fontFamily: "'Poppins', sans-serif"
+  }
+}
 </script>
 
 <template>
-  <n-config-provider>
+  <n-config-provider :theme="themeStore.naiveTheme" :theme-overrides="themeOverrides">
     <n-global-style />
     <n-message-provider>
       <n-dialog-provider>

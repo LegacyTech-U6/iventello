@@ -1,6 +1,6 @@
 <template>
   <n-spin :show="loading" size="large">
-    <div class="p-4 md:p-8 lg:p-7 space-y-8 min-h-screen bg-gray-50/50">
+    <div class="p-4 md:p-8 lg:p-7 space-y-8 min-h-screen bg-gray-50/50 dark:bg-gray-950">
 
       <div class="hidden md:block w-full  flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div class="flex flex-1 w-full sm:w-auto space-x-4">
@@ -10,9 +10,11 @@
         </div>
 
         <!-- Toggle Advanced Analytics -->
-        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
-          <span class="text-sm font-bold text-gray-600" :class="{ 'text-indigo-600': showAdvancedAnalytics }">Advanced
-            Analytics</span>
+        <div
+          class="flex items-center gap-3 bg-white dark:bg-gray-900 px-4 py-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+          <span class="text-sm font-bold text-gray-600 dark:text-gray-300"
+            :class="{ 'text-indigo-600': showAdvancedAnalytics }">{{
+              $t('dashboard.advanced_analytics') }}</span>
           <button @click="showAdvancedAnalytics = !showAdvancedAnalytics"
             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             :class="showAdvancedAnalytics ? 'bg-indigo-600' : 'bg-gray-200'">
@@ -41,7 +43,8 @@
         </div>
 
         <div class="w-full">
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div
+            class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
             <SalesChart />
           </div>
         </div>
@@ -81,11 +84,15 @@ import { CubeIcon, CurrencyDollarIcon, UsersIcon, Square3Stack3DIcon, ArrowPathI
 import mascot from '@/assets/image/professional.png'
 import AdvancedAnalytics from '@/components/statistics/AdvancedAnalytics.vue'
 
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 // SEO & Head
 useHead({
-  title: 'Tableau de Bord | Gestion Enterprise',
+  title: computed(() => `${t('dashboard.title')} | Gestion Enterprise`), // Dynamic title
   meta: [
-    { name: 'description', content: 'Vue d’ensemble des statistiques de ventes, stocks et profits.' }
+    { name: 'description', content: computed(() => t('dashboard.meta_desc')) }
   ]
 })
 
@@ -121,7 +128,7 @@ const totalProductsValue = computed(() =>
 const statsTable = computed(() => [
   {
     id: 1,
-    label: 'Total profit',
+    label: t('dashboard.stats.total_profit'),
     value: statisticStore.profit.profit?.total || 0,
     trend: statisticStore.profit.profit?.history.at(-1)?.growth_percent || 0,
     icon: Square3Stack3DIcon,
@@ -133,7 +140,7 @@ const statsTable = computed(() => [
   },
   {
     id: 2,
-    label: 'Total Customers',
+    label: t('dashboard.stats.total_customers'),
     value: statisticStore.client.clients?.total || 0,
     trend: statisticStore.client.clients?.history?.at(-1)?.growth_percent || 0,
     icon: UsersIcon,
@@ -145,7 +152,7 @@ const statsTable = computed(() => [
   },
   {
     id: 3,
-    label: 'Total Returns',
+    label: t('dashboard.stats.total_returns'),
     value: 0,
     trend: 0,
     icon: ArrowPathIcon,
@@ -158,7 +165,7 @@ const statsTable = computed(() => [
   },
   {
     id: 4,
-    label: 'Total Expenses',
+    label: t('dashboard.stats.total_expenses'),
     value: statisticStore.expenses?.total || 0,
     trend: statisticStore.expenses?.history?.at(-1)?.growth_percent || 0,
     icon: WalletIcon,
@@ -175,7 +182,7 @@ const topStats = computed(() => [
   {
     id: 1,
     icon: CubeIcon,
-    label: 'Total products',
+    label: t('dashboard.stats.total_products'),
     value: productStore.totalProducts,
     bgColor: "#006879",
     isCurrency: false,
@@ -183,7 +190,7 @@ const topStats = computed(() => [
   {
     id: 2,
     icon: CurrencyDollarIcon,
-    label: 'Stock Value',
+    label: t('dashboard.stats.stock_value'),
     value: totalProductsValue.value,
     bgColor: "#3E4565",
     isCurrency: true,
@@ -191,7 +198,7 @@ const topStats = computed(() => [
   {
     id: 3,
     icon: CurrencyDollarIcon,
-    label: 'Total Sales',
+    label: t('dashboard.stats.total_sales'),
     value: statisticStore.topProducts.sales?.total || 0,
     bgColor: "#565D7E",
     trend: statisticStore.topProducts.sales?.history.at(-1)?.growth_percent || 0,
@@ -200,7 +207,7 @@ const topStats = computed(() => [
   {
     id: 4,
     icon: ArrowPathIcon,
-    label: 'Total Purchase',
+    label: t('dashboard.stats.total_purchase'),
     value: 0, // À connecter au store achat si dispo
     bgColor: "#BA1A1A",
     isCurrency: true,

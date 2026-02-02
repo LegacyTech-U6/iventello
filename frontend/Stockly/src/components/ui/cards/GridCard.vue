@@ -69,5 +69,6 @@ const displayValue = computed(() => {
 <style scoped>
 :deep(.n-card__content) {
   color: white;
+  padding: 1.25rem;
 }
 </style>

@@ -33,7 +33,8 @@
 
             <div class="invoice-grid">
               <div class="invoice-header-section">
-                <InvoiceHeader :invoiceNumber="invoice.id" :creationDate="invoice.date" :dueDate="invoice.dueDate" />
+                <InvoiceHeader :invoiceNumber="invoice.id" :creationDate="invoice.date"
+                  :dueDate="invoice.date_echeance || invoice.dueDate" />
               </div>
               <div class="client-section">
                 <BillTo :client="clientData" />

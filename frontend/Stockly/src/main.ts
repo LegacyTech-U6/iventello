@@ -5,12 +5,15 @@ import { createHead } from '@unhead/vue/client'
 
 // Styles globaux
 import './assets/main.css'
-import '@fontsource/nunito/400.css'
-import '@fontsource/nunito/700.css'
+import '@fontsource/poppins/400.css'
+import '@fontsource/poppins/500.css'
+import '@fontsource/poppins/600.css'
+import '@fontsource/poppins/700.css'
 
 // App & router
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n' // <--- Import i18n
 
 // UI components
 import { Toaster } from 'vue-sonner'
@@ -21,6 +24,7 @@ const app = createApp(App)
 // Head manager (SEO, title, meta)
 const head = createHead()
 app.use(head)
+app.use(i18n) // <--- Use i18n
 
 // Pinia + persisted state
 const pinia = createPinia()

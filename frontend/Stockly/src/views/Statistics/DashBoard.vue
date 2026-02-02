@@ -79,23 +79,7 @@
       <!-- Right Side: Health & Audit -->
       <n-gi>
         <n-space vertical size="large">
-          <!-- Health Card -->
-          <n-card class="bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-200" :bordered="false">
-            <div class="relative overflow-hidden">
-              <n-icon size="120" class="absolute -right-6 -bottom-6 text-white/10">
-                <SparklesIcon />
-              </n-icon>
-              <h4 class="text-xl font-black mb-2 relative z-10">Platform Health</h4>
-              <p class="text-indigo-100 text-xs font-medium mb-6 leading-relaxed relative z-10">
-                Toutes les entreprises sont actives et synchronisées. Aucune anomalie détectée sur les serveurs.
-              </p>
-              <div
-                class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-200 relative z-10">
-                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                Système Opérationnel
-              </div>
-            </div>
-          </n-card>
+        
 
           <!-- Audit Trail -->
           <n-card title="Audit Trail" :bordered="false" class="rounded-2xl shadow-sm">

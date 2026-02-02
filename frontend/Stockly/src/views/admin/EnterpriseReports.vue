@@ -2,8 +2,8 @@
     <div class="p-4 lg:p-8">
         <div class="mb-6 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Rapports par Entreprise</h1>
-                <p class="text-sm text-gray-500">Analyse détaillée de la performance de chaque entité.</p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ $t('reports.title') }}</h1>
+                <p class="text-sm text-gray-500">{{ $t('reports.subtitle') }}</p>
             </div>
         </div>
 
@@ -39,12 +39,14 @@
                     <!-- Quick Stats -->
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div class="bg-gray-50 rounded-2xl p-4">
-                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Revenu</p>
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{{
+                                $t('reports.revenue') }}</p>
                             <p class="text-sm font-black text-gray-900">{{ formatCurrency(ent.revenue, ent.currency) }}
                             </p>
                         </div>
                         <div class="bg-gray-50 rounded-2xl p-4">
-                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Profit</p>
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{{
+                                $t('reports.profit') }}</p>
                             <p class="text-sm font-black text-green-600">{{ formatCurrency(ent.profit, ent.currency) }}
                             </p>
                         </div>
@@ -53,7 +55,7 @@
                     <!-- Details -->
                     <div class="space-y-3 mb-6">
                         <div class="flex items-center justify-between text-xs font-bold">
-                            <span class="text-gray-400">Total Ventes</span>
+                            <span class="text-gray-400">{{ $t('reports.total_sales') }}</span>
                             <span class="text-gray-900">{{ ent.sales_count }}</span>
                         </div>
                         <n-progress type="line"
@@ -63,7 +65,7 @@
 
                     <n-button block secondary type="default" @click="router.push(`/${ent.uuid}/dashboard`)"
                         class="rounded-xl">
-                        Voir Dashboard
+                        {{ $t('reports.view_dashboard') }}
                         <template #icon>
                             <n-icon>
                                 <ArrowRightIcon />
@@ -83,6 +85,9 @@ import { useRouter } from 'vue-router'
 import { useStatisticsStore } from '@/stores/statisticStore'
 import { BuildingOfficeIcon, ArrowDownTrayIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
 import { NGrid, NGi, NCard, NButton, NIcon, NTag, NProgress } from 'naive-ui'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const statsStore = useStatisticsStore()
 const router = useRouter()

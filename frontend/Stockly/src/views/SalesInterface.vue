@@ -1,9 +1,9 @@
 <template>
-  <div class="h-full bg-gray-50">
+  <div class="h-full bg-gray-50 flex flex-col">
     <!-- Navbar Mobile -->
-    <div class="lg:hidden bg-white border-b border-gray-200 p-4 sticky top-0 z-20">
+    <div class="lg:hidden bg-white border-b border-gray-200 p-4 sticky top-0 z-20 shrink-0">
       <div class="flex justify-between items-center">
-        <h1 class="font-bold text-lg text-gray-800">Sales POS</h1>
+        <h1 class="font-bold text-lg text-gray-800">{{ $t('sales.title') }}</h1>
         <n-button strong secondary circle type="primary" @click="showCartModal = true">
           <template #icon>
             <n-icon>
@@ -18,24 +18,25 @@
       </div>
     </div>
 
-    <div class="p-4 h-full">
-      <n-grid x-gap="24" y-gap="24" :cols="12" item-responsive responsive="screen">
+    <div class="p-4 flex-1 min-h-0">
+      <n-grid x-gap="24" y-gap="24" :cols="12" item-responsive responsive="screen" class="h-full">
         <!-- Section Produit -->
-        <n-gi span="12 m:8">
-          <n-card :bordered="false" class="h-full shadow-sm rounded-xl">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-xl font-bold text-gray-800">Products</h2>
+        <n-gi span="12 m:8" class="h-full">
+          <n-card :bordered="false" class="h-full shadow-sm rounded-xl"
+            content-style="height: 100%; display: flex; flex-direction: column;">
+            <div class="flex justify-between items-center mb-4 shrink-0">
+              <h2 class="text-xl font-bold text-gray-800">{{ $t('sales.section_products') }}</h2>
               <n-button class="lg:hidden" size="small" @click="showProductModal = true">
-                Browse All
+                {{ $t('sales.browse_all') }}
               </n-button>
             </div>
 
-            <div class="hidden lg:block min-h-[500px]">
+            <div class="hidden lg:block flex-1 min-h-0">
               <ProductSelector :products="products" @add-to-sale="addToSale" :loading="productLoading" />
             </div>
 
-            <div class="lg:hidden text-gray-500 text-center py-8">
-              Tap "Browse All" to select products
+            <div class="lg:hidden text-gray-500 text-center py-8 shrink-0">
+              {{ $t('sales.mobile_instruction') }}
             </div>
           </n-card>
         </n-gi>
@@ -51,7 +52,7 @@
             <!-- Cart Items -->
             <n-card :bordered="false" class="shadow-sm rounded-xl" content-style="padding: 0;">
               <div class="p-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="font-bold text-gray-800">Current Order</h3>
+                <h3 class="font-bold text-gray-800">{{ $t('sales.current_order') }}</h3>
                 <n-tag type="primary" round size="small">{{ saleItems.length }} Items</n-tag>
               </div>
 
@@ -60,7 +61,7 @@
                   <n-icon size="48" class="mb-2">
                     <ShoppingBagIcon />
                   </n-icon>
-                  <p>Empty Cart</p>
+                  <p>{{ $t('sales.empty_cart') }}</p>
                 </div>
                 <CartItem v-else v-for="item in saleItems" :key="item.id" :item="item" @update-item="updateItem"
                   @remove-item="removeItem" />
@@ -70,18 +71,18 @@
             <!-- Payment Summary -->
             <n-card :bordered="false" class="shadow-sm rounded-xl">
               <template #header>
-                <div class="font-bold text-gray-800">Payment Summary</div>
+                <div class="font-bold text-gray-800">{{ $t('sales.payment_summary') }}</div>
               </template>
 
               <div class="space-y-4">
                 <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600">Subtotal</span>
+                  <span class="text-gray-600">{{ $t('sales.subtotal') }}</span>
                   <span class="font-semibold text-gray-800">{{ format(subtotal) }}</span>
                 </div>
 
                 <!-- Discount Control -->
                 <div class="flex justify-between items-center">
-                  <span class="text-sm text-gray-600">Discount (%)</span>
+                  <span class="text-sm text-gray-600">{{ $t('sales.discount') }} (%)</span>
                   <n-input-number v-model:value="discountPercent" size="small" :min="0" :max="100" class="w-24">
                     <template #suffix>%</template>
                   </n-input-number>
@@ -90,7 +91,7 @@
                 <!-- Tax Control -->
                 <div class="flex justify-between items-center">
                   <div class="flex items-center gap-2">
-                    <span class="text-sm text-gray-600">Tax ({{ taxRate }}%)</span>
+                    <span class="text-sm text-gray-600">{{ $t('sales.tax') }} ({{ taxRate }}%)</span>
                     <n-switch v-model:value="enableTax" size="small" />
                   </div>
                   <span class="font-medium text-gray-800">{{ format(taxAmount) }}</span>
@@ -99,14 +100,14 @@
                 <n-divider class="my-3" />
 
                 <div class="flex justify-between items-center mb-6">
-                  <span class="text-lg font-bold text-gray-900">Total</span>
+                  <span class="text-lg font-bold text-gray-900">{{ $t('sales.total') }}</span>
                   <span class="text-2xl font-black text-primary" :style="getDynamicStyle(total)">{{ format(total)
                   }}</span>
                 </div>
 
                 <n-button type="primary" block size="large" @click="createInvoice"
                   :disabled="saleItems.length === 0 || !selectedClient" :loading="processing">
-                  Complete Payment
+                  {{ $t('sales.complete_payment') }}
                 </n-button>
               </div>
             </n-card>
@@ -115,13 +116,13 @@
       </n-grid>
 
       <!-- Modals for Mobile -->
-      <n-modal v-model:show="showProductModal" preset="card" title="Select Products" class="w-full h-full lg:hidden"
-        :bordered="false">
+      <n-modal v-model:show="showProductModal" preset="card" :title="$t('sales.modals.select_products')"
+        class="w-full h-full lg:hidden" :bordered="false">
         <ProductSelector :products="products" @add-to-sale="addToSale" :loading="productLoading" />
       </n-modal>
 
-      <n-modal v-model:show="showCartModal" preset="card" title="Cart" class="w-full h-full lg:hidden"
-        :bordered="false">
+      <n-modal v-model:show="showCartModal" preset="card" :title="$t('sales.modals.cart')"
+        class="w-full h-full lg:hidden" :bordered="false">
         <div class="flex flex-col h-full">
           <div class="flex-1 overflow-y-auto p-2">
             <ClientSelector @select-client="handleClientSelect" class="mb-4" />
@@ -130,11 +131,11 @@
           </div>
           <div class="p-4 border-t bg-gray-50">
             <div class="flex justify-between mb-4">
-              <span class="font-bold">Total</span>
+              <span class="font-bold">{{ $t('sales.total') }}</span>
               <span class="font-bold text-primary">{{ format(total) }}</span>
             </div>
             <n-button type="primary" block @click="createInvoice" :disabled="saleItems.length === 0 || !selectedClient">
-              Checkout
+              {{ $t('sales.checkout') }}
             </n-button>
           </div>
         </div>
@@ -165,6 +166,10 @@ import CreateInvoiceForm from '@/components/invoices/CreateInvoiceForm.vue'
 import { useClientStore } from '@/stores/clientStore'
 import { useCurrency } from '@/composable/useCurrency'
 import ClientModals from '@/views/ClientModals.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 
 const { format, getDynamicStyle } = useCurrency()
 const clientStore = useClientStore()
@@ -307,7 +312,8 @@ async function createInvoice() {
       taxRate: taxRate.value,
       reduction_type: 'amount',
       date: new Date(),
-      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // Default 30 days? Or just current date?
+      date: new Date(),
+      date_echeance: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // Default 30 days
     };
 
     console.log('Opening Invoice Modal with payload:', payload);

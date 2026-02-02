@@ -4,8 +4,8 @@
             <template #header>
                 <div class="flex items-center justify-between px-6 py-4">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Audit Trail Global</h1>
-                        <p class="text-sm text-gray-500">Historique de toutes les activités sur la plateforme.</p>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ $t('activities.title') }}</h1>
+                        <p class="text-sm text-gray-500">{{ $t('activities.subtitle') }}</p>
                     </div>
                     <n-button circle secondary type="primary" @click="refreshData">
                         <template #icon>
@@ -18,7 +18,7 @@
             </template>
 
             <div class="px-6 pb-4 flex flex-wrap gap-4">
-                <n-input v-model:value="search" placeholder="Rechercher une action, un utilisateur..."
+                <n-input v-model:value="search" :placeholder="$t('activities.search_placeholder')"
                     class="min-w-[250px]">
                     <template #prefix>
                         <n-icon>
@@ -27,7 +27,7 @@
                     </template>
                 </n-input>
                 <n-select v-model:value="selectedEnterprise" :options="enterpriseOptions"
-                    placeholder="Toutes les entreprises" clearable class="min-w-[200px]" />
+                    :placeholder="$t('activities.filter_all')" clearable class="min-w-[200px]" />
             </div>
 
             <n-data-table :columns="columns" :data="filteredActivities" :pagination="{ pageSize: 15 }"
@@ -52,6 +52,10 @@ import {
     NTag,
     NSpace
 } from 'naive-ui'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 
 const statsStore = useStatisticsStore()
 const enterpriseStore = useEntrepriseStore()
@@ -96,7 +100,7 @@ const formatDate = (date) => {
 
 const columns = [
     {
-        title: 'Utilisateur',
+        title: t('activities.table.user'),
         key: 'user',
         render(row) {
             const name = row.user?.username || row.worker?.name || 'System'
@@ -111,14 +115,14 @@ const columns = [
         }
     },
     {
-        title: 'Action',
+        title: t('activities.table.action'),
         key: 'action',
         render(row) {
             return h('span', { class: 'font-medium text-gray-600' }, { default: () => row.action })
         }
     },
     {
-        title: 'Entreprise',
+        title: t('activities.table.company'),
         key: 'entreprise',
         render(row) {
             return h(NTag, { type: 'default', bordered: false, class: 'bg-gray-100 text-gray-500 font-bold uppercase text-[10px]' }, {
@@ -127,7 +131,7 @@ const columns = [
         }
     },
     {
-        title: 'Date',
+        title: t('activities.table.date'),
         key: 'createdAt',
         render(row) {
             return h('span', { class: 'text-xs font-bold text-gray-400' }, { default: () => formatDate(row.createdAt) })
