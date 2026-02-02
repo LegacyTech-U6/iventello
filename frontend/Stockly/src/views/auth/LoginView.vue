@@ -46,9 +46,9 @@
           </div>
 
           <div class="text-right">
-            <a href="#" class="text-sm text-gray-700 hover:underline">
+            <router-link to="/forgot-password" class="text-sm text-gray-700 hover:underline">
               Forgotten password?
-            </a>
+            </router-link>
           </div>
         </div>
 

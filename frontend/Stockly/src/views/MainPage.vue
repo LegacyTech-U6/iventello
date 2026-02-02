@@ -1,167 +1,163 @@
 <template>
   <div class="min-h-screen bg-gray-50/50">
-    <div v-if="loadingClients" class="flex flex-col items-center justify-center min-h-[60vh]">
-      <n-spin size="large" />
-      <p class="mt-4 text-gray-500 text-xs animate-pulse font-medium">Récupération des données...</p>
-    </div>
+    <n-spin :show="loadingClients">
+      <template #description>
+        <p class="text-gray-500 text-xs animate-pulse font-medium">Récupération des données...</p>
+      </template>
 
-    <div v-else class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
-      
-      <div class="flex items-end justify-between mb-6">
-        <div>
-          <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">Entreprises</h1>
-          <p class="text-[11px] sm:text-sm text-gray-500 font-medium">{{ store.totalEntreprise }} entités au total</p>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <!-- Header -->
+        <div class="flex items-end justify-between mb-6">
+          <div>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">Entreprises</h1>
+            <p class="text-[11px] sm:text-sm text-gray-500 font-medium">{{ store.totalEntreprise }} entités au total</p>
+          </div>
+          <n-button type="warning" size="medium" @click="openCreateModal" class="shadow-md shadow-orange-200">
+            <template #icon>
+              <PlusIcon class="w-4 h-4 stroke-[3]" />
+            </template>
+            <span class="font-bold">Ajouter</span>
+          </n-button>
         </div>
-        <button @click="openCreateModal"
-          class="flex items-center gap-1.5 px-3 py-2 sm:px-4 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all shadow-md shadow-orange-200 active:scale-95">
-          <PlusIcon class="w-4 h-4 stroke-[3]" />
-          <span class="text-xs sm:text-sm font-bold">Ajouter</span>
-        </button>
-      </div>
 
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-        <GridCard v-for="(stat, idx) in stats" :key="idx" 
-          :title="stat.title" :value="stat.value" :icon="stat.icon" 
-          :gradientFrom="stat.gradientFrom" :gradientTo="stat.gradientTo" 
-          class="!p-3 sm:!p-5 border-none shadow-sm" />
-      </div>
+        <!-- Stats Grid -->
+        <n-grid x-gap="12" y-gap="12" :cols="4" item-responsive responsive="screen" class="mb-8">
+          <n-gi span="2 l:1" v-for="(stat, idx) in stats" :key="idx">
+            <GridCard :title="stat.title" :value="stat.value" :icon="stat.icon" :gradientFrom="stat.gradientFrom"
+              :gradientTo="stat.gradientTo" class="!p-3 sm:!p-5 border-none shadow-sm" />
+          </n-gi>
+        </n-grid>
 
-      <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="p-4 bg-white border-b border-gray-100">
-          <div class="relative w-full sm:max-w-xs">
-            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input v-model="searchQuery" type="text" placeholder="Rechercher..."
-              class="w-full pl-9 pr-4 py-2 text-xs sm:text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/30" />
+        <!-- Main Content -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="p-4 bg-white border-b border-gray-100">
+            <div class="w-full sm:max-w-xs">
+              <n-input v-model:value="searchQuery" placeholder="Rechercher..." size="large" round>
+                <template #prefix>
+                  <MagnifyingGlassIcon class="w-4 h-4 text-gray-400" />
+                </template>
+              </n-input>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <EnterpriseTable v-if="!isMobile" :enterprises="filteredEntreprises" @view="handleOpenEnterprise"
+              @edit="handleEditEnterprise" />
+            <EnterpriseGrid v-else :enterprises="filteredEntreprises" @view="handleOpenEnterprise"
+              @edit="handleEditEnterprise" />
+          </div>
+
+          <div v-if="filteredEntreprises.length === 0" class="py-16 text-center">
+            <BuildingOfficeIcon class="w-12 h-12 text-gray-200 mx-auto mb-3" />
+            <p class="text-sm font-bold text-gray-900">Aucune entreprise</p>
+            <p class="text-xs text-gray-400">Votre recherche ne donne aucun résultat.</p>
           </div>
         </div>
-
-        <div class="overflow-x-auto">
-          <EnterpriseTable v-if="!isMobile" :enterprises="filteredEntreprises" @view="handleOpenEnterprise" @edit="handleEditEnterprise" />
-          <EnterpriseGrid v-else :enterprises="filteredEntreprises" @view="handleOpenEnterprise" @edit="handleEditEnterprise" />
-        </div>
-
-        <div v-if="filteredEntreprises.length === 0" class="py-16 text-center">
-          <BuildingOfficeIcon class="w-12 h-12 text-gray-200 mx-auto mb-3" />
-          <p class="text-sm font-bold text-gray-900">Aucune entreprise</p>
-          <p class="text-xs text-gray-400">Votre recherche ne donne aucun résultat.</p>
-        </div>
       </div>
-    </div>
+    </n-spin>
 
-    <TransitionRoot appear :show="showCreateModal" as="template">
-      <Dialog as="div" @close="closeModal" class="relative z-50">
-        <TransitionChild enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
-          <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" />
-        </TransitionChild>
+    <!-- Modal -->
+    <n-modal v-model:show="showCreateModal">
+      <n-card style="width: 650px; max-width: 95vw;"
+        :title="isEditing ? 'Modifier l\'entreprise' : 'Nouvelle Entreprise'" :bordered="false" size="huge"
+        role="dialog" aria-modal="true">
+        <template #header-extra>
+          <div class="w-2 h-6 bg-orange-500 rounded-full mr-2"></div>
+        </template>
 
-        <div class="fixed inset-0 overflow-y-auto">
-          <div class="flex min-h-full items-center justify-center p-4">
-            <TransitionChild enter="duration-300 ease-out" enter-from="opacity-0 scale-95" enter-to="opacity-100 scale-100" leave="duration-200 ease-in" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
-              <DialogPanel class="w-full max-w-2xl transform rounded-2xl bg-white p-6 shadow-2xl transition-all border border-gray-100 max-h-[90vh] overflow-y-auto">
-                <DialogTitle class="text-lg font-black text-gray-900 mb-6 flex items-center gap-2">
-                  <div class="w-2 h-6 bg-orange-500 rounded-full" />
-                  {{ isEditing ? 'Modifier l\'entreprise' : 'Nouvelle Entreprise' }}
-                </DialogTitle>
-
-                <div class="space-y-6">
-                  <div class="flex justify-center sm:justify-start">
-                    <ImageUploader v-model="entrepriseData.logo_url" label="Logo" :preview-size="80" />
-                  </div>
-                  
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5">
-                    <div class="sm:col-span-2">
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Nom de l'entreprise *</label>
-                      <input v-model="entrepriseData.name" type="text" placeholder="Ex: Acme Corp"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div>
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Devise</label>
-                      <select v-model="entrepriseData.currency" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50 appearance-none">
-                        <option value="XAF">XAF (FCFA)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="USD">USD ($)</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Téléphone</label>
-                      <input v-model="entrepriseData.telephone_contact" type="tel"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div class="sm:col-span-2">
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Email Contact</label>
-                      <input v-model="entrepriseData.email_contact" type="email"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div class="sm:col-span-2">
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Adresse</label>
-                      <input v-model="entrepriseData.adresse" type="text"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div>
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Ville</label>
-                      <input v-model="entrepriseData.ville" type="text"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div>
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Code Postal</label>
-                      <input v-model="entrepriseData.code_postal" type="text"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div>
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">N° Fiscal</label>
-                      <input v-model="entrepriseData.numero_fiscal" type="text"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div>
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">NUI</label>
-                      <input v-model="entrepriseData.nui" type="text"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div class="sm:col-span-2">
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Infos Bancaires</label>
-                      <input v-model="entrepriseData.informations_bancaires" type="text"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50">
-                    </div>
-
-                    <div class="sm:col-span-2">
-                      <label class="block text-[10px] uppercase tracking-[0.1em] font-black text-gray-500 mb-1.5 ml-1">Description</label>
-                      <textarea v-model="entrepriseData.description" rows="3"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 outline-none transition-all bg-gray-50/50 resize-none"></textarea>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mt-8 flex flex-col-reverse sm:flex-row gap-3">
-                  <button @click="closeModal" class="flex-1 px-4 py-3 text-xs font-bold text-gray-500 hover:bg-gray-100 rounded-xl transition-colors">
-                    Annuler
-                  </button>
-                  <button @click="saveEntreprise" :disabled="isSubmitting" 
-                    class="flex-1 px-4 py-3 text-xs font-bold text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-lg shadow-orange-100 disabled:opacity-50 transition-all active:scale-95">
-                    {{ isSubmitting ? 'Traitement...' : (isEditing ? 'Mettre à jour' : 'Créer l\'entreprise') }}
-                  </button>
-                </div>
-              </DialogPanel>
-            </TransitionChild>
+        <n-form ref="formRef" :model="entrepriseData" size="medium" label-placement="top">
+          <div class="flex justify-center sm:justify-start mb-6">
+            <ImageUploader v-model="entrepriseData.logo_url" label="Logo" :preview-size="80" />
           </div>
-        </div>
-      </Dialog>
-    </TransitionRoot>
+
+          <n-grid :cols="2" :x-gap="24">
+            <n-gi :span="2">
+              <n-form-item label="Nom de l'entreprise" path="name" :required="true">
+                <n-input v-model:value="entrepriseData.name" placeholder="Ex: Acme Corp" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="1">
+              <n-form-item label="Devise" path="currency">
+                <n-select v-model:value="entrepriseData.currency" :options="currencyOptions" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="1">
+              <n-form-item label="Téléphone" path="telephone_contact">
+                <n-input v-model:value="entrepriseData.telephone_contact" placeholder="+123..." />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="2">
+              <n-form-item label="Email Contact" path="email_contact">
+                <n-input v-model:value="entrepriseData.email_contact" placeholder="contact@example.com" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="2">
+              <n-form-item label="Adresse" path="adresse">
+                <n-input v-model:value="entrepriseData.adresse" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="1">
+              <n-form-item label="Ville" path="ville">
+                <n-input v-model:value="entrepriseData.ville" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="1">
+              <n-form-item label="Code Postal" path="code_postal">
+                <n-input v-model:value="entrepriseData.code_postal" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="1">
+              <n-form-item label="N° Fiscal" path="numero_fiscal">
+                <n-input v-model:value="entrepriseData.numero_fiscal" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="1">
+              <n-form-item label="NUI" path="nui">
+                <n-input v-model:value="entrepriseData.nui" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="2">
+              <n-form-item label="Infos Bancaires" path="informations_bancaires">
+                <n-input v-model:value="entrepriseData.informations_bancaires" />
+              </n-form-item>
+            </n-gi>
+
+            <n-gi :span="2">
+              <n-form-item label="Description" path="description">
+                <n-input v-model:value="entrepriseData.description" type="textarea" placeholder="Description..." />
+              </n-form-item>
+            </n-gi>
+          </n-grid>
+        </n-form>
+
+        <template #footer>
+          <div class="flex flex-col-reverse sm:flex-row gap-3 justify-end mt-4">
+            <n-button @click="closeModal" quaternary>Annuler</n-button>
+            <n-button type="warning" :loading="isSubmitting" @click="saveEntreprise">
+              {{ isEditing ? 'Mettre à jour' : 'Créer l\'entreprise' }}
+            </n-button>
+          </div>
+        </template>
+      </n-card>
+    </n-modal>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue'
+import {
+  NSpin, NButton, NGrid, NGi, NInput, NSelect, NModal, NCard, NForm, NFormItem, NIcon
+} from 'naive-ui'
 import { PlusIcon, MagnifyingGlassIcon, BuildingOfficeIcon, UsersIcon, CheckCircleIcon, MapPinIcon } from '@heroicons/vue/24/outline'
 
 // Stores & Composables
@@ -185,6 +181,7 @@ const isEditing = ref(false)
 const showCreateModal = ref(false)
 const searchQuery = ref('')
 const isMobile = ref(false)
+const formRef = ref(null)
 
 const entrepriseData = ref({
   name: '',
@@ -200,6 +197,12 @@ const entrepriseData = ref({
   telephone_contact: '',
   informations_bancaires: ''
 })
+
+const currencyOptions = [
+  { label: 'XAF (FCFA)', value: 'XAF' },
+  { label: 'EUR (€)', value: 'EUR' },
+  { label: 'USD ($)', value: 'USD' }
+]
 
 // Logic
 const checkMobile = () => isMobile.value = window.innerWidth < 768
@@ -247,10 +250,10 @@ const saveEntreprise = async () => {
   if (!entrepriseData.value.name) return showError('Le nom est requis')
   isSubmitting.value = true
   try {
-    const success = isEditing.value 
+    const success = isEditing.value
       ? await store.updateEntreprise(entrepriseData.value.id, entrepriseData.value)
       : await store.createEntreprise(entrepriseData.value)
-    
+
     if (success) {
       showSuccess(isEditing.value ? 'Mis à jour avec succès !' : 'Entreprise créée !')
       closeModal()
@@ -268,8 +271,8 @@ const closeModal = () => {
 
 const resetForm = () => {
   entrepriseData.value = {
-    name: '', currency: 'XAF', description: '', logo_url: '', numero_fiscal: '', 
-    nui: '', adresse: '', ville: '', code_postal: '', email_contact: '', 
+    name: '', currency: 'XAF', description: '', logo_url: '', numero_fiscal: '',
+    nui: '', adresse: '', ville: '', code_postal: '', email_contact: '',
     telephone_contact: '', informations_bancaires: ''
   }
 }

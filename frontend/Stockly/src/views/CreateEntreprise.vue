@@ -1,53 +1,34 @@
 <template>
-  <div class="max-w-lg mx-auto p-6 bg-white shadow rounded mt-10">
-    <h2 class="text-2xl font-bold mb-4">Créer une nouvelle entreprise</h2>
+  <div class="h-screen flex items-center justify-center bg-gray-50/50 p-4">
+    <n-card class="max-w-md w-full shadow-lg rounded-2xl" :bordered="false" size="large">
+      <template #header>
+        <div class="text-center pb-2">
+          <h2 class="text-2xl font-bold text-gray-900">Nouvelle Entreprise</h2>
+          <p class="text-sm text-gray-500 mt-2">Créez et configurez votre nouvelle entité commerciale.</p>
+        </div>
+      </template>
 
-    <form @submit.prevent="handleSubmit">
-      <!-- Nom de l'entreprise -->
-      <div class="mb-4">
-        <label class="block font-medium mb-1">Nom de l'entreprise</label>
-        <input
-          v-model="entreprise.name"
-          type="text"
-          class="w-full border px-3 py-2 rounded"
-          placeholder="Ex : Ma Super Entreprise"
-          required
-        />
-      </div>
+      <n-form ref="formRef" :model="entreprise" :rules="rules" size="medium" label-placement="top">
+        <n-form-item label="Nom de l'entreprise" path="name">
+          <n-input v-model:value="entreprise.name" placeholder="Ex: Ma Super Entreprise" />
+        </n-form-item>
 
-      <!-- Description -->
-      <div class="mb-4">
-        <label class="block font-medium mb-1">Description</label>
-        <textarea
-          v-model="entreprise.description"
-          class="w-full border px-3 py-2 rounded"
-          placeholder="Description facultative"
-        ></textarea>
-      </div>
+        <n-form-item label="Description" path="description">
+          <n-input type="textarea" v-model:value="entreprise.description"
+            placeholder="Description courte de l'activité..." :autosize="{ minRows: 3, maxRows: 5 }" />
+        </n-form-item>
 
-      <!-- Logo URL -->
-      <div class="mb-4">
-        <label class="block font-medium mb-1">Logo (URL)</label>
-        <input
-          v-model="entreprise.logo_url"
-          type="url"
-          class="w-full border px-3 py-2 rounded"
-          placeholder="https://..."
-        />
-      </div>
+        <n-form-item label="Logo URL" path="logo_url">
+          <n-input v-model:value="entreprise.logo_url" placeholder="https://example.com/logo.png" />
+        </n-form-item>
 
-      <!-- Erreur / Succès -->
-      <p v-if="store.error" class="text-red-500 mb-4">{{ store.error }}</p>
-      <p v-if="store.successMessage" class="text-green-500 mb-4">{{ store.successMessage }}</p>
-
-      <button
-        type="submit"
-        :disabled="store.isLoading"
-        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        {{ store.isLoading ? 'Création...' : 'Créer l’entreprise' }}
-      </button>
-    </form>
+        <div class="mt-4">
+          <n-button type="primary" block :loading="store.isLoading" @click="handleSubmit" size="large">
+            Créer l'entreprise
+          </n-button>
+        </div>
+      </n-form>
+    </n-card>
   </div>
 </template>
 
@@ -55,12 +36,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
-import { useActionMessage } from '@/composable/useActionMessage'
-import { useGlobalModal } from '@/composable/useValidation'
-const { show } = useGlobalModal()
-const { showSuccess, showError } = useActionMessage()
+import { useMessage, NCard, NForm, NFormItem, NInput, NButton } from 'naive-ui'
+
 const router = useRouter()
 const store = useEntrepriseStore()
+const message = useMessage()
+const formRef = ref(null)
 
 const entreprise = ref({
   name: '',
@@ -68,27 +49,33 @@ const entreprise = ref({
   logo_url: '',
 })
 
-const handleSubmit = async () => {
-  store.error = null
-  store.successMessage = null
-
-  if (!entreprise.value.name) {
-    store.error = 'Le nom de l’entreprise est requis'
-    return
-  }
-
-  const result = await store.createEntreprise(entreprise.value)
-
-  if (result) {
-    show('Entreprise créée avec succès !', 'success')
-    // Rediriger vers la liste des entreprises après création
-    router.push('/entreprises')
-  } else {
-    show('Échec de la création de l’entreprise', 'error')
+const rules = {
+  name: {
+    required: true,
+    message: "Le nom de l'entreprise est requis",
+    trigger: 'blur'
   }
 }
-</script>
 
-<style scoped>
-/* Optionnel : styles supplémentaires */
-</style>
+const handleSubmit = (e) => {
+  e.preventDefault()
+  formRef.value?.validate(async (errors) => {
+    if (!errors) {
+      store.error = null
+      store.successMessage = null
+
+      // Assuming store.createEntreprise returns boolean or throws
+      const result = await store.createEntreprise(entreprise.value)
+
+      if (result) {
+        message.success('Entreprise créée avec succès !')
+        router.push('/entreprises')
+      } else {
+        message.error(store.error || 'Échec de la création de l’entreprise')
+      }
+    } else {
+      message.error('Veuillez remplir correctement le formulaire')
+    }
+  })
+}
+</script>

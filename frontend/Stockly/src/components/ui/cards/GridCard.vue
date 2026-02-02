@@ -1,41 +1,34 @@
 <template>
-  <div class="rounded-xl p-5 text-white shadow-sm   transition-transform duration-200"
-    :class="bgColor && !isHexOrRgb ? bgColor : (isTailwind ? `bg-linear-to-br from-${gradientFrom} to-${gradientTo}` : '')"
-    :style="bgColor && isHexOrRgb
-      ? { background: props.bgColor }
-      : (!isTailwind
-        ? { background: `linear-gradient(to bottom right, ${gradientFrom}, ${gradientTo})` }
-        : {})
-      ">
-    <div class="flex items-center justify-between mb-3">
+  <n-card :bordered="false" class="rounded-xl shadow-sm transition-transform duration-200 hover:scale-[1.02] h-full"
+    :class="[
+      bgColor && !isHexOrRgb ? bgColor : (isTailwind ? `bg-gradient-to-br from-${gradientFrom} to-${gradientTo}` : ''),
+      'text-white'
+    ]" :style="cardStyle" content-style="padding: 1.25rem;">
+
+    <div class="flex items-center justify-between mb-2">
       <span class="text-sm font-medium opacity-90">{{ title }}</span>
-      <component :is="icon" class="w-5 h-5 opacity-80" />
+      <n-icon :component="icon" size="20" class="opacity-80" />
     </div>
 
-    <div class="flex items-end justify-between">
-      <div class="text-3xl font-bold" :style="isCurrency ? getDynamicStyle(Number(value)) : {}">
+    <div class="flex items-end justify-between mt-2">
+      <div class="text-3xl font-bold">
         {{ displayValue }}
       </div>
-      <div v-if="trend !== null" class="flex items-center text-sm">
-        <span :class="{
-          'text-green-400': trend > 0,
-          'text-red-400': trend < 0,
-          'text-gray-300': trend === 0,
-        }">
-          <span v-if="trend > 0">▲</span>
-          <span v-else-if="trend < 0">▼</span>
-          {{ Math.abs(trend).toFixed(1) }}%
-        </span>
+      <div v-if="trend !== null"
+        class="flex items-center text-sm font-bold bg-white/20 px-2 py-0.5 rounded-lg backdrop-blur-sm">
+        <span :class="trend > 0 ? 'text-green-300' : (trend < 0 ? 'text-red-300' : 'text-gray-300')">
+          {{ trend > 0 ? '▲' : (trend < 0 ? '▼' : '') }} {{ Math.abs(trend).toFixed(1) }}% </span>
       </div>
     </div>
-  </div>
+  </n-card>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useCurrency } from '@/composable/useCurrency'
+import { NCard, NIcon } from 'naive-ui'
 
-const { format, getDynamicStyle } = useCurrency()
+const { format } = useCurrency()
 
 const props = defineProps({
   title: String,
@@ -45,7 +38,7 @@ const props = defineProps({
   gradientFrom: { type: String, default: 'blue-500' },
   gradientTo: { type: String, default: 'blue-600' },
   isCurrency: { type: Boolean, default: false },
-  bgColor: { type: String, default: '' }, // new prop for single color
+  bgColor: { type: String, default: '' },
 })
 
 const isTailwind = computed(
@@ -61,9 +54,20 @@ const isHexOrRgb = computed(() => {
   )
 })
 
-// Computed pour gérer les nombres simples vs les montants en currency
+const cardStyle = computed(() => {
+  if (props.bgColor && isHexOrRgb.value) return { background: props.bgColor }
+  if (!isTailwind.value) return { background: `linear-gradient(to bottom right, ${props.gradientFrom}, ${props.gradientTo})` }
+  return {}
+})
+
 const displayValue = computed(() => {
   if (props.value == null) return '-'
   return props.isCurrency ? format(Number(props.value)) : Number(props.value).toLocaleString('fr-FR')
 })
 </script>
+
+<style scoped>
+:deep(.n-card__content) {
+  color: white;
+}
+</style>

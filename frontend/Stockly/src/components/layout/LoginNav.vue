@@ -1,195 +1,148 @@
 <template>
-  <div class="flex h-screen bg-gray-50 font-sans text-gray-600">
+  <n-layout class="h-screen bg-gray-50" has-sider>
 
-    <div
-      class="fixed top-0 left-0 right-0 z-40 lg:hidden bg-white/80 backdrop-blur-md border-b border-gray-200/60 px-4 h-16 flex items-center justify-between transition-all duration-200">
-      <div class="flex items-center gap-3">
-        <button @click="sidebarOpen = true"
-          class="p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors active:scale-95"
-          aria-label="Ouvrir le menu">
-          <Bars3Icon class="w-6 h-6" stroke-width="2.5" />
-        </button>
-        <span class="font-bold text-lg text-gray-800 tracking-tight">Iventello</span>
-      </div>
+    <!-- Mobile Sidebar (Drawer) -->
+    <n-drawer v-model:show="mobileMenuOpen" :width="260" placement="left" class="lg:hidden">
+      <n-drawer-content body-content-style="padding: 0;" :native-scrollbar="false">
+        <div class="h-full flex flex-col bg-white">
+          <div class="h-16 flex items-center justify-center border-b border-gray-100 gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+              <img :src="Iventello" alt="Logo" class="w-6 h-6 object-contain" />
+            </div>
+            <span class="font-bold text-lg tracking-tight text-gray-800">Iventello</span>
+          </div>
 
-      <button @click="toggleNotificationPanel"
-        class="relative p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors">
-        <BellIcon class="w-6 h-6" />
-        <span v-if="unreadCount > 0"
-          class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white shadow-sm"></span>
-      </button>
-    </div>
+          <n-menu :options="menuOptions" @update:value="handleMenuClick" class="mt-4" />
 
-    <Transition enter-active-class="transition-opacity ease-linear duration-300" enter-from-class="opacity-0"
-      enter-to-class="opacity-100" leave-active-class="transition-opacity ease-linear duration-300"
-      leave-from-class="opacity-100" leave-to-class="opacity-0">
-      <div v-if="sidebarOpen && !isDesktop" class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-50 lg:hidden"
-        @click="sidebarOpen = false"></div>
-    </Transition>
+          <div class="mt-auto border-t border-gray-100 p-4">
+            <n-dropdown trigger="click" :options="userOptions" @select="handleUserAction" placement="top">
+              <div
+                class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200">
+                <n-avatar round size="small" :style="{ backgroundColor: '#10b981', color: 'white' }">
+                  {{ userInitials }}
+                </n-avatar>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate">{{ userName }}</p>
+                  <p class="text-xs text-gray-500 truncate">{{ userRoleDisplay }}</p>
+                </div>
+                <n-icon class="text-gray-400">
+                  <ChevronUpIcon />
+                </n-icon>
+              </div>
+            </n-dropdown>
+          </div>
+        </div>
+      </n-drawer-content>
+    </n-drawer>
 
-    <aside
-      class="fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200/60 transition-transform duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] lg:translate-x-0 lg:static shadow-2xl lg:shadow-none"
-      :class="[
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        isExpanded ? 'w-72' : 'w-20'
-      ]">
-      <div class="h-20 flex items-center px-6 relative" :class="isExpanded ? 'justify-start' : 'justify-center'">
-        <button v-if="!isDesktop" @click="sidebarOpen = false"
-          class="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 lg:hidden">
-          <XMarkIcon class="w-5 h-5" />
-        </button>
-
-        <div class="flex items-center gap-3 overflow-hidden whitespace-nowrap">
+    <!-- Desktop Sidebar -->
+    <n-layout-sider v-if="isDesktop" bordered collapse-mode="width" :collapsed-width="64" :width="260"
+      show-trigger="bar" :collapsed="collapsed" @update:collapsed="collapsed = $event"
+      class="bg-white z-20 h-full shadow-sm">
+      <div class="h-full flex flex-col bg-white">
+        <div class="h-16 flex items-center justify-center border-b border-gray-100 gap-3 transition-all duration-300">
           <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
             <img :src="Iventello" alt="Logo" class="w-6 h-6 object-contain" />
           </div>
-
-          <span class="font-bold text-xl tracking-tight text-gray-800 transition-opacity duration-300"
-            :class="isExpanded ? 'opacity-100' : 'opacity-0 hidden lg:block'">
-            Iventello
-          </span>
+          <span v-if="!collapsed"
+            class="font-bold text-lg tracking-tight text-gray-800 transition-opacity duration-300">Iventello</span>
         </div>
-      </div>
 
-      <nav class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar py-4 px-3 space-y-1">
-        <template v-for="group in groupedMenu" :key="group.id">
+        <n-menu :options="menuOptions" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
+          @update:value="handleMenuClick" class="mt-4" />
 
-          <div v-if="isExpanded || !isDesktop"
-            class="px-3 mt-6 mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider transition-opacity duration-300">
-            {{ group.label }}
-          </div>
-          <div v-else-if="group.id !== 'main'" class="my-3 mx-2 border-t border-gray-100"></div>
-
-          <div v-for="item in group.items" :key="item.path">
-            <router-link v-if="!item.permission || authStore.can(item.permission)" :to="item.path"
-              @click="closeSidebarOnMobile"
-              class="group relative flex items-center rounded-xl transition-all duration-200 min-h-[44px]" :class="[
-                isActive(item.path)
-                  ? 'bg-emerald-50 text-emerald-700 font-medium'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900',
-                isExpanded ? 'px-3 gap-3' : 'justify-center px-2'
-              ]">
-              <component :is="item.icon" class="w-5 h-5 flex-shrink-0 transition-colors"
-                :class="isActive(item.path) ? 'text-emerald-600' : 'text-gray-400 group-hover:text-gray-600'" />
-              <span v-if="isExpanded" class="text-sm whitespace-nowrap overflow-hidden transition-all">
-                {{ item.label }}
-              </span>
-
-              <span v-if="item.count > 0"
-                class="flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full ring-2 ring-white"
-                :class="isExpanded ? 'ml-auto h-5 px-1.5 min-w-[20px]' : 'absolute top-1 right-1 w-2.5 h-2.5 p-0 border-none !ring-0 !text-transparent overflow-hidden'">
-                {{ isExpanded ? (item.count > 99 ? '99+' : item.count) : '' }}
-              </span>
-
-              <div v-if="!isExpanded && isDesktop"
-                class="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg shadow-xl opacity-0 translate-x-[-10px] group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 whitespace-nowrap">
-                {{ item.label }}
-                <div
-                  class="absolute top-1/2 right-full -translate-y-1/2 border-[5px] border-transparent border-r-gray-900">
+        <div class="mt-auto border-t border-gray-100" :class="collapsed ? 'p-2' : 'p-4'">
+          <n-dropdown trigger="click" :options="userOptions" @select="handleUserAction"
+            :placement="collapsed ? 'right-end' : 'top'">
+            <div
+              class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-transparent"
+              :class="{ 'justify-center': collapsed, 'hover:border-gray-200': !collapsed }">
+              <n-avatar round size="small" :style="{ backgroundColor: '#10b981', color: 'white' }">
+                {{ userInitials }}
+              </n-avatar>
+              <template v-if="!collapsed">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate">{{ userName }}</p>
+                  <p class="text-xs text-gray-500 truncate">{{ userRoleDisplay }}</p>
                 </div>
-              </div>
-            </router-link>
-          </div>
-        </template>
-      </nav>
-
-      <div class="p-3 border-t border-gray-100 bg-gray-50/50">
-
-        <button @click="toggleSidebarSize"
-          class="hidden lg:flex w-full items-center justify-center p-2 rounded-lg text-gray-400 hover:bg-white hover:text-emerald-600 hover:shadow-sm transition-all mb-2 border border-transparent hover:border-gray-200"
-          :title="isExpanded ? 'Réduire' : 'Agrandir'">
-          <ChevronDoubleLeftIcon v-if="isExpanded" class="w-5 h-5" />
-          <ChevronDoubleRightIcon v-else class="w-5 h-5" />
-        </button>
-
-        <div class="flex flex-col gap-1">
-          <router-link v-if="authStore.can('canAccessSettings')" :to="SettingRoute"
-            class="group relative flex items-center rounded-lg hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 text-gray-500 transition-all min-h-[40px]"
-            :class="isExpanded ? 'px-3 gap-3' : 'justify-center'">
-            <Cog6ToothIcon class="w-5 h-5" />
-            <span v-if="isExpanded" class="text-sm">Paramètres</span>
-            <div v-if="!isExpanded && isDesktop"
-              class="absolute left-full ml-3 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 z-50 whitespace-nowrap pointer-events-none">
-              Paramètres</div>
-          </router-link>
-
-          <button @click="logoutEntreprise"
-            class="group relative flex items-center rounded-lg hover:bg-red-50 hover:text-red-600 text-gray-500 transition-colors min-h-[40px]"
-            :class="isExpanded ? 'px-3 gap-3' : 'justify-center'">
-            <ArrowRightOnRectangleIcon class="w-5 h-5" />
-            <span v-if="isExpanded" class="text-sm">Déconnexion</span>
-            <div v-if="!isExpanded && isDesktop"
-              class="absolute left-full ml-3 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 z-50 whitespace-nowrap pointer-events-none">
-              Déconnexion</div>
-          </button>
+                <n-icon class="text-gray-400">
+                  <ChevronUpIcon />
+                </n-icon>
+              </template>
+            </div>
+          </n-dropdown>
         </div>
       </div>
-    </aside>
+    </n-layout-sider>
 
-    <div class="flex-1 flex flex-col h-screen overflow-hidden relative bg-gray-50">
-
-      <header
-        class="hidden lg:flex items-center justify-between px-8 py-5 bg-white/80 backdrop-blur-sm border-b border-gray-200/60 sticky top-0 z-30">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-800 tracking-tight">{{ pageTitle }}</h1>
-          <p class="text-sm text-gray-400 mt-1 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"></span>
-            {{ formattedDate }}
-          </p>
+    <!-- Main Content -->
+    <n-layout class="bg-gray-50 h-full flex-1" :native-scrollbar="false"
+      content-style="display: flex; flex-direction: column; height: 100%;">
+      <n-layout-header
+        class="h-16 bg-white/80 backdrop-blur-sm border-b border-gray-100 px-4 lg:px-8 flex items-center justify-between shrink-0 z-30 transition-all duration-300">
+        <div class="flex items-center gap-4">
+          <n-button v-if="!isDesktop" text @click="mobileMenuOpen = true" class="lg:hidden text-gray-600">
+            <template #icon><n-icon size="24">
+                <Bars3Icon />
+              </n-icon></template>
+          </n-button>
+          <div>
+            <h1 class="text-xl font-bold text-gray-800 tracking-tight">{{ pageTitle }}</h1>
+            <p class="text-xs text-gray-500 hidden sm:block">{{ formattedDate }}</p>
+          </div>
         </div>
-        <div class="flex items-center gap-6">
-          <button @click="toggleNotificationPanel"
-            class="relative group p-2.5 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all">
-            <BellIcon class="w-5 h-5 text-gray-500 group-hover:text-gray-700" />
-            <span v-if="unreadCount > 0"
-              class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-          </button>
 
+        <div class="flex items-center gap-6">
+          <n-badge :value="unreadCount" :max="99">
+            <n-button circle quaternary @click="toggleNotificationPanel">
+              <template #icon><n-icon size="24" class="text-gray-500">
+                  <BellIcon />
+                </n-icon></template>
+            </n-button>
+          </n-badge>
+
+          <!-- User Profile -->
           <div class="flex items-center gap-3 pl-6 border-l border-gray-100">
-            <div class="text-right">
+            <div class="text-right hidden md:block">
               <p class="text-sm font-semibold text-gray-800 leading-tight">{{ userName }}</p>
               <p
                 class="text-[11px] font-medium text-emerald-600 uppercase tracking-wide bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-0.5">
-                {{ userRoleDisplay }}
-              </p>
+                {{ userRoleDisplay }}</p>
             </div>
-            <div
-              class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 border border-white shadow-sm text-gray-600 flex items-center justify-center font-bold text-sm">
+            <n-avatar round
+              :style="{ backgroundColor: '#f3f4f6', color: '#4b5563', border: '2px solid white', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }">
               {{ userInitials }}
-            </div>
+            </n-avatar>
           </div>
         </div>
-      </header>
+      </n-layout-header>
 
-      <main class="flex-1 overflow-y-auto overflow-x-hidden  pt-20 lg:pt-8 custom-scrollbar">
-        <div class="w-full mx-auto animate-fade-in-up">
+      <n-layout-content class="flex-1" content-style="padding: 1rem;" :native-scrollbar="false">
+        <div class="w-full mx-auto animate-fade-in-up lg:p-2">
           <slot></slot>
         </div>
-      </main>
-    </div>
+      </n-layout-content>
+    </n-layout>
 
-    <NotificationPanel v-model:notificationOpen="notificationOpen" @close="notificationOpen = false" />
+    <!-- Notification Drawer -->
+    <n-drawer v-model:show="notificationOpen" :width="isDesktop ? 400 : '100%'" placement="right">
+      <n-drawer-content title="Notifications" closable :native-scrollbar="false">
+        <NotificationPanelContent />
+      </n-drawer-content>
+    </n-drawer>
 
-    <!-- Loading Overlay for Enterprise Switch -->
-    <Transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0"
-      enter-to-class="opacity-100" leave-active-class="transition ease-in duration-200" leave-from-class="opacity-100"
-      leave-to-class="opacity-0">
-      <div v-if="entrepriseStore.isSwitching"
-        class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/60 backdrop-blur-md">
-        <div class="relative">
-          <div class="w-16 h-16 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
-          <img :src="Iventello" alt="Logo" class="absolute inset-0 m-auto w-8 h-8 object-contain animate-pulse" />
-        </div>
-        <p class="mt-4 text-emerald-800 font-bold text-sm tracking-widest uppercase animate-pulse">
-          Chargement de l'entreprise...
-        </p>
-      </div>
-    </Transition>
-  </div>
+    <!-- Global Loading Overlay -->
+    <n-spin v-if="entrepriseStore.isSwitching" description="Chargement de l'entreprise..."
+      class="fixed inset-0 z-[100] bg-white/80 flex items-center justify-center" size="large">
+      <template #icon>
+        <div class="w-16 h-16 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
+      </template>
+    </n-spin>
+  </n-layout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, h } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import { useAuthStore } from '@/stores/authStore'
@@ -199,14 +152,13 @@ import { useProductStore } from '@/stores/productStore'
 import { useCategoryStore } from '@/stores/CategoryStore'
 import { useStatisticsStore } from '@/stores/statisticStore'
 import { useClientStore } from '@/stores/clientStore'
-import NotificationPanel from '@/components/ui/NotificationPanel.vue'
+import NotificationPanelContent from '@/components/ui/NotificationPanel.vue'
 import Iventello from '@/assets/iventello.png'
 
-// Heroicons
+import { NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NMenu, NButton, NIcon, NBadge, NAvatar, NDrawer, NDrawerContent, NSpin, NDropdown, NTooltip } from 'naive-ui'
 import {
   Squares2X2Icon, CubeIcon, RectangleGroupIcon, ArrowTrendingDownIcon, TagIcon, ShoppingCartIcon, DocumentTextIcon,
-  UsersIcon, ChartBarIcon, Bars3Icon, XMarkIcon, BellIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon,
-  ChevronDoubleLeftIcon, ChevronDoubleRightIcon, BanknotesIcon
+  UsersIcon, ChartBarIcon, Bars3Icon, BellIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon, BanknotesIcon, ChevronUpIcon
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
@@ -215,108 +167,117 @@ const entrepriseStore = useEntrepriseStore()
 const authStore = useAuthStore()
 const notificationStore = useNotificationStore()
 
-// STATE
-const sidebarOpen = ref(false)
-const isExpanded = ref(true) // Par défaut ouvert sur desktop pour le confort
+const collapsed = ref(false)
+const mobileMenuOpen = ref(false)
 const notificationOpen = ref(false)
 const isDesktop = ref(window.innerWidth >= 1024)
-const formattedDate = ref(new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })) // Ajout du jour de la semaine
+const formattedDate = ref(new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }))
+const activeKey = ref(null)
 
-// Mock Data
-const lowStockCount = ref(0)
-const outOfStockCount = ref(0)
-const unreadCount = computed(() => notificationStore.unreadCount)
-
-// Helper Route & Menu Logic
 const currentUuid = computed(() => route.params.uuid || authStore.user?.entrepriseUuid)
 const getPath = (suffix) => `/${currentUuid.value}/${suffix}`
 
-const menuStructure = computed(() => [
-  {
-    id: 'main', label: 'Principal',
-    items: [{ label: 'Tableau de bord', icon: Squares2X2Icon, path: getPath('dashboard'), permission: 'canViewDashboard' }]
-  },
-  {
-    id: 'inventory', label: 'Inventaire',
-    items: [
-      { label: 'Produits', icon: CubeIcon, path: getPath('products'), permission: 'canManageStock' },
-      { label: 'Catégories', icon: RectangleGroupIcon, path: getPath('categories'), permission: 'canManageStock' },
-      { label: 'Stock faible', icon: ArrowTrendingDownIcon, path: getPath('lowStock'), permission: 'canManageStock', count: lowStockCount.value },
-      { label: 'Rupture', icon: TagIcon, path: getPath('outOfStock'), permission: 'canManageStock', count: outOfStockCount.value }
-    ]
-  },
-  {
-    id: 'commercial', label: 'Commercial',
-    items: [
-      { label: 'Ventes', icon: ShoppingCartIcon, path: getPath('sales'), permission: 'canMakeSales' },
-      { label: 'Factures', icon: DocumentTextIcon, path: getPath('invoices'), permission: 'canViewInvoices' },
-      { label: 'Dépenses', icon: BanknotesIcon, path: getPath('expenses'), permission: 'canViewDashboard' },
-      { label: 'Clients', icon: UsersIcon, path: getPath('clients'), permission: 'canMakeSales' },
-      { label: 'Rapports', icon: ChartBarIcon, path: getPath('reports'), permission: 'canViewDashboard' },
-      { label: 'Audit Trail', icon: ChartBarIcon, path: getPath('AuditTrail'), permission: 'canAccessSettings' }
-    ]
-  }
-])
-const groupedMenu = computed(() => menuStructure.value)
-const SettingRoute = computed(() => getPath('EntrepriseSettings'))
+function renderIcon(icon) {
+  return () => h(NIcon, null, { default: () => h(icon) })
+}
 
-// Computed Properties
-const pageTitle = computed(() => {
-  const titles = { dashboard: 'Tableau de bord', products: 'Gestion des Produits', categories: 'Catégories', sales: 'Ventes', invoices: 'Facturation', clients: 'Répertoire Clients', reports: 'Rapports & Analytiques', lowStock: 'Alertes Stock Faible', outOfStock: 'Ruptures de Stock', AuditTrail: 'Journal d\'activité', expenses: 'Gestion des Dépenses' }
-  const key = route.path.split('/').pop()
-  return titles[key] || 'Iventello'
+const menuOptions = computed(() => {
+  const list = []
+  if (authStore.can('canViewDashboard')) {
+    list.push({ label: 'Tableau de bord', key: getPath('dashboard'), icon: renderIcon(Squares2X2Icon) })
+  }
+  list.push({
+    key: 'inventory-group', type: 'group', label: 'Inventaire',
+    children: [
+      authStore.can('canManageStock') ? { label: 'Produits', key: getPath('products'), icon: renderIcon(CubeIcon) } : null,
+      authStore.can('canManageStock') ? { label: 'Catégories', key: getPath('categories'), icon: renderIcon(RectangleGroupIcon) } : null,
+      authStore.can('canManageStock') ? { label: 'Stock faible', key: getPath('lowStock'), icon: renderIcon(ArrowTrendingDownIcon) } : null,
+      authStore.can('canManageStock') ? { label: 'Rupture', key: getPath('outOfStock'), icon: renderIcon(TagIcon) } : null,
+    ].filter(Boolean)
+  })
+  list.push({
+    key: 'commercial-group', type: 'group', label: 'Commercial',
+    children: [
+      authStore.can('canMakeSales') ? { label: 'Ventes', key: getPath('sales'), icon: renderIcon(ShoppingCartIcon) } : null,
+      authStore.can('canViewInvoices') ? { label: 'Factures', key: getPath('invoices'), icon: renderIcon(DocumentTextIcon) } : null,
+      authStore.can('canViewDashboard') ? { label: 'Dépenses', key: getPath('expenses'), icon: renderIcon(BanknotesIcon) } : null,
+      authStore.can('canMakeSales') ? { label: 'Clients', key: getPath('clients'), icon: renderIcon(UsersIcon) } : null,
+      authStore.can('canViewDashboard') ? { label: 'Rapports', key: getPath('reports'), icon: renderIcon(ChartBarIcon) } : null,
+      authStore.can('canAccessSettings') ? { label: 'Journal d\'activité', key: getPath('AuditTrail'), icon: renderIcon(ChartBarIcon) } : null,
+    ].filter(Boolean)
+  })
+  return list
 })
 
+const userOptions = computed(() => [
+  authStore.can('canAccessSettings') ? { label: 'Paramètres', key: getPath('EntrepriseSettings'), icon: renderIcon(Cog6ToothIcon) } : null,
+  { label: 'Déconnexion', key: 'logout', icon: renderIcon(ArrowRightOnRectangleIcon) }
+].filter(Boolean))
+
+const handleMenuClick = (key) => {
+  if (key) router.push(key)
+  mobileMenuOpen.value = false
+}
+
+const handleUserAction = (key) => {
+  if (key === 'logout') logoutEntreprise()
+  else {
+    router.push(key)
+    mobileMenuOpen.value = false
+  }
+}
+
+const logoutEntreprise = () => {
+  entrepriseStore.clearActiveEntreprise()
+  useInvoiceStore().clearInvoices()
+  useProductStore().clearProducts()
+  useCategoryStore().clearCategories()
+  useStatisticsStore().clearStats()
+  useClientStore().clearClients()
+  authStore.user?.type === 'admin' ? authStore.logout('backToAdmin') : authStore.logout()
+}
+
+const toggleNotificationPanel = () => {
+  notificationOpen.value = !notificationOpen.value
+  if (notificationOpen.value) notificationStore.fetchNotifications()
+}
+
+watch(() => route.path, (path) => { activeKey.value = path }, { immediate: true })
+
+const handleResize = () => {
+  isDesktop.value = window.innerWidth >= 1024
+  if (isDesktop.value) mobileMenuOpen.value = false
+}
+
+const unreadCount = computed(() => notificationStore.unreadCount)
 const userName = computed(() => `${authStore.user?.username || ''} ${authStore.user?.Last_name || ''}`.trim() || 'Utilisateur')
 const userInitials = computed(() => ((authStore.user?.username?.[0] || '') + (authStore.user?.Last_name?.[0] || '')).toUpperCase() || 'U')
 const userRoleDisplay = computed(() => authStore.isAdmin ? 'Administrateur' : (authStore.user?.roleName || 'Membre'))
 
-// Functions
-const isActive = (path) => route.path === path || route.path.startsWith(path + '/')
-const toggleNotificationPanel = () => { notificationOpen.value = !notificationOpen.value; if (notificationOpen.value) notificationStore.fetchNotifications() }
-const closeSidebarOnMobile = () => { if (!isDesktop.value) sidebarOpen.value = false }
-const toggleSidebarSize = () => { isExpanded.value = !isExpanded.value }
-const logoutEntreprise = () => { entrepriseStore.clearActiveEntreprise(); authStore.user?.type === 'admin' ? authStore.logout('backToAdmin') : authStore.logout() }
-
-watch(sidebarOpen, (v) => v && (notificationOpen.value = false))
-const handleResize = () => { isDesktop.value = window.innerWidth >= 1024; if (isDesktop.value) sidebarOpen.value = false }
+const pageTitle = computed(() => {
+  const titles = { dashboard: 'Tableau de bord', products: 'Gestion des Produits', categories: 'Catégories', sales: 'Ventes', invoices: 'Facturation', clients: 'Répertoire Clients', reports: 'Rapports & Analytiques', lowStock: 'Alertes Stock Faible', outOfStock: 'Ruptures de Stock', AuditTrail: 'Journal d\'activité', expenses: 'Gestion des Dépenses', EntrepriseSettings: 'Paramètres' }
+  const key = route.path.split('/').pop()
+  return titles[key] || 'Iventello'
+})
 
 onMounted(async () => {
   window.addEventListener('resize', handleResize)
+  handleResize()
   if (authStore.token && !authStore.user) await authStore.getAccount()
-
-  // Connecter le socket si l'utilisateur est présent
   if (authStore.user) {
     notificationStore.connectSocket(authStore.user.id, authStore.user.entreprise_id)
     notificationStore.fetchNotifications()
   }
 })
 
-// Surveiller les changements d'utilisateur (login/logout)
-watch(() => authStore.user, (user) => {
-  if (user) {
-    notificationStore.connectSocket(user.id, user.entreprise_id)
-  } else {
-    notificationStore.disconnectSocket()
-  }
-})
-
-// Vider les stores lors du changement d'entreprise pour éviter le flash d'anciennes données
-watch(() => entrepriseStore.activeEntreprise?.uuid, (newUuid, oldUuid) => {
-  if (newUuid && oldUuid && newUuid !== oldUuid) {
-    console.log('🔄 Entreprise changée, nettoyage des stores...')
-    useInvoiceStore().clearInvoices()
-    useProductStore().clearProducts()
-    useCategoryStore().clearCategories()
-    useStatisticsStore().clearStats()
-    useClientStore().clearClients()
-  }
-})
 onUnmounted(() => window.removeEventListener('resize', handleResize))
 </script>
 
 <style scoped>
-/* Petite animation d'entrée pour le contenu */
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -327,32 +288,5 @@ onUnmounted(() => window.removeEventListener('resize', handleResize))
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out forwards;
-}
-
-/* Scrollbar fine et élégante */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #e2e8f0 transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 20px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8;
 }
 </style>

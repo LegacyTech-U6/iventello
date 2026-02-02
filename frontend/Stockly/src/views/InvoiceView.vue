@@ -70,117 +70,19 @@
     </div>
 
     <n-spin :show="loading" size="large" tip="Loading invoices...">
-      <div v-if="filteredInvoices.length === 0 && !loading"
-        class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 flex flex-col items-center justify-center min-h-[400px]">
-        <div class="w-48 h-48 text-gray-200 mb-4">
-          <FileText class="w-16 h-16 mx-auto opacity-20" />
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900">No invoices found</h3>
-        <p class="text-gray-500 mt-2">Try adjusting your search or filters.</p>
-      </div>
-
-      <div v-else class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full min-w-[1000px]">
-            <thead class="bg-gray-50/50 border-b border-gray-200">
-              <tr>
-                <th class="text-left px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">ID</th>
-                <th class="text-left px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Client</th>
-                <th class="text-left px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                <th class="text-left px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Due Date</th>
-                <th class="text-left px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount</th>
-                <th class="text-left px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="text-center px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr v-for="invoice in paginatedInvoices" :key="invoice.id"
-                class="group hover:bg-gray-50/80 transition-colors">
-                <td class="px-6 py-4">
-                  <span class="font-mono text-xs font-medium text-gray-500">#{{ invoice.id }}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <div class="flex flex-col">
-                    <span class="text-sm font-medium text-gray-900">{{ invoice.client?.client_name || 'N/A' }}</span>
-                    <span class="text-xs text-gray-400">{{ invoice.client?.email || '' }}</span>
-                  </div>
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(invoice.createdAt) }}</td>
-                <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(invoice.dueDate || invoice.createdAt) }}</td>
-                <td class="px-6 py-4">
-                  <span class="text-sm font-semibold text-gray-900" :style="getDynamicStyle(invoice.total)">{{
-                    format(invoice.total) }}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <n-tag :type="getStatusType(invoice.status)" :bordered="false" size="small" round class="px-3">
-                    {{ getStatusLabel(invoice.status) }}
-                  </n-tag>
-                </td>
-                <td class="px-6 py-4">
-                  <div
-                    class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <n-button quaternary circle size="small" @click="viewInvoice(invoice)">
-                      <template #icon>
-                        <Eye class="w-4 h-4 text-gray-500 hover:text-blue-600" />
-                      </template>
-                    </n-button>
-                    <n-button quaternary circle size="small" @click="editInvoice(invoice)">
-                      <template #icon>
-                        <Pencil class="w-4 h-4 text-gray-500 hover:text-orange-500" />
-                      </template>
-                    </n-button>
-                    <n-button quaternary circle size="small" @click="deleteInvoice(invoice)">
-                      <template #icon>
-                        <Trash2 class="w-4 h-4 text-gray-500 hover:text-red-600" />
-                      </template>
-                    </n-button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div
-          class="px-6 py-4 border-t border-gray-100 bg-gray-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="text-sm text-gray-500">
-            Showing <span class="font-medium text-gray-800">{{ startIndex }}</span> to <span
-              class="font-medium text-gray-800">{{ endIndex }}</span> of <span class="font-medium text-gray-800">{{
-                filteredInvoices.length }}</span>
-          </div>
-
-          <div class="flex items-center gap-1">
-            <button
-              class="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600"
-              :disabled="currentPage === 1" @click="currentPage = 1">
-              <ChevronsLeft class="w-4 h-4" />
-            </button>
-            <button
-              class="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600"
-              :disabled="currentPage === 1" @click="prevPage">
-              <ChevronLeft class="w-4 h-4" />
-            </button>
-
-            <div class="flex gap-1 px-2">
-              <button v-for="page in visiblePages" :key="page" @click="currentPage = page"
-                class="w-8 h-8 rounded-lg text-sm font-medium transition-colors"
-                :class="page === currentPage ? 'bg-white shadow-sm border border-gray-200 text-blue-600' : 'text-gray-500 hover:bg-gray-100'">
-                {{ page }}
-              </button>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <n-data-table :columns="columns" :data="filteredInvoices" :pagination="pagination" :row-props="rowProps"
+          :loading="loading" :bordered="false" size="small" :row-class-name="'group'">
+          <template #empty>
+            <div class="p-12 flex flex-col items-center justify-center">
+              <div class="w-48 h-48 text-gray-200 mb-4">
+                <FileText class="w-16 h-16 mx-auto opacity-20" />
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900">No invoices found</h3>
+              <p class="text-gray-500 mt-2">Try adjusting your search or filters.</p>
             </div>
-
-            <button
-              class="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600"
-              :disabled="currentPage === totalPages" @click="nextPage">
-              <ChevronRight class="w-4 h-4" />
-            </button>
-            <button
-              class="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600"
-              :disabled="currentPage === totalPages" @click="currentPage = totalPages">
-              <ChevronsRight class="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+          </template>
+        </n-data-table>
       </div>
     </n-spin>
 
@@ -193,8 +95,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { NButton, NTag, NSpin } from 'naive-ui' // Suppression des imports inutilisés
+import { ref, computed, onMounted, h } from 'vue'
+import { NButton, NTag, NSpin, NDataTable, NIcon } from 'naive-ui'
 import { useCurrency } from '@/composable/useCurrency'
 import {
   DocumentTextIcon as FileText,
@@ -204,17 +106,12 @@ import {
   MagnifyingGlassIcon as Search,
   EyeIcon as Eye,
   PencilIcon as Pencil,
-  TrashIcon as Trash2,
-  ChevronLeftIcon as ChevronLeft,
-  ChevronRightIcon as ChevronRight,
-  ChevronDoubleLeftIcon as ChevronsLeft,
-  ChevronDoubleRightIcon as ChevronsRight
+  TrashIcon as Trash2
 } from '@heroicons/vue/24/outline'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
 import InvoiceDetailModal from '@/components/invoices/InvoiceDetailModal.vue'
 import ActionModal from '@/components/ui/ActionModal.vue'
-
 
 const { format, getDynamicStyle } = useCurrency()
 // Stores
@@ -225,12 +122,82 @@ const loading = ref(true)
 // Refs
 const searchQuery = ref('')
 const selectedStatus = ref(null)
-const pageSize = ref(10)
-const currentPage = ref(1)
+// n-data-table internal pagination
+const pagination = ref({ pageSize: 10 })
+
 const showInvoiceModal = ref(false)
 const selectedInvoice = ref(null)
 const showDeleteModal = ref(false)
 const invoiceToDelete = ref(null)
+
+const rowProps = (row) => {
+  return {
+    style: 'cursor: pointer;',
+    onClick: () => viewInvoice(row)
+  }
+}
+
+const columns = [
+  {
+    title: 'ID',
+    key: 'id',
+    render: (row) => h('span', { class: 'font-mono text-xs font-medium text-gray-500' }, { default: () => `#${row.id}` })
+  },
+  {
+    title: 'Client',
+    key: 'client',
+    render(row) {
+      return h('div', { class: 'flex flex-col' }, [
+        h('span', { class: 'text-sm font-medium text-gray-900' }, { default: () => row.client?.client_name || 'N/A' }),
+        h('span', { class: 'text-xs text-gray-400' }, { default: () => row.client?.email || '' })
+      ])
+    }
+  },
+  {
+    title: 'Date',
+    key: 'createdAt',
+    render: (row) => formatDate(row.createdAt)
+  },
+  {
+    title: 'Due Date',
+    key: 'dueDate',
+    render: (row) => formatDate(row.dueDate || row.createdAt)
+  },
+  {
+    title: 'Amount',
+    key: 'total',
+    render(row) {
+      return h('span', {
+        class: 'text-sm font-semibold text-gray-900',
+        style: getDynamicStyle(row.total)
+      }, { default: () => format(row.total) })
+    }
+  },
+  {
+    title: 'Status',
+    key: 'status',
+    render(row) {
+      return h(NTag, {
+        type: getStatusType(row.status),
+        bordered: false,
+        size: 'small',
+        round: true,
+        class: 'px-3'
+      }, { default: () => getStatusLabel(row.status) })
+    }
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    render(row) {
+      return h('div', { class: 'flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity' }, [
+        h(NButton, { quaternary: true, circle: true, size: 'small', onClick: (e) => { e.stopPropagation(); viewInvoice(row) } }, { icon: () => h(NIcon, null, { default: () => h(Eye, { class: 'w-4 h-4 text-gray-500 hover:text-blue-600' }) }) }),
+        h(NButton, { quaternary: true, circle: true, size: 'small', onClick: (e) => { e.stopPropagation(); editInvoice(row) } }, { icon: () => h(NIcon, null, { default: () => h(Pencil, { class: 'w-4 h-4 text-gray-500 hover:text-orange-500' }) }) }),
+        h(NButton, { quaternary: true, circle: true, size: 'small', onClick: (e) => { e.stopPropagation(); deleteInvoice(row) } }, { icon: () => h(NIcon, null, { default: () => h(Trash2, { class: 'w-4 h-4 text-gray-500 hover:text-red-600' }) }) })
+      ])
+    }
+  }
+]
 
 // Computed
 const invoices = computed(() => invoiceStore.invoices || [])
@@ -268,49 +235,6 @@ const filteredInvoices = computed(() => {
 
   return result
 })
-
-const totalPages = computed(() => Math.ceil(filteredInvoices.value.length / pageSize.value))
-
-const paginatedInvoices = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  return filteredInvoices.value.slice(start, start + pageSize.value)
-})
-
-const startIndex = computed(() => {
-  if (filteredInvoices.value.length === 0) return 0
-  return (currentPage.value - 1) * pageSize.value + 1
-})
-
-const endIndex = computed(() => {
-  const end = currentPage.value * pageSize.value
-  return Math.min(end, filteredInvoices.value.length)
-})
-
-const visiblePages = computed(() => {
-  const pages = []
-  const maxVisible = 5
-  let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2))
-  const end = Math.min(totalPages.value, start + maxVisible - 1)
-
-  if (end - start < maxVisible - 1) {
-    start = Math.max(1, end - maxVisible + 1)
-  }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-
-  return pages
-})
-
-// Pagination
-const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
-}
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++
-}
 
 // Actions
 const addInvoice = () => {

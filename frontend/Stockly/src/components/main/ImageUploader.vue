@@ -1,103 +1,76 @@
 <template>
-  <div
-    class="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors"
-    :class="isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'"
-    @dragover.prevent="isDragging = true"
-    @dragleave.prevent="isDragging = false"
-    @drop.prevent="handleDrop"
-    @click="openFilePicker"
-  >
-    <input ref="fileInput" type="file" class="hidden" :accept="accept" @change="handleFileChange" />
-
-    <div v-if="!previewImage" class="text-gray-500">
-      <p class="font-medium">Glissez-déposez une image ici</p>
-      <p>ou cliquez pour sélectionner un fichier</p>
-    </div>
-
-    <div v-else class="flex flex-col items-center gap-3">
-      <img :src="previewImage" alt="Preview" class="max-h-56 rounded-lg shadow" />
-      <button class="text-red-500 text-sm hover:underline" @click.stop="removeImage">
-        Supprimer
-      </button>
-    </div>
+  <div class="flex justify-center">
+    <n-upload list-type="image-card" :max="1" :default-file-list="fileList" @change="handleFileChange"
+      @before-upload="onBeforeUpload" accept="image/*">
+      <div class="flex flex-col items-center justify-center gap-1 text-gray-500">
+        <span class="text-2xl">+</span>
+        <span class="text-xs">Upload</span>
+      </div>
+    </n-upload>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { NUpload, type UploadFileInfo } from 'naive-ui'
 
 interface Props {
-  modelValue?: File | null
+  modelValue?: File | string | null
   maxSize?: number // en Mo
   accept?: string
-  preview?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: null,
   maxSize: 5,
   accept: 'image/*',
-  preview: true,
 })
 
 const emit = defineEmits(['update:modelValue'])
 
-const fileInput = ref<HTMLInputElement | null>(null)
-const isDragging = ref(false)
-const previewImage = ref<string | null>(null)
+const fileList = ref<UploadFileInfo[]>([])
 
-// 📤 Ouvrir le sélecteur de fichiers
-function openFilePicker() {
-  fileInput.value?.click()
-}
-
-// 📂 Gestion du drop
-function handleDrop(event: DragEvent) {
-  isDragging.value = false
-  const file = event.dataTransfer?.files[0]
-  if (file) validateFile(file)
-}
-
-// 📂 Gestion du changement via input
-function handleFileChange(event: Event) {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (file) validateFile(file)
-}
-
-// ✅ Validation du fichier
-function validateFile(file: File) {
-  if (file.size > props.maxSize * 1024 * 1024) {
-    alert(`Fichier trop volumineux (max ${props.maxSize} Mo)`)
-    return
-  }
-  emit('update:modelValue', file)
-  if (props.preview) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      previewImage.value = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
-// ❌ Supprimer l’image
-function removeImage() {
-  previewImage.value = null
-  emit('update:modelValue', null)
-}
-
-// 🔁 Synchroniser avec v-model externe
+// 🔄 Sync external model with internal list
 watch(
   () => props.modelValue,
   (newVal) => {
-    if (!newVal) previewImage.value = null
+    if (!newVal) {
+      fileList.value = []
+    } else if (typeof newVal === 'string') {
+      fileList.value = [{
+        id: 'existing',
+        name: 'Logo',
+        status: 'finished',
+        url: newVal
+      }]
+    }
+    // If it's a File object, we assume it came from the uploader internally, 
+    // so we don't need to force update the list to avoid loops, 
+    // unless we want to support external File setting.
   },
+  { immediate: true }
 )
-</script>
 
-<style scoped>
-.border-dashed {
-  transition: all 0.2s ease;
+// 📂 Handle File Change
+function handleFileChange(data: { fileList: UploadFileInfo[] }) {
+  // Update local list state
+  fileList.value = data.fileList
+
+  const fileObj = data.fileList[0]?.file
+  if (fileObj) {
+    emit('update:modelValue', fileObj)
+  } else {
+    // If we removed the file, emit null
+    emit('update:modelValue', null)
+  }
 }
-</style>
+
+// ✅ Validation
+async function onBeforeUpload(data: { file: UploadFileInfo; fileList: UploadFileInfo[] }) {
+  if (data.file.file && data.file.file.size > props.maxSize * 1024 * 1024) {
+    alert(`Fichier trop volumineux (max ${props.maxSize} Mo)`)
+    return false
+  }
+  return true
+}
+</script>

@@ -1,120 +1,91 @@
 <template>
-  <div class="min-h-screen bg-background p-4 lg:p-8">
-    <div class="max-w-4xl mx-auto flex flex-col gap-10">
-
+  <div class="p-4 lg:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
       <!-- Header -->
-      <div class="space-y-1">
-        <h1 class="text-3xl md:text-4xl font-black text-on-surface tracking-tight">Paramètres du Profil</h1>
-        <p class="text-on-surface-variant font-medium">Gérez vos informations personnelles et la sécurité de votre
-          compte.</p>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Paramètres du Compte</h1>
+        <p class="text-gray-500">Gérez vos informations personnelles et la sécurité de votre compte.</p>
       </div>
 
-      <!-- Personal Information -->
-      <section class="bg-white rounded-[2.5rem] border border-outline-variant shadow-sm overflow-hidden">
-        <div class="p-8 lg:p-10">
-          <div class="flex items-center gap-4 mb-8">
-            <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-              <UserIcon class="w-6 h-6" />
+      <n-card class="rounded-2xl shadow-sm" :bordered="false">
+        <n-tabs type="line" animated>
+          <!-- Tab 1: Profile -->
+          <n-tab-pane name="profile" tab="Profile">
+            <n-form :model="profileForm" label-placement="top" class="mt-4">
+              <div class="flex items-center gap-4 mb-8 p-4 bg-gray-50 rounded-xl">
+                <div
+                  class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-2xl font-bold">
+                  {{ userInitials }}
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg">{{ userFullName }}</h3>
+                  <p class="text-gray-500 text-sm">{{ profileForm.role || 'Admin' }}</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <n-form-item label="Prénom">
+                  <n-input v-model:value="profileForm.username" placeholder="Votre prénom" />
+                </n-form-item>
+                <n-form-item label="Nom">
+                  <n-input v-model:value="profileForm.Last_name" placeholder="Votre nom" />
+                </n-form-item>
+                <n-form-item label="Email">
+                  <n-input v-model:value="profileForm.email" placeholder="email@exemple.com" />
+                </n-form-item>
+                <n-form-item label="Téléphone">
+                  <n-input v-model:value="profileForm.telephone" placeholder="+237..." />
+                </n-form-item>
+              </div>
+              <div class="flex justify-end mt-6">
+                <n-button type="primary" :loading="authStore.isLoading" @click="updateProfile" size="large">
+                  Enregistrer les modifications
+                </n-button>
+              </div>
+            </n-form>
+          </n-tab-pane>
+
+          <!-- Tab 2: Security -->
+          <n-tab-pane name="security" tab="Sécurité">
+            <div class="max-w-xl">
+              <n-alert title="Sécurité du compte" type="info" class="mb-6">
+                Assurez-vous d'utiliser un mot de passe fort pour protéger votre compte administrateur.
+              </n-alert>
+
+              <n-form :model="passwordForm" label-placement="top">
+                <n-form-item label="Mot de passe actuel">
+                  <n-input v-model:value="passwordForm.oldPassword" type="password" show-password-on="click"
+                    placeholder="••••••••" />
+                </n-form-item>
+                <n-form-item label="Nouveau mot de passe">
+                  <n-input v-model:value="passwordForm.newPassword" type="password" show-password-on="click"
+                    placeholder="••••••••" />
+                </n-form-item>
+
+                <div class="flex items-center justify-between mt-6">
+                  <router-link to="/forgotPassword" class="text-orange-600 hover:underline text-sm font-medium">
+                    Mot de passe oublié ?
+                  </router-link>
+                  <n-button type="primary" :loading="authStore.isLoading" @click="changePassword">
+                    Modifier le mot de passe
+                  </n-button>
+                </div>
+              </n-form>
             </div>
-            <h2 class="text-2xl font-black text-on-surface">Informations Personnelles</h2>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-2">
-              <label
-                class="text-[12px] font-black text-on-surface-variant uppercase tracking-widest px-1">Prénom</label>
-              <input v-model="profileForm.username" type="text"
-                class="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-[1.25rem] text-sm lg:text-base font-bold text-on-surface focus:ring-4 focus:ring-primary/5 focus:bg-white focus:border-primary/20 transition-all outline-none placeholder:text-outline-variant"
-                placeholder="Prénom" />
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-on-surface-variant uppercase tracking-widest px-1">Nom</label>
-              <input v-model="profileForm.Last_name" type="text"
-                class="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-[1.25rem] text-sm lg:text-base font-bold text-on-surface focus:ring-4 focus:ring-primary/5 focus:bg-white focus:border-primary/20 transition-all outline-none placeholder:text-outline-variant"
-                placeholder="Nom" />
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-on-surface-variant uppercase tracking-widest px-1">Email</label>
-              <input v-model="profileForm.email" type="email"
-                class="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-[1.25rem] text-sm lg:text-base font-bold text-on-surface focus:ring-4 focus:ring-primary/5 focus:bg-white focus:border-primary/20 transition-all outline-none placeholder:text-outline-variant"
-                placeholder="email@exemple.com" />
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-on-surface-variant uppercase tracking-widest px-1">Numéro de
-                Téléphone</label>
-              <input v-model="profileForm.telephone" type="text"
-                class="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-[1.25rem] text-sm lg:text-base font-bold text-on-surface focus:ring-4 focus:ring-primary/5 focus:bg-white focus:border-primary/20 transition-all outline-none placeholder:text-outline-variant"
-                placeholder="+237..." />
-            </div>
-          </div>
-
-          <div class="flex justify-start mt-10">
-            <button @click="updateProfile" :disabled="authStore.isLoading"
-              class="px-8 py-3.5 bg-primary text-on-primary rounded-2xl font-bold shadow-lg shadow-primary/30 transition-all hover:brightness-110 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50">
-              <CheckIcon v-if="!authStore.isLoading" class="w-5 h-5" />
-              <n-spin v-else size="small" />
-              {{ authStore.isLoading ? 'Enregistrement...' : 'Enregistrer les Modifications' }}
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Change Password -->
-      <section class="bg-white rounded-[2.5rem] border border-outline-variant shadow-sm overflow-hidden">
-        <div class="p-8 lg:p-10">
-          <div class="flex items-center gap-4 mb-8">
-            <div class="w-12 h-12 rounded-2xl bg-tertiary/10 flex items-center justify-center text-tertiary">
-              <LockClosedIcon class="w-6 h-6" />
-            </div>
-            <h2 class="text-2xl font-black text-on-surface">Sécurité du Compte</h2>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-on-surface-variant uppercase tracking-widest px-1">Mot de passe
-                actuel</label>
-              <input v-model="passwordForm.oldPassword" type="password"
-                class="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-[1.25rem] text-sm lg:text-base font-bold text-on-surface focus:ring-4 focus:ring-primary/5 focus:bg-white focus:border-primary/20 transition-all outline-none placeholder:text-outline-variant"
-                placeholder="••••••••" />
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[12px] font-black text-on-surface-variant uppercase tracking-widest px-1">Nouveau mot
-                de passe</label>
-              <input v-model="passwordForm.newPassword" type="password"
-                class="w-full px-6 py-4 bg-surface-variant/20 border-2 border-transparent rounded-[1.25rem] text-sm lg:text-base font-bold text-on-surface focus:ring-4 focus:ring-primary/5 focus:bg-white focus:border-primary/20 transition-all outline-none placeholder:text-outline-variant"
-                placeholder="••••••••" />
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mt-10">
-            <button @click="changePassword" :disabled="authStore.isLoading"
-              class="px-8 py-3.5 bg-tertiary text-on-tertiary rounded-2xl font-bold shadow-lg shadow-tertiary/30 transition-all hover:brightness-110 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50">
-              <KeyIcon v-if="!authStore.isLoading" class="w-5 h-5" />
-              <n-spin v-else size="small" />
-              {{ authStore.isLoading ? 'Mise à jour...' : 'Modifier le Mot de Passe' }}
-            </button>
-            <router-link to="/forgotPassword"
-              class="text-sm font-black text-primary hover:text-primary/70 uppercase tracking-widest transition-colors">
-              Mot de passe oublié ?
-            </router-link>
-          </div>
-        </div>
-      </section>
+          </n-tab-pane>
+        </n-tabs>
+      </n-card>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
-import { UserIcon, LockClosedIcon, CheckIcon, KeyIcon } from '@heroicons/vue/24/solid'
-import { NSpin } from 'naive-ui'
+import { useMessage, NCard, NTabs, NTabPane, NForm, NFormItem, NInput, NButton, NAlert } from 'naive-ui'
 
 const authStore = useAuthStore()
+const message = useMessage()
 
 const profileForm = ref({
   username: '',
@@ -130,6 +101,16 @@ const passwordForm = ref({
   newPassword: '',
 })
 
+const userInitials = computed(() => {
+  const f = profileForm.value.username?.[0] || ''
+  const l = profileForm.value.Last_name?.[0] || ''
+  return (f + l).toUpperCase()
+})
+
+const userFullName = computed(() => {
+  return `${profileForm.value.username} ${profileForm.value.Last_name}`
+})
+
 watch(
   () => authStore.user,
   (user) => {
@@ -141,11 +122,25 @@ watch(
 )
 
 const updateProfile = async () => {
-  await authStore.updateProfile(profileForm.value)
+  try {
+    await authStore.updateProfile(profileForm.value)
+    message.success("Profil mis à jour avec succès")
+  } catch (e) {
+    message.error("Erreur lors de la mise à jour du profil")
+  }
 }
 
 const changePassword = async () => {
-  await authStore.changePassword(passwordForm.value.oldPassword, passwordForm.value.newPassword)
-  passwordForm.value = { oldPassword: '', newPassword: '' }
+  try {
+    if (!passwordForm.value.oldPassword || !passwordForm.value.newPassword) {
+      message.warning("Veuillez remplir tous les champs")
+      return
+    }
+    await authStore.changePassword(passwordForm.value.oldPassword, passwordForm.value.newPassword)
+    message.success("Mot de passe modifié avec succès")
+    passwordForm.value = { oldPassword: '', newPassword: '' }
+  } catch (e) {
+    message.error("Erreur lors du changement de mot de passe")
+  }
 }
 </script>

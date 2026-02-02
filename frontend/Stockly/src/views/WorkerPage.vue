@@ -9,422 +9,259 @@
   - Vue liste et grille
 -->
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-7xl mx-auto">
-      <!-- En-tête avec titre et actions -->
-      <div class="mb-6 flex items-center justify-between">
-        <div>
-          <h1 class="text-3xl font-semibold text-gray-800 mb-1">Employees</h1>
-          <p class="text-sm text-gray-500">Manage your employees</p>
-        </div>
-        <!-- Boutons d'action: Vue, Export, Ajouter -->
-        <div class="flex items-center gap-3">
-
-
-          <!-- Bouton ajouter employé -->
-          <ValidationButton text="Add Employer" width="100%" color="#0C333B" variant="flat" size="large"
-            :asyncClick="create" :loading="isLoading" :icon="PlusIcon" />
-
-        </div>
+  <div class="p-4 lg:p-8 space-y-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Employés</h1>
+        <p class="text-gray-500">Gérez vos employés et leurs accès.</p>
       </div>
-
-      <!-- Cartes de statistiques -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <GridCard title="Total Employee" :value="stats.total" :icon="UsersIcon" gradientFrom="purple-500"
-          gradientTo="purple-600" />
-        <GridCard title="Active" :value="stats.active" :icon="UserIcon" gradientFrom="teal-500" gradientTo="teal-600" />
-        <GridCard title="Inactive" :value="stats.inactive" :icon="UserMinusIcon" gradientFrom="slate-700"
-          gradientTo="slate-800" />
-        <GridCard title="New Joiners" :value="stats.newJoiners" :icon="UserPlusIcon" gradientFrom="blue-500"
-          gradientTo="blue-600" />
-      </div>
-
-      <!-- Search and Filters -->
-      <div class="mb-6 flex gap-3">
-        <div class="flex-1 max-w-1/2 relative">
-          <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <input type="text" placeholder="Search" v-model="searchTerm"
-            class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white text-sm" />
-        </div>
-        <select v-model="filterDepartment"
-          class="border border-gray-200 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white text-sm text-gray-600">
-          <option value="">Select department</option>
-          <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
-        </select>
-
-      </div>
-
-      <!-- Loading State -->
-      <div v-if="isLoading && filteredWorkers.length === 0"
-        class="flex flex-col items-center justify-center py-20 bg-white rounded-xl">
-        <n-spin size="large" />
-        <p class="text-gray-500 mt-4 animate-pulse">Loading workers...</p>
-      </div>
-
-      <!-- Workers Grid -->
-      <div v-else-if="filteredWorkers.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <WorkersCard v-for="worker in filteredWorkers" :key="worker.id" :worker="worker" @edit="handleEditWorker"
-          @delete="handleDeleteWorker" />
-      </div>
-
-      <!-- Empty State -->
-      <div v-else class="text-center py-16 bg-white rounded-xl">
-        <UsersIcon v-if="!isLoading" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <p class="text-gray-500 text-base">{{ isLoading ? 'Fetching data...' : 'No workers found matching your search'
-          }}</p>
-      </div>
+      <n-button type="primary" size="large" @click="create">
+        <template #icon><n-icon>
+            <PlusIcon />
+          </n-icon></template>
+        Ajouter un employé
+      </n-button>
     </div>
 
-    <!-- Create/Edit Worker Modal -->
-    <WorkerModals v-if="showModal" :show="showModal" :worker="selectedWorker" :is-editing="isEditing"
-      @close="closeModal" @submit="handleSubmit" />
+    <!-- Stats -->
+    <n-grid x-gap="12" cols="1 s:2 m:4" responsive="screen" :y-gap="12">
+      <n-gi>
+        <n-card :bordered="false" class="rounded-xl shadow-sm">
+          <n-statistic label="Total Employés" :value="stats.total">
+            <template #prefix><n-icon class="text-purple-500">
+                <UsersIcon />
+              </n-icon></template>
+          </n-statistic>
+        </n-card>
+      </n-gi>
+      <n-gi>
+        <n-card :bordered="false" class="rounded-xl shadow-sm">
+          <n-statistic label="Actifs" :value="stats.active">
+            <template #prefix><n-icon class="text-teal-500">
+                <UserIcon />
+              </n-icon></template>
+          </n-statistic>
+        </n-card>
+      </n-gi>
+      <n-gi>
+        <n-card :bordered="false" class="rounded-xl shadow-sm">
+          <n-statistic label="Inactifs" :value="stats.inactive">
+            <template #prefix><n-icon class="text-slate-500">
+                <UserMinusIcon />
+              </n-icon></template>
+          </n-statistic>
+        </n-card>
+      </n-gi>
+      <n-gi>
+        <n-card :bordered="false" class="rounded-xl shadow-sm">
+          <n-statistic label="Nouveaux" :value="stats.newJoiners">
+            <template #prefix><n-icon class="text-blue-500">
+                <UserPlusIcon />
+              </n-icon></template>
+          </n-statistic>
+        </n-card>
+      </n-gi>
+    </n-grid>
 
-    <!-- Delete Confirmation Modal -->
-    <ActionModal v-model="showDeleteModal" title="Delete Worker"
-      message="Are you sure you want to delete this worker? This action cannot be undone." confirm-text="Delete"
-      cancel-text="Cancel" :loading="isLoading" @confirm="confirmDelete" />
+    <n-card :bordered="false" class="rounded-xl shadow-sm">
+      <div class="flex flex-col sm:flex-row gap-4 mb-6">
+        <n-input v-model:value="searchTerm" placeholder="Rechercher un employé..." class="max-w-xs">
+          <template #prefix><n-icon>
+              <MagnifyingGlassIcon />
+            </n-icon></template>
+        </n-input>
+        <n-select v-model:value="filterDepartment" :options="departmentOptions" placeholder="Filtrer par Département"
+          clearable class="w-64" />
+      </div>
+
+      <n-data-table :columns="columns" :data="filteredWorkers" :loading="isLoading" :pagination="{ pageSize: 10 }" />
+    </n-card>
+
+    <!-- Modal for Create/Edit -->
+    <n-modal v-model:show="showModal" preset="card" :title="isEditing ? 'Modifier l\'employé' : 'Nouvel employé'"
+      class="max-w-lg">
+      <n-form ref="formRef" :model="formModel" :rules="rules" label-placement="top">
+        <n-form-item label="Nom complet" path="name">
+          <n-input v-model:value="formModel.name" placeholder="John Doe" />
+        </n-form-item>
+        <n-form-item label="Email" path="email">
+          <n-input v-model:value="formModel.email" placeholder="john@example.com" />
+        </n-form-item>
+        <n-form-item label="Entreprise" path="entreprise_id" v-if="!isEditing">
+          <!-- Assuming enterprise selection on creation -->
+          <n-select v-model:value="formModel.entreprise_id" :options="enterpriseOptions"
+            placeholder="Sélectionner une entreprise" />
+        </n-form-item>
+        <!-- Add Password field for creation if needed, logic depends on backend -->
+        <n-form-item label="Mot de passe" path="password" v-if="!isEditing">
+          <n-input type="password" v-model:value="formModel.password" show-password-on="click" />
+        </n-form-item>
+
+        <div class="flex justify-end gap-2 mt-4">
+          <n-button @click="closeModal">Annuler</n-button>
+          <n-button type="primary" :loading="isSubmitting" @click="handleFormSubmit">
+            {{ isEditing ? 'Mettre à jour' : 'Créer' }}
+          </n-button>
+        </div>
+      </n-form>
+    </n-modal>
   </div>
 </template>
 
 <script setup>
-/**
- * WorkerPage.vue - Page de Gestion des Employés
- *
- * Responsabilités principales:
- * - Affiche la liste complète des employés avec filtres
- * - Permet ajouter, modifier, supprimer des employés
- * - Affiche statistiques: Total, Actifs, Inactifs, Nouveaux
- * - Recherche par nom/email/poste
- * - Filtre par département (entreprise) et désignation
- * - Export PDF et CSV (UI prête)
- *
- * Architecture:
- * - Utilise workerStore pour gestion des états employés
- * - Utilise roleStore et entrepriseStore pour données contextuelles
- * - Modal WorkerModals pour créer/éditer
- * - ActionModal pour confirmation suppression
- */
-
-// ========================================
-// IMPORTS & DÉPENDANCES
-// ========================================
-
-import { ref, computed, onMounted } from 'vue'
-import { NSpin } from 'naive-ui'
-
-/** Icônes Heroicons pour l'interface utilisateur */
-import {
-  UsersIcon,          // Icône affichage total employés
-  UserIcon,           // Icône employés actifs (Mapping UserCheck -> UserIcon)
-  UserMinusIcon,      // Icône employés inactifs (Mapping UserX -> UserMinusIcon)
-  UserPlusIcon,       // Icône nouveaux employés
-  MagnifyingGlassIcon, // Icône barre de recherche
-  PlusIcon,           // Icône bouton ajouter
-  ListBulletIcon,      // Icône vue liste
-  Squares2X2Icon,     // Icône vue grille
-  DocumentTextIcon,    // Icône export PDF
-  TableCellsIcon,      // Icône export Excel
-  ArrowPathIcon,       // Icône rafraîchir
-  ChevronUpIcon,       // Icône trier
-} from '@heroicons/vue/24/outline'
-
-/** Stores Pinia pour gestion d'état */
+import { ref, computed, onMounted, h, reactive } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useWorkerStore } from '@/stores/workerStore'
 import { useEntrepriseStore } from '@/stores/entrepriseStore'
-import { useRoleStore } from '@/stores/roleStore'
-import { storeToRefs } from 'pinia'
+import { useMessage, useDialog, NButton, NIcon, NGrid, NGi, NCard, NStatistic, NInput, NSelect, NDataTable, NTag, NModal, NForm, NFormItem } from 'naive-ui'
+import {
+  UsersIcon, UserIcon, UserMinusIcon, UserPlusIcon, MagnifyingGlassIcon, PlusIcon, PencilIcon, TrashIcon
+} from '@heroicons/vue/24/outline'
 
-/** Composables pour actions et validations */
-import { useActionMessage } from '@/composable/useActionMessage'
-import { useGlobalModal } from '@/composable/useValidation'
+const workerStore = useWorkerStore()
+const entrepriseStore = useEntrepriseStore()
+const message = useMessage()
+const dialog = useDialog()
 
-/** Composants réutilisables */
-import ActionModal from '@/components/ui/ActionModal.vue'
-import WorkersCard from '@/components/workers/WorkersCard.vue'
-import WorkerModals from '@/components/workers/WorkerModals.vue'
-import GridCard from '@/components/ui/cards/GridCard.vue'
-import ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
-
-// ========================================
-// COMPOSABLES & STORES
-// ========================================
-
-/** Composable pour afficher notifications de succès/erreur */
-const { show } = useGlobalModal()
-const { showSuccess, showError } = useActionMessage()
-
-/** Store Pinia contenant la liste des employés et méthodes CRUD */
-const store = useWorkerStore()
-const { isLoading } = storeToRefs(store)
-
-/** Store pour accéder aux entreprises (départements) */
-const enterpriseStore = useEntrepriseStore()
-
-/** Store pour accéder aux rôles disponibles */
-const roleStore = useRoleStore()
-
-// ========================================
-// DONNÉES RÉACTIVES
-// ========================================
-
-/** Affiche/masque le modal de création/édition d'employé */
+const { isLoading } = storeToRefs(workerStore)
 const showModal = ref(false)
-
-/** Terme de recherche saisi par l'utilisateur */
-const searchTerm = ref('')
-
-/** Filtre sélectionné par département/entreprise */
-const filterDepartment = ref('')
-
-/** Filtre sélectionné par désignation/poste */
-const filterDesignation = ref('')
-
-/** Indique si on est en mode édition (true) ou création (false) */
 const isEditing = ref(false)
+const isSubmitting = ref(false)
+const searchTerm = ref('')
+const filterDepartment = ref(null)
+const formRef = ref(null)
 
-/** Objet employé sélectionné pour édition */
-const selectedWorker = ref(null)
-
-/** Affiche/masque le modal de confirmation suppression */
-const showDeleteModal = ref(false)
-
-/** ID de l'employé à supprimer (stocké avant confirmation) */
-const workerToDelete = ref(null)
-
-// ========================================
-// LIFECYCLE HOOKS
-// ========================================
-
-/**
- * Initialisation au montage du composant
- *
- * Actions:
- * 1. Récupère la liste complète des employés depuis le store
- * 2. Charge la liste des rôles disponibles
- * 3. Charge la liste des entreprises (pour filtrer par département)
- *
- * @async
- */
-onMounted(async () => {
-  store.fetchAllWorkers()
-  await roleStore.fetchRoles()
-  await enterpriseStore.fetchEntreprises()
+const formModel = reactive({
+  id: null,
+  name: '',
+  email: '',
+  entreprise_id: null,
+  password: ''
 })
 
-// ========================================
-// PROPRIÉTÉS CALCULÉES
-// ========================================
+const rules = {
+  name: { required: true, message: 'Requis', trigger: 'blur' },
+  email: { required: true, message: 'Requis', trigger: 'blur' },
+  entreprise_id: { required: true, message: 'Requis', trigger: 'blur', type: 'number' },
+  password: { required: true, message: 'Requis', trigger: 'blur' }
+}
 
-/**
- * Génère les statistiques affichées dans les cartes
- *
- * Calculs:
- * - Total: nombre total d'employés dans le store
- * - Actifs: employés avec status = 'active'
- * - Inactifs: employés avec status = 'inactive'
- * - Nouveaux: employés embauchés depuis 30 jours
- *
- * @returns {Object} Objet avec propriétés {total, active, inactive, newJoiners}
- */
+onMounted(async () => {
+  await workerStore.fetchAllWorkers()
+  await entrepriseStore.fetchEntreprises()
+})
+
 const stats = computed(() => {
   const now = new Date()
   const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30))
-
   return {
-    total: store.workers.length,
-    active: store.workers.filter((w) => w.status === 'active').length,
-    inactive: store.workers.filter((w) => w.status === 'inactive').length,
-    newJoiners: store.workers.filter((w) => new Date(w.date_hired) >= thirtyDaysAgo).length,
+    total: workerStore.workers.length,
+    active: workerStore.workers.filter((w) => w.status === 'active').length,
+    inactive: workerStore.workers.filter((w) => w.status === 'inactive').length,
+    newJoiners: workerStore.workers.filter((w) => new Date(w.date_hired) >= thirtyDaysAgo).length,
   }
 })
-const create = () => {
-  showModal.value = true
-}
 
-/**
- * Extrait la liste unique des départements
- *
- * Utilisé pour remplir le select de filtre département
- * Basé sur le champ 'entreprise_name' de chaque employé
- *
- * @returns {Array<string>} Liste unique des noms d'entreprises
- */
-const departments = computed(() => {
-  return [...new Set(store.workers.map((w) => w.entreprise?.name).filter(Boolean))]
-})
-
-/**
- * Extrait la liste unique des postes/désignations
- *
- * Utilisé pour remplir le select de filtre désignation
- * Basé sur le champ 'position' de chaque employé
- *
- * @returns {Array<string>} Liste unique des postes
- */
-const positions = computed(() => {
-  return [...new Set(store.workers.map((w) => w.position).filter(Boolean))]
-})
-
-/**
- * Filtre les employés selon critères actifs
- *
- * Applique 3 niveaux de filtrage en cascade:
- * 1. Recherche texte: cherche dans name, email, position
- * 2. Filtre département: par entreprise sélectionnée
- * 3. Filtre désignation: par poste sélectionné
- *
- * Exemple avec searchTerm='jean' et filterDepartment='IT':
- * - Affiche employés dont le nom contient 'jean' ET entreprise = 'IT'
- *
- * @returns {Array<Object>} Liste filtrée des employés
- */
 const filteredWorkers = computed(() => {
-  let workers = store.workers
-
-  // Filtre 1: Recherche texte (case-insensitive)
+  let w = workerStore.workers
   if (searchTerm.value) {
-    const term = searchTerm.value.toLowerCase()
-    workers = workers.filter(
-      (worker) =>
-        worker.name?.toLowerCase().includes(term) ||
-        worker.email?.toLowerCase().includes(term) ||
-        worker.position?.toLowerCase().includes(term),
-    )
+    const t = searchTerm.value.toLowerCase()
+    w = w.filter(x => x.name?.toLowerCase().includes(t) || x.email?.toLowerCase().includes(t))
   }
-
-  // Filtre 2: Département/Entreprise
   if (filterDepartment.value) {
-    workers = workers.filter((w) => w.entreprise?.name === filterDepartment.value)
+    w = w.filter(x => x.entreprise?.name === filterDepartment.value)
   }
-
-  // Filtre 3: Désignation/Poste
-  if (filterDesignation.value) {
-    workers = workers.filter((w) => w.position === filterDesignation.value)
-  }
-
-  return workers
+  return w
 })
 
-// ========================================
-// MÉTHODES - GESTION FORMULAIRES
-// ========================================
+const departmentOptions = computed(() => {
+  const depts = [...new Set(workerStore.workers.map((w) => w.entreprise?.name).filter(Boolean))]
+  return depts.map(d => ({ label: d, value: d }))
+})
 
-/**
- * Prépare l'édition d'un employé
- *
- * Actions:
- * 1. Active le mode édition
- * 2. Copie les données de l'employé sélectionné
- * 3. Ouvre le modal de modification
- *
- * @param {Object} worker - Objet employé à éditer
- */
-const handleEditWorker = (worker) => {
-  isEditing.value = true
-  selectedWorker.value = { ...worker }
+const enterpriseOptions = computed(() => {
+  return entrepriseStore.entreprises.map(e => ({ label: e.name, value: e.id }))
+})
+
+const columns = [
+  { title: 'Nom', key: 'name', sorter: 'default' },
+  { title: 'Email', key: 'email' },
+  { title: 'Entreprise', key: 'entreprise.name' },
+  {
+    title: 'Statut',
+    key: 'status',
+    render(row) {
+      return h(NTag, { type: row.status === 'active' ? 'success' : 'error', size: 'small' }, { default: () => row.status })
+    }
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    render(row) {
+      return h('div', { class: 'flex gap-2' }, [
+        h(NButton, { size: 'small', secondary: true, onClick: () => prepareEdit(row) }, { icon: () => h(NIcon, null, { default: () => h(PencilIcon) }) }),
+        h(NButton, { size: 'small', type: 'error', secondary: true, onClick: () => confirmDelete(row) }, { icon: () => h(NIcon, null, { default: () => h(TrashIcon) }) })
+      ])
+    }
+  }
+]
+
+const create = () => {
+  isEditing.value = false
+  Object.assign(formModel, { id: null, name: '', email: '', entreprise_id: null, password: '' })
   showModal.value = true
 }
 
-/**
- * Sauvegarde employé (création ou mise à jour)
- *
- * Flux:
- * 1. Vérifie si on est en édition ou création
- * 2. Si édition: appelle store.updateWorker()
- * 3. Si création: appelle store.addWorker()
- * 4. Affiche message succès/erreur
- * 5. Ferme le modal
- *
- * @async
- * @param {Object} formData - Données du formulaire employé
- * @throws {Error} Si la sauvegarde échoue (affiche message erreur)
- */
-const handleSubmit = async (formData) => {
-  try {
-    if (isEditing.value) {
-      const success = await store.updateWorker(formData.worker_id, formData)
-      if (success) {
-        show('Worker updated successfully!', 'success')
-      } else {
-        show('Failed to update worker', 'error')
-      }
-    } else {
-      const success = await store.addWorker(formData)
-      if (success) {
-        show('Worker created successfully!', 'success')
-      } else {
-        show('Failed to create worker', 'error')
-      }
-    }
-    closeModal()
-  } catch (error) {
-    console.error('Error saving worker:', error)
-    show('Error saving worker. Please try again.', 'error')
-  }
+const prepareEdit = (row) => {
+  isEditing.value = true
+  Object.assign(formModel, {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    entreprise_id: row.entreprise?.id
+    // Password usually left blank on edit
+  })
+  showModal.value = true
 }
 
-// ========================================
-// MÉTHODES - GESTION SUPPRESSION
-// ========================================
-
-/**
- * Ouvre le modal de confirmation avant suppression
- *
- * Actions:
- * 1. Stocke l'ID de l'employé à supprimer
- * 2. Affiche le modal de confirmation
- *
- * @param {number} workerId - ID de l'employé à supprimer
- */
-const handleDeleteWorker = (workerId) => {
-  workerToDelete.value = workerId
-  showDeleteModal.value = true
-}
-
-/**
- * Confirme et exécute la suppression d'un employé
- *
- * Flux:
- * 1. Appelle store.removeWorker() avec l'ID stocké
- * 2. Si succès: affiche message confirmation
- * 3. Si erreur: affiche message d'erreur
- * 4. Dans tous les cas: ferme le modal et réinitialise
- *
- * @async
- * @throws {Error} Affiche message erreur en cas d'échec API
- */
-const confirmDelete = async () => {
-  try {
-    const success = await store.removeWorker(workerToDelete.value)
-    if (success) {
-      show('Worker deleted successfully!', 'success')
-    } else {
-      show('Failed to delete worker', 'error')
-    }
-  } catch (error) {
-    console.error('Error deleting worker:', error)
-    show('Failed to delete worker', 'error')
-  } finally {
-    showDeleteModal.value = false
-    workerToDelete.value = null
-  }
-}
-
-// ========================================
-// MÉTHODES - UTILITAIRES
-// ========================================
-
-/**
- * Ferme le modal et réinitialise l'état du formulaire
- *
- * Actions:
- * 1. Masque le modal
- * 2. Désactive le mode édition
- * 3. Réinitialise l'employé sélectionné (null)
- */
 const closeModal = () => {
   showModal.value = false
-  isEditing.value = false
-  selectedWorker.value = null
+}
+
+const handleFormSubmit = (e) => {
+  e.preventDefault()
+  formRef.value?.validate(async (errors) => {
+    if (!errors) {
+      isSubmitting.value = true
+      try {
+        if (isEditing.value) {
+          await workerStore.updateWorker(formModel.id, formModel)
+          message.success('Employé mis à jour')
+        } else {
+          await workerStore.addWorker(formModel)
+          message.success('Employé créé')
+        }
+        closeModal()
+        workerStore.fetchAllWorkers() // Refresh list
+      } catch (err) {
+        message.error('Une erreur est survenue')
+      } finally {
+        isSubmitting.value = false
+      }
+    }
+  })
+}
+
+const confirmDelete = (row) => {
+  dialog.warning({
+    title: 'Confirmer la suppression',
+    content: `Êtes-vous sûr de vouloir supprimer ${row.name} ?`,
+    positiveText: 'Supprimer',
+    negativeText: 'Annuler',
+    onPositiveClick: async () => {
+      await workerStore.removeWorker(row.id)
+      message.success('Employé supprimé')
+    }
+  })
 }
 </script>

@@ -1,20 +1,15 @@
 <template>
-    <div class="min-h-screen bg-gray-50/50 p-4 lg:p-8">
-        <div class="max-w-7xl mx-auto space-y-6">
-
-            <!-- Header -->
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-black text-gray-900 tracking-tight">Rapports par Entreprise</h1>
-                    <p class="text-sm text-gray-500 font-medium">Analyse détaillée de la performance de chaque entité.
-                    </p>
-                </div>
+    <div class="p-4 lg:p-8">
+        <div class="mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Rapports par Entreprise</h1>
+                <p class="text-sm text-gray-500">Analyse détaillée de la performance de chaque entité.</p>
             </div>
+        </div>
 
-            <!-- Enterprise Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div v-for="ent in statsStore.enterprisePerformance" :key="ent.uuid"
-                    class="bg-white rounded-[2rem] border border-gray-200 shadow-sm p-6 hover:shadow-xl hover:shadow-gray-200/50 transition-all group">
+        <n-grid x-gap="24" y-gap="24" cols="1 s:1 m:2 l:3" responsive="screen">
+            <n-gi v-for="ent in statsStore.enterprisePerformance" :key="ent.uuid">
+                <n-card :bordered="false" class="rounded-2xl shadow-sm hover:shadow-md transition-shadow h-full">
 
                     <div class="flex items-start justify-between mb-6">
                         <div class="flex items-center gap-4">
@@ -25,15 +20,20 @@
                                 <BuildingOfficeIcon v-else class="w-6 h-6 text-gray-300" />
                             </div>
                             <div>
-                                <h3 class="font-black text-gray-900 leading-tight">{{ ent.name }}</h3>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ ent.currency
-                                }}</p>
+                                <h3 class="font-bold text-gray-900 leading-tight">{{ ent.name }}</h3>
+                                <n-tag size="small" :bordered="false"
+                                    class="text-[10px] font-bold uppercase tracking-widest bg-gray-100 text-gray-500 mt-1">
+                                    {{ ent.currency }}
+                                </n-tag>
                             </div>
                         </div>
-                        <button @click="downloadReport(ent)"
-                            class="p-2.5 bg-gray-50 text-gray-400 rounded-xl hover:bg-orange-500 hover:text-white transition-all shadow-sm group-hover:bg-orange-600 group-hover:text-white">
-                            <ArrowDownTrayIcon class="w-5 h-5" />
-                        </button>
+                        <n-button circle secondary size="small" @click="downloadReport(ent)">
+                            <template #icon>
+                                <n-icon>
+                                    <ArrowDownTrayIcon />
+                                </n-icon>
+                            </template>
+                        </n-button>
                     </div>
 
                     <!-- Quick Stats -->
@@ -51,28 +51,29 @@
                     </div>
 
                     <!-- Details -->
-                    <div class="space-y-3">
+                    <div class="space-y-3 mb-6">
                         <div class="flex items-center justify-between text-xs font-bold">
                             <span class="text-gray-400">Total Ventes</span>
                             <span class="text-gray-900">{{ ent.sales_count }}</span>
                         </div>
-                        <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-orange-500 h-full transition-all"
-                                :style="{ width: `${Math.min(100, (ent.revenue / statsStore.adminStats.totalRevenue) * 100)}%` }">
-                            </div>
-                        </div>
+                        <n-progress type="line"
+                            :percentage="Math.min(100, (ent.revenue / (statsStore.adminStats.totalRevenue || 1)) * 100)"
+                            :show-indicator="false" color="#f97316" rail-color="#f3f4f6" height="6" border-radius="4" />
                     </div>
 
-                    <div class="mt-8">
-                        <button @click="router.push(`/${ent.uuid}/dashboard`)"
-                            class="w-full py-3 bg-white border border-gray-200 text-gray-700 font-black text-xs rounded-2xl hover:bg-gray-50 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
-                            Voir Dashboard
-                            <ArrowRightIcon class="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    <n-button block secondary type="default" @click="router.push(`/${ent.uuid}/dashboard`)"
+                        class="rounded-xl">
+                        Voir Dashboard
+                        <template #icon>
+                            <n-icon>
+                                <ArrowRightIcon />
+                            </n-icon>
+                        </template>
+                    </n-button>
+
+                </n-card>
+            </n-gi>
+        </n-grid>
     </div>
 </template>
 
@@ -81,6 +82,7 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStatisticsStore } from '@/stores/statisticStore'
 import { BuildingOfficeIcon, ArrowDownTrayIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
+import { NGrid, NGi, NCard, NButton, NIcon, NTag, NProgress } from 'naive-ui'
 
 const statsStore = useStatisticsStore()
 const router = useRouter()

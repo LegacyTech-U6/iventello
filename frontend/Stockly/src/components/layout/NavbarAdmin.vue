@@ -1,157 +1,163 @@
 <template>
-  <div class="flex h-screen bg-gray-50/50">
-    <!-- Mobile Header -->
-    <div
-      class="fixed top-0 left-0 right-0 z-50 lg:hidden bg-surface/80 backdrop-blur-md border-b border-outline-variant">
-      <div class="flex items-center justify-between px-4 h-16">
-        <!-- Mobile Menu Button -->
-        <button @click="sidebarOpen = !sidebarOpen" class="p-2 -ml-2">
-          <Bars3Icon class="w-6 h-6 text-on-surface" />
-        </button>
-
-        <!-- Mobile Logo -->
-        <img :src="Iventello" alt="Logo" class="h-8" />
-
-        <!-- Placeholder for alignment -->
-        <div class="w-6"></div>
-
-      </div>
-    </div>
-
-    <!-- Overlay for mobile -->
-    <div v-if="sidebarOpen" @click="sidebarOpen = false"
-      class="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300"></div>
-
-    <!-- Sidebar -->
-    <aside :class="[
-      'fixed lg:static top-0 left-0 h-screen bg-white/95 backdrop-blur-md border-r border-gray-200/60 transition-all duration-500 z-40 flex flex-col',
-      'w-72',
-      sidebarOpen ? 'translate-x-0 shadow-xl' : '-translate-x-full lg:translate-x-0 lg:shadow-sm',
-    ]">
-      <!-- Logo -->
-      <div class=" border-gray-200/50 p-5">
-        <img :src="Iventello" alt="Logo" class="w-42" />
+  <n-layout has-sider class="h-screen">
+    <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="250" :collapsed="collapsed"
+      show-trigger @collapse="collapsed = true" @expand="collapsed = false" class="bg-white">
+      <div class="h-16 flex items-center justify-center p-4 border-b border-gray-100">
+        <img :src="Iventello" alt="Logo" class="max-h-8" v-if="!collapsed" />
+        <img :src="Iventello" alt="Logo" class="max-h-6" v-else />
       </div>
 
-      <!-- Close button for mobile inside sidebar -->
-      <button @click="sidebarOpen = false" class="absolute top-4 right-4 lg:hidden p-2">
-        <XMarkIcon class="w-6 h-6 text-on-surface-variant" />
-      </button>
+      <n-menu v-model:value="activeKey" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
+        :options="menuOptions" />
 
-
-      <!-- Navigation Menu -->
-      <nav class="px-3 py-6 space-y-1 flex-1 overflow-y-auto">
-        <RouterLink v-for="link in navLinks" :key="link.to" :to="link.to"
-          :class="isActive(link.to) ? 'bg-primary-container text-primary' : 'text-on-surface-variant hover:bg-primary-container/50'"
-          class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200" @click="closeSidebarOnMobile">
-          <component :is="link.icon" class="w-5 h-5 flex-shrink-0" />
-          <span class="font-medium text-sm">{{ link.label }}</span>
-        </RouterLink>
-      </nav>
-
-      <!-- User Profile Section -->
-      <div class="relative mt-auto border-t border-outline-variant px-4 py-3">
-        <!-- User Menu Dropdown -->
-        <div v-if="userMenuOpen"
-          class="absolute bottom-full left-4 right-4 mb-2 bg-surface rounded-xl shadow-lg border border-outline-variant p-2">
-          <ValidationButton text="Sign Out" :color="'var(--md-error-container)'"
-            :customTextColor="'var(--md-on-error-container)'" :asyncClick="logout" width="100%" class="!justify-start">
-            <template #icon>
-              <ArrowRightOnRectangleIcon class="w-5 h-5" />
-            </template>
-          </ValidationButton>
+      <div class="absolute bottom-4 left-0 w-full px-4" v-if="!collapsed">
+        <div class="border-t border-gray-100 pt-4">
+          <n-dropdown trigger="click" :options="userOptions" @select="handleUserAction">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+              <n-avatar round size="small" :style="{ backgroundColor: 'var(--n-primary-color)' }">
+                {{ userInitials }}
+              </n-avatar>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate">{{ userName }}</p>
+                <p class="text-xs text-gray-500 truncate">{{ userEmail }}</p>
+              </div>
+            </div>
+          </n-dropdown>
         </div>
-
-        <!-- User Profile Clickable Area -->
-        <div @click="userMenuOpen = !userMenuOpen"
-          class="flex items-center gap-3 p-2 rounded-xl hover:bg-primary-container/50 transition-all duration-300 cursor-pointer group">
-          <div
-            class="w-10 h-10 bg-primary-container rounded-full flex items-center justify-center text-on-primary-container font-medium flex-shrink-0">
+      </div>
+      <div class="absolute bottom-4 left-0 w-full flex justify-center" v-else>
+        <n-dropdown trigger="click" :options="userOptions" @select="handleUserAction">
+          <n-avatar round size="small" class="cursor-pointer" :style="{ backgroundColor: 'var(--n-primary-color)' }">
             {{ userInitials }}
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-on-surface truncate">{{ userName }}</p>
-            <p class="text-xs text-on-surface-variant truncate">{{ userEmail }}</p>
-          </div>
-          <ChevronUpIcon class="w-5 h-5 text-on-surface-variant flex-shrink-0 transition-transform duration-300"
-            :class="userMenuOpen ? 'rotate-180' : ''" />
-        </div>
+          </n-avatar>
+        </n-dropdown>
       </div>
-    </aside>
+    </n-layout-sider>
 
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-      <header
-        class="bg-surface/80 backdrop-blur-md border-b border-outline-variant px-6 py-4 flex items-center justify-between">
-        <!-- This h2 is part of the desktop header, but we need a placeholder on mobile for the flexbox to work -->
-        <div class="lg:hidden"></div>
-
-        <h2 class="text-lg font-semibold text-on-surface hidden lg:block">
-          Welcome back, <span class="text-primary">{{ userFirstName }}!</span>
-        </h2>
-        <div class="flex items-center gap-4">
-          <button
-            class="p-2 rounded-full hover:bg-primary-container/50 text-on-surface-variant hover:text-primary transition-colors">
-            <BellIcon class="w-5 h-5" />
-          </button>
-          <button
-            class="p-2 rounded-full hover:bg-primary-container/50 text-on-surface-variant hover:text-primary transition-colors">
-            <Cog6ToothIcon class="w-5 h-5" />
-          </button>
+    <n-layout class="bg-gray-50">
+      <n-layout-header bordered class="h-16 flex items-center justify-between px-6 bg-white/80 backdrop-blur-sm z-10">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-800">
+            Welcome back, <span class="text-orange-500">{{ userFirstName }}!</span>
+          </h2>
         </div>
-      </header>
 
-      <main class="flex-1 overflow-y-auto pt-16 lg:pt-0">
+        <div class="flex items-center gap-4">
+          <n-button circle quaternary>
+            <template #icon>
+              <n-icon>
+                <BellIcon />
+              </n-icon>
+            </template>
+          </n-button>
+          <n-button circle quaternary>
+            <template #icon>
+              <n-icon>
+                <Cog6ToothIcon />
+              </n-icon>
+            </template>
+          </n-button>
+        </div>
+      </n-layout-header>
+
+      <n-layout-content content-style="padding: 24px; min-height: calc(100vh - 64px);" :native-scrollbar="false">
         <slot></slot>
-      </main>
-    </div>
-  </div>
+      </n-layout-content>
+    </n-layout>
+  </n-layout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, h, watchEffect } from 'vue'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore.js'
 import Iventello from '@/assets/iventello.png'
-import { RouterLink } from 'vue-router'
-import ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
 import {
-  Bars3Icon,
-  XMarkIcon,
+  NLayout,
+  NLayoutSider,
+  NLayoutHeader,
+  NLayoutContent,
+  NMenu,
+  NDropdown,
+  NAvatar,
+  NButton,
+  NIcon
+} from 'naive-ui'
+import {
   Squares2X2Icon,
-  UserGroupIcon,
+  ClipboardDocumentListIcon,
+  ListBulletIcon,
   BuildingOfficeIcon,
+  UserGroupIcon,
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
-  ChevronUpIcon,
-  BellIcon,
-  ClipboardDocumentListIcon,
-  ListBulletIcon
+  BellIcon
 } from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
 const route = useRoute()
-const sidebarOpen = ref(false)
-const userMenuOpen = ref(false)
+const router = useRouter()
+const collapsed = ref(false)
+const activeKey = ref(null)
 
-const logout = () => {
-  authStore.logout()
+// Sync active menu item with route
+watchEffect(() => {
+  activeKey.value = route.path
+})
+
+function renderIcon(icon) {
+  return () => h(NIcon, null, { default: () => h(icon) })
 }
 
-const navLinks = [
-  { to: '/ad/dashboard', icon: Squares2X2Icon, label: 'Tableau de Bord' },
-  { to: '/ad/reports', icon: ClipboardDocumentListIcon, label: 'Rapports' },
-  { to: '/ad/activities', icon: ListBulletIcon, label: 'Audit Trail' },
-  { to: '/ad/admin', icon: BuildingOfficeIcon, label: 'Compagnies' },
-  { to: '/ad/workers', icon: UserGroupIcon, label: 'Employés' },
-  { to: '/ad/settings', icon: Cog6ToothIcon, label: 'Paramètres' },
+const menuOptions = [
+  {
+    label: () => h(RouterLink, { to: '/ad/dashboard' }, { default: () => 'Tableau de Bord' }),
+    key: '/ad/dashboard',
+    icon: renderIcon(Squares2X2Icon)
+  },
+  {
+    label: () => h(RouterLink, { to: '/ad/reports' }, { default: () => 'Rapports' }),
+    key: '/ad/reports',
+    icon: renderIcon(ClipboardDocumentListIcon)
+  },
+  {
+    label: () => h(RouterLink, { to: '/ad/activities' }, { default: () => 'Audit Trail' }),
+    key: '/ad/activities',
+    icon: renderIcon(ListBulletIcon)
+  },
+  {
+    label: () => h(RouterLink, { to: '/ad/admin' }, { default: () => 'Compagnies' }),
+    key: '/ad/admin',
+    icon: renderIcon(BuildingOfficeIcon)
+  },
+  {
+    label: () => h(RouterLink, { to: '/ad/workers' }, { default: () => 'Employés' }),
+    key: '/ad/workers',
+    icon: renderIcon(UserGroupIcon)
+  },
+  {
+    label: () => h(RouterLink, { to: '/ad/settings' }, { default: () => 'Paramètres' }),
+    key: '/ad/settings',
+    icon: renderIcon(Cog6ToothIcon)
+  }
 ]
 
-const isActive = (path) => {
-  return route.path.startsWith(path)
+const userOptions = [
+  {
+    label: 'Sign Out',
+    key: 'logout',
+    icon: renderIcon(ArrowRightOnRectangleIcon)
+  }
+]
+
+const handleUserAction = (key) => {
+  if (key === 'logout') {
+    authStore.logout()
+    router.push('/login')
+  }
 }
 
-// Computed user data
+// User data
 const userName = computed(() => authStore.user ? `${authStore.user.username || ''} ${authStore.user.Last_name || ''}`.trim() : 'Demo User')
 const userFirstName = computed(() => authStore.user?.username || 'User')
 const userEmail = computed(() => authStore.user?.email || 'demo@demo.com')
@@ -161,14 +167,4 @@ const userInitials = computed(() => {
   const last = authStore.user.Last_name?.[0] || ''
   return `${first}${last}`.toUpperCase()
 })
-
-const closeSidebarOnMobile = () => {
-  if (window.innerWidth < 1024) sidebarOpen.value = false
-}
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1024) sidebarOpen.value = false
-  })
-}
 </script>

@@ -64,6 +64,16 @@ const routes: RouteRecordRaw[] = [
     name: 'login',
     component: () => import('../views/auth/LoginView.vue'),
   },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('../views/auth/ForgotPassword.vue'),
+  },
+  {
+    path: '/reset-password/:token',
+    name: 'reset-password',
+    component: () => import('../views/auth/ResetPassword.vue'),
+  },
 
   // ===================== ADMIN =====================
   {

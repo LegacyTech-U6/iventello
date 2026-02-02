@@ -251,16 +251,41 @@ exports.forgotPassword = async (req, res) => {
       expiresIn: "15m",
     });
 
-    // 💌 Normalement : envoi du lien par email
-    // Exemple : https://tonsite.com/reset-password?token=xxxx
-    // Ici on renvoie juste le token (pour dev)
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    const htmlContent = `
+      <h2>Réinitialisation de mot de passe �</h2>
+      <p>Bonjour,</p>
+      <p>Vous avez demandé à réinitialiser votre mot de passe sur <strong>Iventello</strong>.</p>
+      <p>Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :</p>
+      <a href="${resetLink}" 
+         style="display:inline-block;background:#2563eb;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;">
+        Réinitialiser mon mot de passe
+      </a>
+      <p style="margin-top:20px;font-size:12px;color:#666;">Ce lien expire dans 15 minutes. Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
+    `;
+
+    // Envoi du mail via Mailjet
+    const mailResult = await sendMail({
+      to: email,
+      subject: "Réinitialisation de votre mot de passe - Iventello",
+      html: htmlContent,
+    });
+
+    if (!mailResult.success) {
+      console.error("⚠️ Erreur envoi mail reset password:", mailResult.error);
+      return res
+        .status(500)
+        .json({ message: "Erreur lors de l'envoi de l'email." });
+    }
+
     res.status(200).json({
-      message: "Lien de réinitialisation généré (à envoyer par email)",
-      resetToken,
+      message:
+        "Un lien de réinitialisation a été envoyé à votre adresse email.",
     });
   } catch (err) {
     console.error("Erreur forgotPassword:", err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Erreur serveur lors de la demande." });
   }
 };
 
