@@ -398,6 +398,7 @@ exports.getProfile = async (req, res) => {
           "Last_name",
           "telephone",
           "created_at",
+          "onboarding_completed", // ✅ Added
         ],
       });
 
@@ -485,5 +486,26 @@ exports.activateAccount = async (req, res) => {
     res.status(200).json({ message: "Compte activé avec succès" });
   } catch (err) {
     res.status(400).json({ message: "Lien d’activation invalide ou expiré" });
+  }
+};
+
+// ===============================
+// 🔹 Complete Onboarding
+// ===============================
+exports.completeOnboarding = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findByPk(userId);
+
+    if (!user)
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+    user.onboarding_completed = true;
+    await user.save();
+
+    res.status(200).json({ message: "Onboarding completed" });
+  } catch (err) {
+    console.error("Erreur completeOnboarding:", err);
+    res.status(500).json({ message: err.message });
   }
 };
