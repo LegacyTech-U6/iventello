@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.1.0",
+    "@sentry/node": "^10.38.0",
+    "@sentry/profiling-node": "^10.38.0",
     "@supabase/supabase-js": "^1.35.7",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",

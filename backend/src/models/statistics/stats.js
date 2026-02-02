@@ -1,9 +1,15 @@
-const { Product, Sales, Client, Entreprise, Sequelize } = require("../../config/db");
+const {
+  Product,
+  Sales,
+  Client,
+  Entreprise,
+  Sequelize,
+} = require("../../config/db");
 const { Op, fn, col, literal } = Sequelize;
 const db = require("../../config/db");
-const { sequelize } = require('../../config/db');
+const { sequelize } = require("../../config/db");
 function formatDate(date) {
-  return date.toISOString().slice(0, 19).replace('T', ' ');
+  return date.toISOString().slice(0, 19).replace("T", " ");
 }
 const BASE_URL = process.env.BASE_URL;
 
@@ -12,9 +18,9 @@ async function getEnterpriseIds(userId) {
   if (!userId) return [];
   const enterprises = await Entreprise.findAll({
     where: { user_id: userId },
-    attributes: ['id']
+    attributes: ["id"],
   });
-  return enterprises.map(e => e.id);
+  return enterprises.map((e) => e.id);
 }
 
 // 🔹 Prépare le filtre entreprise/user
@@ -30,11 +36,16 @@ async function getFilter({ userId, enterpriseId }) {
 // 🔹 Formater la date selon la période
 function getDateFormat(period) {
   switch (period) {
-    case "day": return 'YYYY-MM-DD';
-    case "week": return 'IYYY-IW';
-    case "month": return 'YYYY-MM';
-    case "year": return 'YYYY';
-    default: return 'YYYY-MM';
+    case "day":
+      return "YYYY-MM-DD";
+    case "week":
+      return "IYYY-IW";
+    case "month":
+      return "YYYY-MM";
+    case "year":
+      return "YYYY";
+    default:
+      return "YYYY-MM";
   }
 }
 
@@ -57,19 +68,19 @@ async function getSales({ userId, enterpriseId, period }) {
   const dateFormat = getDateFormat(period);
 
   const rows = await Sales.findAll({
-    include: { model: Product, as: 'product', where: filter, attributes: [] },
+    include: { model: Product, as: "product", where: filter, attributes: [] },
     attributes: [
-      [fn('TO_CHAR', col('sale_date'), dateFormat), 'period'],
-      [fn('SUM', col('total_price')), 'value']
+      [fn("TO_CHAR", col("sale_date"), dateFormat), "period"],
+      [fn("SUM", col("total_price")), "value"],
     ],
-    group: ['period'],
-    order: [['period', 'ASC']]
+    group: ["period"],
+    order: [["period", "ASC"]],
   });
 
-  const history = rows.map(r => ({
+  const history = rows.map((r) => ({
     period: r.dataValues.period,
     value: Number(r.dataValues.value),
-    growth_percent: 0
+    growth_percent: 0,
   }));
   const total = history.reduce((a, h) => a + h.value, 0);
   return { total, history: computeGrowth(history) };
@@ -83,19 +94,22 @@ async function getProfit({ userId, enterpriseId, period = "month" }) {
   const dateFormat = getDateFormat(period);
 
   const rows = await Sales.findAll({
-    include: { model: Product, as: 'product', where: filter, attributes: [] },
+    include: { model: Product, as: "product", where: filter, attributes: [] },
     attributes: [
-      [fn('TO_CHAR', col('sale_date'), dateFormat), 'period'],
-      [fn('SUM', literal('quantity_sold * (selling_price - cost_price)')), 'value']
+      [fn("TO_CHAR", col("sale_date"), dateFormat), "period"],
+      [
+        fn("SUM", literal("quantity_sold * (selling_price - cost_price)")),
+        "value",
+      ],
     ],
-    group: ['period'],
-    order: [['period', 'ASC']]
+    group: ["period"],
+    order: [["period", "ASC"]],
   });
 
-  const history = rows.map(r => ({
+  const history = rows.map((r) => ({
     period: r.dataValues.period,
     value: Number(r.dataValues.value),
-    growth_percent: 0
+    growth_percent: 0,
   }));
   const total = history.reduce((a, h) => a + h.value, 0);
   return { total, history: computeGrowth(history) };
@@ -111,41 +125,46 @@ async function getClients({ userId, enterpriseId, period = "month" }) {
   const rows = await Client.findAll({
     where: filter,
     attributes: [
-      [fn('TO_CHAR', col('createdAt'), dateFormat), 'period'],
-      [fn('COUNT', col('id')), 'value']
+      [fn("TO_CHAR", col("createdAt"), dateFormat), "period"],
+      [fn("COUNT", col("id")), "value"],
     ],
-    group: ['period'],
-    order: [['period', 'ASC']]
+    group: ["period"],
+    order: [["period", "ASC"]],
   });
 
-  const history = rows.map(r => ({
+  const history = rows.map((r) => ({
     period: r.dataValues.period,
     value: Number(r.dataValues.value),
-    growth_percent: 0
+    growth_percent: 0,
   }));
   const total = history.reduce((a, h) => a + h.value, 0);
   return { total, history: computeGrowth(history) };
 }
 
 // 🔹 Produits top
-async function getTopProducts({ userId, enterpriseId, limit = 10, period = 'month' }) {
+async function getTopProducts({
+  userId,
+  enterpriseId,
+  limit = 10,
+  period = "month",
+}) {
   let entrepriseIds = [];
   if (enterpriseId) entrepriseIds = [enterpriseId];
   else if (userId) {
     const entreprises = await db.Entreprise.findAll({
       where: { user_id: userId },
-      attributes: ['id'],
+      attributes: ["id"],
     });
-    entrepriseIds = entreprises.map(e => e.id);
+    entrepriseIds = entreprises.map((e) => e.id);
   }
   if (entrepriseIds.length === 0) return [];
 
   const now = new Date();
   let startDate, endDate;
-  if (period === 'day') {
+  if (period === "day") {
     startDate = new Date(now.setHours(0, 0, 0, 0));
     endDate = new Date(now.setHours(23, 59, 59, 999));
-  } else if (period === 'week') {
+  } else if (period === "week") {
     const day = now.getDay();
     startDate = new Date(now);
     startDate.setDate(now.getDate() - day);
@@ -159,7 +178,8 @@ async function getTopProducts({ userId, enterpriseId, limit = 10, period = 'mont
   const end = formatDate(endDate);
 
   try {
-    const products = await sequelize.query(`
+    const products = await sequelize.query(
+      `
       SELECT 
         p.id,
         p."Prod_name",
@@ -178,12 +198,14 @@ async function getTopProducts({ userId, enterpriseId, limit = 10, period = 'mont
       GROUP BY p.id
       ORDER BY total_sold DESC
       LIMIT :limit
-    `, {
-      replacements: { start, end, entrepriseIds, limit },
-      type: sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { start, end, entrepriseIds, limit },
+        type: sequelize.QueryTypes.SELECT,
+      },
+    );
 
-    return products.map(p => ({
+    return products.map((p) => ({
       id: p.id,
       name: p.Prod_name,
       image: `${BASE_URL}${p.Prod_image}`,
@@ -193,33 +215,38 @@ async function getTopProducts({ userId, enterpriseId, limit = 10, period = 'mont
       total_sold: Number(p.total_sold),
       total_revenue: Number(p.total_revenue) || 0,
       total_profit: Number(p.total_profit) || 0,
+      total_cost:
+        (Number(p.total_revenue) || 0) - (Number(p.total_profit) || 0),
     }));
-
   } catch (err) {
-    console.error('Erreur SQL dans getTopProducts:', err);
+    console.error("Erreur SQL dans getTopProducts:", err);
     throw err;
   }
 }
 
 // 🔹 Revenu par catégorie
-async function getRevenueByCategory({ userId, enterpriseId, period = 'month' }) {
+async function getRevenueByCategory({
+  userId,
+  enterpriseId,
+  period = "month",
+}) {
   let entrepriseIds = [];
   if (enterpriseId) entrepriseIds = [enterpriseId];
   else if (userId) {
     const entreprises = await db.Entreprise.findAll({
       where: { user_id: userId },
-      attributes: ['id'],
+      attributes: ["id"],
     });
-    entrepriseIds = entreprises.map(e => e.id);
+    entrepriseIds = entreprises.map((e) => e.id);
   }
   if (entrepriseIds.length === 0) return [];
 
   const now = new Date();
   let startDate, endDate;
-  if (period === 'day') {
+  if (period === "day") {
     startDate = new Date(now.setHours(0, 0, 0, 0));
     endDate = new Date(now.setHours(23, 59, 59, 999));
-  } else if (period === 'week') {
+  } else if (period === "week") {
     const day = now.getDay();
     startDate = new Date(now);
     startDate.setDate(now.getDate() - day);
@@ -233,7 +260,8 @@ async function getRevenueByCategory({ userId, enterpriseId, period = 'month' }) 
   const end = formatDate(endDate);
 
   try {
-    const rows = await sequelize.query(`
+    const rows = await sequelize.query(
+      `
       SELECT 
         c.name AS category,
         COALESCE(SUM(s.total_price), 0) AS total_revenue,
@@ -246,19 +274,21 @@ async function getRevenueByCategory({ userId, enterpriseId, period = 'month' }) 
         AND (s.sale_date BETWEEN :start AND :end OR s.sale_date IS NULL)
       GROUP BY c.name
       ORDER BY total_revenue DESC
-    `, {
-      replacements: { start, end, entrepriseIds },
-      type: sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { start, end, entrepriseIds },
+        type: sequelize.QueryTypes.SELECT,
+      },
+    );
 
-    return rows.map(r => ({
-      category: r.category || 'Uncategorized',
+    return rows.map((r) => ({
+      category: r.category || "Uncategorized",
       total_revenue: Number(r.total_revenue) || 0,
       total_profit: Number(r.total_profit) || 0,
-      product_count: Number(r.product_count) || 0
+      product_count: Number(r.product_count) || 0,
     }));
   } catch (err) {
-    console.error('Erreur SQL dans getRevenueByCategory:', err);
+    console.error("Erreur SQL dans getRevenueByCategory:", err);
     throw err;
   }
 }
@@ -268,5 +298,5 @@ module.exports = {
   getProfit,
   getClients,
   getRevenueByCategory,
-  getTopProducts
+  getTopProducts,
 };

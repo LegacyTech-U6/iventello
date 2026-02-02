@@ -1,19 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const  validateSupplier  = require("../middleware/validateSupllier"); 
+const validateSupplier = require("../middleware/validateSupllier");
 const {
   deleteSupplier,
-   createSupplier,
+  createSupplier,
   getAllSuppliers,
   getSupplierById,
   updateSupplier,
   getProductsBySupplier,
 } = require("../controller/suppliers.controller");
-const getActiveEntreprise = require('../middleware/activeEntreprise');
+const getActiveEntreprise = require("../middleware/activeEntreprise");
 
-// router.use(getActiveEntreprise);
+router.use(getActiveEntreprise);
 router.get("/", getAllSuppliers);
-router.post("/",validateSupplier, createSupplier);
+router.post("/", validateSupplier, createSupplier);
 router.get("/:id", getSupplierById);
 router.put("/:id", updateSupplier);
 router.delete("/:id", deleteSupplier);

@@ -9,7 +9,7 @@ exports.getRecentNotifications = async (req, res) => {
     if (!user_id) return res.status(401).json({ message: "Unauthorized" });
 
     const { Op } = require("sequelize");
-    const entreprise_id = req.entrepriseId;
+    const entreprise_id = req.entrepriseId || null;
 
     // 🔹 Récupère les notifications pour l'utilisateur OU pour l'entreprise entière
     const notifications = await Notification.findAll({
@@ -57,7 +57,7 @@ exports.markAllAsRead = async (req, res) => {
     if (!user_id) return res.status(401).json({ message: "Unauthorized" });
 
     const { Op } = require("sequelize");
-    const entreprise_id = req.entrepriseId;
+    const entreprise_id = req.entrepriseId || null;
 
     await Notification.update(
       { read: true },
