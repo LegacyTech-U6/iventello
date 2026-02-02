@@ -8,7 +8,7 @@
 -->
 <script setup lang="ts">
 // Import du navbar spécifique aux pages de login
-import LoginNav from '@/components/LoginNav.vue'
+import LoginNav from '@/components/layout/LoginNav.vue'
 import ValidationModal from '@/components/ui/ValidationModal.vue'
 </script>
 

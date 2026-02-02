@@ -77,13 +77,6 @@ export async function updateProduct(productId, productData) {
   return data
 }
 
-/*
-export async function deleteProduct(productId) {
-  const { data } = await API.delete(`/products/${productId}`)
-  return data
-}
-*/
-
 export async function createProduct(productData) {
   console.log('🚀 API: Creating product with data:', productData)
 
@@ -161,20 +154,6 @@ export async function importProducts(formData) {
 // Invoice PDF
 ///////////////////////////////////
 
-/*
-export async function generateInvoicePdf(html) {
-  const response = await API.post(
-    '/pdf/from-python',
-    { html },
-    {
-      responseType: 'blob', // 🔴 OBLIGATOIRE pour PDF
-    },
-  )
-
-  return response.data
-}
-*/
-
 ///////////////////////////////////////
 // Invoice calls
 ///////////////////////////////////////
@@ -203,25 +182,6 @@ export async function getInvoiceById(id) {
 ///////////////////////////////////////
 
 // ✅ Ventes : Récupérer toutes les ventes
-/*
-export async function getAllSales() {
-  const { data } = await API.get('/sales')
-  return data
-}
-
-export async function getSaleById(id) {
-  const { data } = await API.get(`/sales/${id}`)
-  return data
-}
-export async function createSale(saleData) {
-  const { data } = await API.post('/sales', saleData)
-  return data
-}
-export async function deleteSale(saleId) {
-  const { data } = await API.delete(`/sales/${saleId}`)
-  return data
-}
-*/
 
 /////////////////////////////////////
 // category management
@@ -482,8 +442,8 @@ export async function getSalesReport(period = 'month') {
 }
 
 // ✅ Récupérer le meilleur produit vendu pour une période
-export async function getBestSellingProduct(period = 'month') {
-  const { data } = await API.get('/stats/products', { params: { period } })
+export async function getBestSellingProduct(period = 'month', limit = 10) {
+  const { data } = await API.get('/stats/products', { params: { period, limit } })
   return data
 }
 
@@ -516,6 +476,12 @@ export async function getRevenue(period = 'month') {
 // period = "day" | "month"
 export async function getProfit(period = 'month') {
   const { data } = await API.get('/stats/profit', { params: { period } })
+  return data
+}
+
+// ✅ Récupérer les dépenses pour une période
+export async function getExpenseStats(period = 'month') {
+  const { data } = await API.get('/stats/expenses', { params: { period } })
   return data
 }
 
@@ -562,25 +528,6 @@ export async function getAllActivities() {
 ////////////////////////////////////////////////////
 // Reports: Sales and Purchase
 ////////////////////////////////////////////////////
-
-// ✅ voir le rapport des ventes journalières
-export async function getDailySalesReport() {
-  const { data } = await API.get('/activities/reports/daily-sales')
-  return data
-}
-
-// ✅ Générer le rapport des achats journaliers
-export async function getDailyPurchaseReport() {
-  const { data } = await API.get('/activities/reports/daily-purchases')
-  return data
-}
-
-// ✅ generer le raport des ventejounalier
-
-export async function getSellingReport() {
-  const { data } = await API.get('/activities/reports/sales-report')
-  return data
-}
 
 // ===============================
 // 🔹 Notifications

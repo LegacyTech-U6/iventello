@@ -15,6 +15,7 @@ import {
   getProductDistributionByCategory,
   getClientsTats,
   getAdminDashboard,
+  getExpenseStats,
 } from '@/service/api'
 
 export const useStatisticsStore = defineStore('statistics', {
@@ -26,6 +27,7 @@ export const useStatisticsStore = defineStore('statistics', {
     bestByCategory: {},
     revenue: { total: 0, history: [] },
     profit: { total: 0, history: [] },
+    expenses: { total: 0, history: [] },
     salesComparison: null,
     quarterlySales: [],
     salesTrend: [],
@@ -87,7 +89,7 @@ export const useStatisticsStore = defineStore('statistics', {
     async fetchBestSellingProduct(period = 'month') {
       this.loading = true
       try {
-        const data = await getBestSellingProduct(period)
+        const data = await getBestSellingProduct(period, 5)
         this.bestSellingProduct = data
         console.log('====================================')
         console.log(data)
@@ -255,6 +257,21 @@ export const useStatisticsStore = defineStore('statistics', {
       this.revenueByCategory = []
       this.topProducts = []
       this.client = []
+    },
+    // 🔹 Fetch expenses for a period
+    async fetchExpenseStats(period = 'month') {
+      this.loading = true
+      try {
+        const data = await getExpenseStats(period)
+        console.log('====================================')
+        console.log('Expenses:', data)
+        console.log('====================================')
+        this.expenses = data.expenses || { total: 0, history: [] }
+      } catch (err) {
+        this.error = err.message
+      } finally {
+        this.loading = false
+      }
     },
   },
 })

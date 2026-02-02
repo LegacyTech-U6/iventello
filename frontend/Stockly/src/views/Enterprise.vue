@@ -106,6 +106,7 @@ onMounted(async () => {
       statisticStore.fetchProductSales('day'),
       statisticStore.fetchProfit('day'),
       statisticStore.fetclient('day'),
+      statisticStore.fetchExpenseStats('day'),
     ])
   } finally {
     loading.value = false
@@ -158,15 +159,15 @@ const statsTable = computed(() => [
   {
     id: 4,
     label: 'Total Expenses',
-    value: 0,
-    trend: 0,
+    value: statisticStore.expenses?.total || 0,
+    trend: statisticStore.expenses?.history?.at(-1)?.growth_percent || 0,
     icon: WalletIcon,
     iconBg: '#FFF7E6',
     iconColor: '#f59e0b',
     viewLink: '/expenses',
     period: 'Month',
     isCurrency: true,
-    disabled: true
+    disabled: false
   }
 ])
 

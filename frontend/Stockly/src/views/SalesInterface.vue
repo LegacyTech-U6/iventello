@@ -257,9 +257,9 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { ShoppingBagIcon } from '@heroicons/vue/24/outline'
-import ClientSelector from '@/components/ClientSelector.vue'
-import ProductSelector from '@/components/ProductSelector.vue'
-import CartItem from '@/components/CartItem.vue'
+import ClientSelector from '@/components/sales/ClientSelector.vue'
+import ProductSelector from '@/components/sales/ProductSelector.vue'
+import CartItem from '@/components/sales/CartItem.vue'
 import { useProductStore } from '@/stores/productStore'
 import { useInvoiceStore } from '@/stores/FactureStore'
 import CreateInvoiceForm from '@/components/invoices/CreateInvoiceForm.vue'

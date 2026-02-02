@@ -1,6 +1,6 @@
 const sequelizeQuery = require("sequelize-query");
-const  { Op } = require( "sequelize");
-const  db = require('../config/db')  // tes modèles Sequelize
+const { Op } = require("sequelize");
+const db = require("../config/db"); // tes modèles Sequelize
 const queryParser = sequelizeQuery(db);
 exports.getDailySalesReport = async (req, res) => {
   try {
@@ -54,11 +54,14 @@ exports.getDailySalesReport = async (req, res) => {
     const details = invoices.map((invoice) => {
       const invoiceTotal = invoice.items.reduce(
         (sum, item) => sum + item.quantity * item.unit_price,
-        0
+        0,
       );
 
       totalSales += invoiceTotal;
-      totalItemsSold += invoice.items.reduce((sum, item) => sum + item.quantity, 0);
+      totalItemsSold += invoice.items.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
+      );
 
       // Construire top_products
       invoice.items.forEach((item) => {
@@ -94,14 +97,17 @@ exports.getDailySalesReport = async (req, res) => {
     invoices.forEach((invoice) => {
       invoice.items.forEach((item) => {
         const categoryName = item.product.category?.name || "Uncategorized";
-        if (!salesByCategoryMap[categoryName]) salesByCategoryMap[categoryName] = 0;
+        if (!salesByCategoryMap[categoryName])
+          salesByCategoryMap[categoryName] = 0;
         salesByCategoryMap[categoryName] += item.quantity * item.unit_price;
       });
     });
-    const salesByCategory = Object.entries(salesByCategoryMap).map(([category, total]) => ({
-      category,
-      total,
-    }));
+    const salesByCategory = Object.entries(salesByCategoryMap).map(
+      ([category, total]) => ({
+        category,
+        total,
+      }),
+    );
 
     // 5️⃣ Réponse finale
     const report = {
@@ -115,17 +121,16 @@ exports.getDailySalesReport = async (req, res) => {
       details,
     };
     await db.salesReport.upsert({
-  date: new Date().toISOString().split("T")[0],
-  total_sales: totalSales,
-  total_items_sold: totalItemsSold,
-  transactions: invoices.length,
-  average_sale: Number((totalSales / invoices.length).toFixed(2)),
-  top_products: topProducts,
-  sales_by_category: salesByCategory,
-  details,
-  entreprise_id: entrepriseId,
-});
-
+      date: new Date().toISOString().split("T")[0],
+      total_sales: totalSales,
+      total_items_sold: totalItemsSold,
+      transactions: invoices.length,
+      average_sale: Number((totalSales / invoices.length).toFixed(2)),
+      top_products: topProducts,
+      sales_by_category: salesByCategory,
+      details,
+      entreprise_id: entrepriseId,
+    });
 
     res.status(200).json(report);
   } catch (error) {
@@ -133,32 +138,3 @@ exports.getDailySalesReport = async (req, res) => {
     res.status(500).json({ error: "Erreur lors de la génération du rapport." });
   }
 };
-exports.getReport = async (req, res) => {
-  try {
-    const entreprise_id = req.entrepriseId;
-    if (!entreprise_id) {
-      return res.status(400).json({ message: "Entreprise ID missing" });
-    }
-
-    const query = await queryParser.parse(req);
-    query.where = { ...query.where, entreprise_id };
-
-    console.log("Query where:", query.where);
-
-    const data = await db.salesReport.findAll({
-      ...query,
-     
-    });
-
-    const count = await db.salesReport.count({
-      where: query.where,
-    });
-
-
-    res.status(200).json({ count, data });
-  } catch (err) {
-    console.error("Error fetching report:", err);
-    res.status(500).json({ message: err.message });
-  }
-};
-

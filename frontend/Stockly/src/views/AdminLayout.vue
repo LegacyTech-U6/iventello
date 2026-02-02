@@ -22,7 +22,7 @@
 
 <script setup>
 // Import du composant NavBar (contient tous les menus admin)
-import NavbarAdmin from '@/components/NavbarAdmin.vue'
+import NavbarAdmin from '@/components/layout/NavbarAdmin.vue'
 import ValidationModal from '@/components/ui/ValidationModal.vue'
 </script>
 <style>

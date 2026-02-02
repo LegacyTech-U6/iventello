@@ -114,7 +114,7 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore.js'
 import Iventello from '@/assets/iventello.png'
 import { RouterLink } from 'vue-router'
-import ValidationButton from './ui/buttons/ValidationButton.vue'
+import ValidationButton from '@/components/ui/buttons/ValidationButton.vue'
 import {
   Bars3Icon,
   XMarkIcon,

@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4" @click.self="$emit('close')">
+  <div class="absolute inset-0 bg-black/50 flex justify-center items-center w-full h-full z-50 p-4 backdrop-blur-sm overflow-y-auto" @click.self="$emit('close')">
     <div class="bg-white w-full max-w-6xl rounded-xl shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
       <!-- Header -->
       <div class="bg-gradient-to-r from-[#004E5B] to-[#006879] px-6 py-4 flex justify-between items-center">

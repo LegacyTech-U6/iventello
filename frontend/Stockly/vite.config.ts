@@ -14,7 +14,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-   process.env.STORYBOOK ? null : vueDevTools(),
+    process.env.STORYBOOK ? null : vueDevTools(),
     tailwindcss(),
 
     // gzip + brotli
@@ -22,7 +22,7 @@ export default defineConfig({
     viteCompression({ algorithm: 'gzip', ext: '.gz' }),
 
     Components({
-      resolvers: [NaiveUiResolver()]
+      resolvers: [NaiveUiResolver()],
     }),
 
     VitePWA({
@@ -43,16 +43,16 @@ export default defineConfig({
           {
             src: '/iventello.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
           },
           {
             src: '/iventello.png',
             sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
-      }
-    })
+            type: 'image/png',
+          },
+        ],
+      },
+    }),
   ],
 
   resolve: {
@@ -65,7 +65,7 @@ export default defineConfig({
   build: {
     assetsInlineLimit: 4096,
     rollupOptions: {
-      output: {}
-    }
-  }
+      output: {},
+    },
+  },
 })

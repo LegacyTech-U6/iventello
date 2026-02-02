@@ -73,10 +73,10 @@ import {
   ArrowLeftIcon,
   CheckCircleIcon
 } from '@heroicons/vue/24/outline'
-import LowStockCard from '../components/LowStockCard.vue'
+import LowStockCard from '@/components/Products/LowStockCard.vue'
 import GridCard from '@/components/ui/cards/GridCard.vue'
 import { LowStock } from '@/service/api'
-import RestockModal from '@/components/RestockModal.vue'
+import RestockModal from '@/components/Products/RestockModal.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/productStore'
 

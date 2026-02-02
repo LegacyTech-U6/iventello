@@ -48,7 +48,6 @@ const checkStockAlerts = async (product, entrepriseId) => {
 // 🔹 Récupérer tous les produits
 // ===============================
 exports.getAllProducts = async (req, res) => {
-
   try {
     const query = await queryParser.parse(req);
 
@@ -144,7 +143,6 @@ exports.createProduct = async (req, res) => {
     let Prod_image = null;
 
     if (req.file) {
-
       const fileName = `${Date.now()}-${req.file.originalname}`;
 
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -566,7 +564,6 @@ exports.getOutOfStockProducts = async (req, res) => {
         user_id: req.user?.id,
         save: true,
       });
-    }
     }
     res.json({ products: data });
   } catch (err) {

@@ -16,9 +16,14 @@
             </span>
           </div>
           <div class="flex flex-col border-l-2 border-emerald-500 pl-3">
-            <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Total Ventes</span>
             <span class="text-lg font-bold text-emerald-600 transition-all">
               {{ isLoading ? '...' : totalSales.toLocaleString() }}
+            </span>
+          </div>
+          <div class="flex flex-col border-l-2 border-orange-500 pl-3">
+            <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Total Dépenses</span>
+            <span class="text-lg font-bold text-orange-500 transition-all">
+              {{ isLoading ? '...' : totalExpenses.toLocaleString() }}
             </span>
           </div>
         </div>
@@ -62,6 +67,10 @@
             fill="#10b981" rx="4"
             class="cursor-pointer hover:fill-emerald-600 transition-all duration-300 opacity-80 hover:opacity-100"
             @mouseenter="showTooltip(item, 'Ventes', item.sales, $event)" @mouseleave="hideTooltip" />
+          <rect :x="getX(i) + (barWidth * 2) + 6" :y="getY(item.expenses)" :width="barWidth"
+            :height="getH(item.expenses)" fill="#f97316" rx="4"
+            class="cursor-pointer hover:fill-orange-600 transition-all duration-300 opacity-80 hover:opacity-100"
+            @mouseenter="showTooltip(item, 'Dépenses', item.expenses, $event)" @mouseleave="hideTooltip" />
           <text v-if="shouldShowLabel(i)" :x="getX(i) + barWidth" :y="chartHeight + 30" text-anchor="middle"
             class="text-[11px] fill-gray-400 font-bold uppercase">
             {{ item.time }}
@@ -72,10 +81,10 @@
       <div v-if="tooltip.visible && !isLoading" :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }"
         class="absolute -translate-x-1/2 -translate-y-full mt-[-15px] z-50 bg-gray-900 text-white p-3 rounded-xl shadow-2xl pointer-events-none border border-white/10">
         <div class="text-[10px] uppercase tracking-widest opacity-50 border-b border-white/10 mb-2 pb-1">{{ tooltip.time
-          }}</div>
+        }}</div>
         <div class="flex justify-between items-center gap-6">
           <div class="flex items-center gap-2">
-            <div class="w-2 h-2 rounded-full" :class="tooltip.label === 'Ventes' ? 'bg-emerald-400' : 'bg-red-400'">
+            <div class="w-2 h-2 rounded-full" :class="getTooltipColor(tooltip.label)">
             </div>
             <span class="text-xs font-medium">{{ tooltip.label }}</span>
           </div>
@@ -112,15 +121,16 @@ const padding = { top: 40, right: 20, bottom: 40, left: 60 }
 const barWidth = computed(() => {
   const count = chartData.value.length || 1
   if (count <= 7) return 25
-  if (count <= 12) return 18
-  return 8
+  if (count <= 12) return 15
+  return 6
 })
 
 const totalSales = computed(() => chartData.value.reduce((acc, i) => acc + i.sales, 0))
 const totalPurchase = computed(() => chartData.value.reduce((acc, i) => acc + i.purchase, 0))
+const totalExpenses = computed(() => chartData.value.reduce((acc, i) => acc + i.expenses, 0))
 
 const maxValue = computed(() => {
-  const all = chartData.value.flatMap(i => [i.sales, i.purchase])
+  const all = chartData.value.flatMap(i => [i.sales, i.purchase, i.expenses])
   return Math.max(...all, 100) * 1.2
 })
 
@@ -129,7 +139,7 @@ const getY = (val) => chartHeight - (val / maxValue.value * (chartHeight - paddi
 const getH = (val) => Math.max((val / maxValue.value * (chartHeight - padding.top)), 4)
 const getX = (i) => {
   const spacing = (chartWidth - padding.left - padding.right) / (chartData.value.length || 1)
-  return padding.left + (i * spacing) + (spacing - ((barWidth.value * 2) + 3)) / 2
+  return padding.left + (i * spacing) + (spacing - ((barWidth.value * 3) + 6)) / 2
 }
 
 const formatYAxis = (v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v
@@ -139,30 +149,56 @@ const shouldShowLabel = (i) => activeTab.value === 'month' ? i % 2 === 0 : true
 async function fetchData(period) {
   isLoading.value = true
   try {
-    await store.fetchProductSales(period)
+    await Promise.all([
+      store.fetchProductSales(period),
+      store.fetchExpenseStats(period)
+    ])
+
     const history = store.topProducts?.sales?.history || []
+    const expenseHistory = store.expenses?.history || []
     const today = new Date()
 
     if (period === 'day') {
       const start = startOfWeek(today, { weekStartsOn: 1 })
       chartData.value = Array.from({ length: 7 }, (_, i) => {
         const d = addDays(start, i)
-        const match = history.find(h => h.period === format(d, 'yyyy-MM-dd'))
-        return { time: format(d, 'EEE'), sales: match?.value || 0, purchase: match?.total || 0 }
+        const dateStr = format(d, 'yyyy-MM-dd')
+        const match = history.find(h => h.period === dateStr)
+        const expMatch = expenseHistory.find(h => h.period === dateStr)
+        return {
+          time: format(d, 'EEE'),
+          sales: match?.value || 0,
+          purchase: match?.total || 0,
+          expenses: expMatch?.value || 0
+        }
       })
     } else if (period === 'week') {
       const start = startOfMonth(today)
       chartData.value = Array.from({ length: getWeeksInMonth(today, { weekStartsOn: 1 }) }, (_, i) => {
         const wDate = addWeeks(start, i)
         const wNum = getWeek(wDate, { weekStartsOn: 1 })
-        const match = history.find(h => h.period === `${today.getFullYear()}-${wNum}`)
-        return { time: `S${wNum}`, sales: match?.value || 0, purchase: match?.total || 0 }
+        const periodStr = `${today.getFullYear()}-${wNum}` // Need to match backend format IYYY-IW
+        const match = history.find(h => h.period === periodStr)
+        const expMatch = expenseHistory.find(h => h.period === periodStr)
+        return {
+          time: `S${wNum}`,
+          sales: match?.value || 0,
+          purchase: match?.total || 0,
+          expenses: expMatch?.value || 0
+        }
       })
     } else {
       const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc']
       chartData.value = months.map((name, i) => {
-        const match = history.find(h => h.period === `${today.getFullYear()}-${String(i + 1).padStart(2, '0')}`)
-        return { time: name, sales: match?.value || 0, purchase: match?.total || 0 }
+        const periodStr = `${today.getFullYear()}-${String(i + 1).padStart(2, '0')}`
+        const match = history.find(h => h.period === periodStr)
+        const expMatch = expenseHistory.find(h => h.period === periodStr)
+        return {
+          time: name,
+          sales: match?.value || 0,
+          purchase: match?.total || 0,
+          expenses: expMatch?.value || 0
+        }
       })
     }
   } catch (e) {
@@ -177,6 +213,13 @@ const showTooltip = (item, label, value, e) => {
   tooltip.value = { visible: true, x: e.clientX - rect.left, y: e.clientY - rect.top, label, value, time: item.time }
 }
 const hideTooltip = () => tooltip.value.visible = false
+
+const getTooltipColor = (label) => {
+  if (label === 'Ventes') return 'bg-emerald-400'
+  if (label === 'Achats') return 'bg-red-400'
+  if (label === 'Dépenses') return 'bg-orange-400'
+  return 'bg-gray-400'
+}
 
 onMounted(() => fetchData(activeTab.value))
 watch(activeTab, (t) => fetchData(t))

@@ -143,10 +143,10 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600 text-right">{{ item.qty }}</td>
                             <td class="px-6 py-4 text-sm font-medium text-gray-900 text-right">{{ format(item.revenue)
-                            }}</td>
+                                }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500 text-right">{{ format(item.cost) }}</td>
                             <td class="px-6 py-4 text-sm font-bold text-emerald-600 text-right">{{ format(item.profit)
-                            }}</td>
+                                }}</td>
                             <td class="px-6 py-4 text-xs font-bold text-right py-1">
                                 <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                                     {{ ((item.profit / item.revenue) * 100).toFixed(1) }}%
@@ -199,7 +199,7 @@ const profitMargin = computed(() => {
 const refreshData = async () => {
     loading.value = true
     try {
-        await statisticStore.fetchProductSales(period.value)
+        await statisticStore.fetchBestSellingProduct(period.value)
         await statisticStore.fetchProfit(period.value)
         await statisticStore.fetchRevenue(period.value)
         await statisticStore.fetchSalesReport(period.value)
@@ -216,8 +216,8 @@ const refreshData = async () => {
         totalItemsSold.value = statisticStore.topProducts.sales?.total || statisticStore.topProducts.length * 10 || 0
 
         // Populate Table
-        if (statisticStore.topProducts.data) {
-            productPerformance.value = statisticStore.topProducts.data.map(p => ({
+        if (statisticStore.topProducts) {
+            productPerformance.value = statisticStore.topProducts.map(p => ({
                 id: p.id,
                 name: p.Prod_name,
                 category: p.category?.name || 'Uncategorized',

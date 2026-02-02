@@ -84,7 +84,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { MagnifyingGlassIcon, ArchiveBoxIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import ProductCard from './ProductCard.vue'
+import ProductCard from '@/components/Products/ProductCard.vue'
 import { useCategoryStore } from '@/stores/CategoryStore' // Vérifie ton chemin
 import { NSpin } from 'naive-ui'
 const props = defineProps({

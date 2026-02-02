@@ -1,7 +1,7 @@
 <!-- layouts/DefaultLayout.vue -->
 <script setup lang="ts">
-import NavBar from '@/components/NavBar.vue'
-import FooTer from '@/components/FooTer.vue'
+import NavBar from '@/components/layout/NavBar.vue'
+import Footer from '@/components/layout/Footer.vue'
 </script>
 
 <template>
@@ -15,6 +15,6 @@ import FooTer from '@/components/FooTer.vue'
       <RouterView />
     </main>
 
-    <FooTer />
+    <Footer />
   </div>
 </template>

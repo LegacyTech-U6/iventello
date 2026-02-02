@@ -82,7 +82,7 @@ import { storeToRefs } from 'pinia'
 import { NSpin } from 'naive-ui'
 import { OutOfStock } from '@/service/api'
 import GridCard from '@/components/ui/cards/GridCard.vue'
-import OutOfStockCard from '@/components/OutOfStockCard.vue'
+import OutOfStockCard from '@/components/Products/OutOfStockCard.vue'
 import {
   ArchiveBoxArrowDownIcon,
   ArchiveBoxXMarkIcon,

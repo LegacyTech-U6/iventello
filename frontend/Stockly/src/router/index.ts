@@ -143,8 +143,8 @@ const routes: RouteRecordRaw[] = [
         meta: { permission: 'canViewDashboard' },
       },
       {
-        path:'expenses',
-        name:'expenses',
+        path: 'expenses',
+        name: 'expenses',
         component: () => import('../views/ExpenseView.vue'),
         meta: { permission: 'canManageExpenses' },
       },
@@ -168,8 +168,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'stepper',
-        name: 'steper',
-        component: () => import('../components/SteeperComponent.vue'),
+        name: 'stepper',
+        component: () => import('@/components/Products/StepperComponent.vue'),
         meta: { showNavbarAndFooter: false },
       },
       {
