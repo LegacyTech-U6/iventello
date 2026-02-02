@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const morgan = require("morgan");
 const path = require("path");
 const app = express();
 const dotenv = require("dotenv");
@@ -99,10 +100,7 @@ async function startApp() {
 startApp();
 
 app.use(express.json());
-app.use((req, res, next) => {
-  console.log(`Requête reçue : ${req.method} ${req.url}`);
-  next();
-});
+app.use(morgan("dev"));
 const allowedOrigins = (process.env.FRONTEND_URL || "")
   .split(",")
   .filter(Boolean);

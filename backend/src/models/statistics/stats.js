@@ -235,7 +235,7 @@ async function getTopProducts({
     return products.map((p) => ({
       id: p.id,
       name: p.Prod_name,
-      image: `${BASE_URL}${p.Prod_image}`,
+      image: p.Prod_image,
       cost_price: Number(p.cost_price),
       selling_price: Number(p.selling_price),
       quantity: Number(p.quantity),

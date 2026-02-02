@@ -23,7 +23,6 @@ exports.register = async (req, res) => {
 
     const { username, Last_name, email, telephone, password } = userData;
 
-    console.log("Payload register traité:", userData);
     const existingInAdmin = await User.findOne({ where: { email } });
     const existingInWorker = await db.Worker.findOne({ where: { email } });
 
@@ -70,15 +69,12 @@ exports.register = async (req, res) => {
       <p>Ce lien expire dans 24 heures.</p>
     `;
 
-    // 7️⃣ Envoi du mail via Resend + logs détaillés
     // 7️⃣ Envoi du mail via Mailjet
     const mailResult = await sendMail({
       to: email,
       subject: "Activez votre compte Stockly",
       html: htmlContent,
     });
-
-    console.log("Résultat envoi mail:", mailResult);
 
     if (!mailResult.success) {
       console.error(
@@ -101,11 +97,9 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Payload login:", req.body); // Log du payload
 
     // Vérifier si l'email et le mot de passe sont présents
     if (!email || !password) {
-      console.log("Email ou mot de passe requis");
       return res.status(400).json({ message: "Email et mot de passe requis" });
     }
 
@@ -119,11 +113,8 @@ exports.login = async (req, res) => {
       { replacements: { email } },
     );
 
-    console.log("Résultat de la requête SQL:", results); // Log des résultats de la requête SQL
-
     // Si aucun utilisateur n'est trouvé
     if (!results || results.length === 0) {
-      console.log("Cet email n'a pas de compte Iventello");
       return res
         .status(400)
         .json({ message: "Cet email n'a pas de compte Iventello" });
@@ -131,7 +122,6 @@ exports.login = async (req, res) => {
 
     // On récupère l'utilisateur trouvé
     const userRecord = results[0];
-    console.log("Utilisateur trouvé:", userRecord); // Log de l'utilisateur trouvé
 
     // 2️⃣ Vérifier le mot de passe
     const match = await bcrypt.compare(password, userRecord.password_hash);
@@ -211,8 +201,6 @@ exports.login = async (req, res) => {
       { expiresIn: "1h" },
     );
 
-    console.log("Token généré:", token); // Log du token généré
-
     // URL publique pour le logo si worker
     let finalUser = userDetails;
     if (
@@ -230,7 +218,6 @@ exports.login = async (req, res) => {
       token,
       user: finalUser,
     });
-    console.log("Détails de l'utilisateur:", userDetails); // Log des détails de l'utilisateur
   } catch (err) {
     console.error("Erreur dans le processus de login:", err); // Log détaillé de l'erreur
     res.status(500).json({ message: "Erreur serveur lors de la connexion" });

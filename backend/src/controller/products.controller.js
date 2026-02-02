@@ -48,7 +48,6 @@ const checkStockAlerts = async (product, entrepriseId) => {
 // 🔹 Récupérer tous les produits
 // ===============================
 exports.getAllProducts = async (req, res) => {
-  console.log("GET /api/products called");
 
   try {
     const query = await queryParser.parse(req);
@@ -68,7 +67,6 @@ exports.getAllProducts = async (req, res) => {
         },
       ],
     });
-    console.log(products[0]);
 
     const data = products.map((p) => {
       const prodJSON = p.toJSON();
@@ -113,7 +111,6 @@ exports.getProductById = async (req, res) => {
       // URL publique Supabase
       product.Prod_image = `${product.Prod_image}`;
     }
-    console.log(product);
 
     res.status(200).json(product);
   } catch (err) {
@@ -147,14 +144,8 @@ exports.createProduct = async (req, res) => {
     let Prod_image = null;
 
     if (req.file) {
-      console.log("📸 FICHIER REÇU :", {
-        originalname: req.file.originalname,
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-      });
 
       const fileName = `${Date.now()}-${req.file.originalname}`;
-      console.log("📝 Nom généré pour Supabase :", fileName);
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("images")
@@ -165,13 +156,9 @@ exports.createProduct = async (req, res) => {
         });
 
       if (uploadError) throw uploadError;
-      console.log("📡 Résultat upload :", uploadData);
 
       // 🔹 Générer l’URL publique directement
       Prod_image = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${fileName}`;
-      console.log("🌍 URL publique générée :", Prod_image);
-    } else {
-      console.log("⚠️ Aucun fichier reçu → pas d’upload.");
     }
 
     // 🔹 Créer le produit avec l'URL publique
@@ -361,16 +348,8 @@ exports.createSale = async (req, res) => {
 // ===============================
 
 exports.addQuantity = async (req, res) => {
-  console.log("====================================");
-  console.log("add product called");
-  console.log("====================================");
-
   const { productId, quantityAdd } = req.body;
   const entrepriseId = req.entrepriseId;
-
-  console.log("====================================");
-  console.log(req.body);
-  console.log("====================================");
 
   const MAX_RETRIES = 3; // nombre de tentatives si lock timeout
   let attempt = 0;
@@ -507,7 +486,6 @@ exports.buyProduct = async (req, res) => {
 exports.getLowStockProducts = async (req, res) => {
   try {
     const entrepriseId = req.entrepriseId;
-    console.log(entrepriseId);
 
     const settings = await Settings.findOne({
       where: { entreprise_id: entrepriseId },
@@ -534,10 +512,6 @@ exports.getLowStockProducts = async (req, res) => {
       }
       return prodJSON;
     });
-
-    console.log("====================================");
-    console.log(data);
-    console.log("====================================");
 
     if (products.length > 0) {
       await sendNotification({
@@ -593,9 +567,7 @@ exports.getOutOfStockProducts = async (req, res) => {
         save: true,
       });
     }
-    console.log("====================================");
-    console.log("finished products count:", data.length);
-    console.log("====================================");
+    }
     res.json({ products: data });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -606,18 +578,12 @@ exports.getOutOfStockProducts = async (req, res) => {
 // 🔹 Produits par catégorie
 // ===============================
 exports.getProductsByCategory = async (req, res) => {
-  console.log("====================================");
-  console.log("products by category called");
-  console.log("====================================");
   try {
     const categoryId = parseInt(req.params.categoryId);
     if (isNaN(categoryId))
       return res
         .status(400)
         .json({ success: false, message: "ID de catégorie invalide" });
-    console.log("====================================");
-    console.log("this is the category id received", categoryId);
-    console.log("====================================");
 
     const data = await Product.findAll({
       where: {
@@ -641,16 +607,13 @@ exports.getProductsByCategory = async (req, res) => {
       },
     });
     // Transformer le nom du fichier en URL publique Supabase
-    const products = products.map((p) => {
+    const products = data.map((p) => {
       const prodJSON = p.toJSON();
       if (prodJSON.Prod_image) {
         prodJSON.Prod_image = `${prodJSON.Prod_image}`;
       }
       return prodJSON;
     });
-    console.log("====================================");
-    console.log(count);
-    console.log("====================================");
 
     res.status(200).json({ count, products });
   } catch (err) {

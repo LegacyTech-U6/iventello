@@ -3,7 +3,7 @@ const sequelizeQuery = require("sequelize-query");
 const db = require("../config/db");
 const Entreprise = db.Entreprise;
 const queryParser = sequelizeQuery(db);
-const {supabase} = require('../middleware/supabase')
+const { supabase } = require("../middleware/supabase");
 
 // ===============================
 // 🔹 Récupérer toutes les entreprises d’un utilisateur
@@ -20,8 +20,6 @@ exports.getAllEntreprises = async (req, res) => {
       ...query,
       attributes: { exclude: [] },
     });
-const entreprise = await Entreprise.findOne({ where: { id: 1 } });
-console.log(entreprise.currency);
 
     const data = entreprises.map((p) => {
       const EntJSON = p.toJSON();
@@ -67,24 +65,20 @@ exports.getEntrepriseByUuid = async (req, res) => {
 // ===============================
 exports.createEntreprise = async (req, res) => {
   try {
-    
-    console.log("=== Début createEntreprise ===");
-
     // 1️⃣ Vérifier l'utilisateur
-    console.log("req.user:", req.user);
+    // 1️⃣ Vérifier l'utilisateur
+
     if (!req.user || !req.user.id) {
       return res.status(401).json({ message: "Utilisateur non authentifié" });
     }
     const user_id = req.user.id;
 
     // 2️⃣ Vérifier le body reçu
-    console.log("req.body:", req.body);
+    // 2️⃣ Vérifier le body reçu
 
     // 3️⃣ Vérifier le fichier uploadé
     let logoFileName = null;
     if (req.file) {
-      console.log("Fichier reçu:", req.file.originalname);
-
       const fileName = Date.now() + "-" + req.file.originalname;
 
       const { error } = await supabase.storage
@@ -102,7 +96,6 @@ exports.createEntreprise = async (req, res) => {
 
       logoFileName = fileName;
     } else {
-      console.log("Pas de fichier uploadé");
     }
 
     // 4️⃣ Création en DB
@@ -118,18 +111,14 @@ exports.createEntreprise = async (req, res) => {
       entJSON.logo_url = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${logoFileName}`;
     }
 
-    console.log("Entreprise créée avec succès:", entJSON);
-
     // 6️⃣ Réponse
     res.status(201).json(entJSON);
   } catch (err) {
     console.error("Erreur createEntreprise:", err);
     res.status(500).json({ message: err.message || "fetch failed" });
   } finally {
-    console.log("=== Fin createEntreprise ===");
   }
 };
-
 
 // ===============================
 // 🔹 Mettre à jour une entreprise par UUID
@@ -170,7 +159,12 @@ exports.updateEntreprise = async (req, res) => {
       entJSON.logo_url = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${entJSON.logo_url}`;
     }
 
-    res.status(200).json({ message: "Entreprise mise à jour avec succès", entreprise: entJSON });
+    res
+      .status(200)
+      .json({
+        message: "Entreprise mise à jour avec succès",
+        entreprise: entJSON,
+      });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

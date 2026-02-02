@@ -17,8 +17,6 @@ exports.getAllWorkers = async (req, res) => {
       query.where.user_id = req.user.id;
     }
 
-    console.log("Query where:", query.where);
-
     const data = await Worker.findAll({
       where: query.where,
       order: query.order || [["id", "ASC"]],
@@ -70,8 +68,6 @@ exports.getWorkerById = async (req, res) => {
 // 🔹 Créer un employé
 // ===============================
 exports.createWorker = async (req, res) => {
-  console.log("Worker payload:", req.body);
-
   try {
     const { email } = req.body;
 
