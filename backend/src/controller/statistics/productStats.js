@@ -3,11 +3,10 @@ const {
   getProfit,
   getClients,
   getTopProducts,
-  getRevenueByCategory
+  getRevenueByCategory,
 } = require("../../models/statistics/stats");
 
 module.exports = {
-
   /**
    * 🔹 Ventes par période
    * GET /api/stats/sales?period=month&enterpriseId=1
@@ -20,7 +19,7 @@ module.exports = {
       const result = await getSales({
         period,
         enterpriseId,
-        userId: req.user?.id
+        userId: req.user?.id,
       });
 
       res.json({ period, sales: result });
@@ -42,7 +41,7 @@ module.exports = {
       const result = await getProfit({
         period,
         enterpriseId,
-        userId: req.user?.id
+        userId: req.user?.id,
       });
 
       res.json({ period, profit: result });
@@ -64,7 +63,7 @@ module.exports = {
       const result = await getClients({
         period,
         enterpriseId,
-        userId: req.user?.id
+        userId: req.user?.id,
       });
 
       res.json({ period, clients: result });
@@ -86,7 +85,7 @@ module.exports = {
       const products = await getTopProducts({
         enterpriseId,
         userId: req.user?.id,
-        limit
+        limit,
       });
 
       res.json({ products });
@@ -108,7 +107,7 @@ module.exports = {
       const result = await getRevenueByCategory({
         period,
         enterpriseId,
-        userId: req.user?.id
+        userId: req.user?.id,
       });
 
       res.json({ period, revenue: result });
@@ -118,4 +117,26 @@ module.exports = {
     }
   },
 
+  /**
+   * 🔹 Dépenses par période
+   * GET /api/stats/expenses?period=month&enterpriseId=1
+   */
+  expenses: async (req, res) => {
+    try {
+      const period = req.query.period || "month";
+      const enterpriseId = req.query.enterpriseId || req?.entrepriseId;
+
+      const result =
+        await require("../../models/statistics/stats").getExpensesStats({
+          period,
+          enterpriseId,
+          userId: req.user?.id,
+        });
+
+      res.json({ period, expenses: result });
+    } catch (error) {
+      console.error("Erreur expenses:", error);
+      res.status(500).json({ error: error.message });
+    }
+  },
 };

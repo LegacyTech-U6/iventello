@@ -3,6 +3,7 @@ const {
   Sales,
   Client,
   Entreprise,
+  Expense,
   Sequelize,
 } = require("../../config/db");
 const { Op, fn, col, literal } = Sequelize;
@@ -127,6 +128,32 @@ async function getClients({ userId, enterpriseId, period = "month" }) {
     attributes: [
       [fn("TO_CHAR", col("createdAt"), dateFormat), "period"],
       [fn("COUNT", col("id")), "value"],
+    ],
+    group: ["period"],
+    order: [["period", "ASC"]],
+  });
+
+  const history = rows.map((r) => ({
+    period: r.dataValues.period,
+    value: Number(r.dataValues.value),
+    growth_percent: 0,
+  }));
+  const total = history.reduce((a, h) => a + h.value, 0);
+  return { total, history: computeGrowth(history) };
+}
+
+// 🔹 Stats dépenses
+async function getExpensesStats({ userId, enterpriseId, period }) {
+  const filter = await getFilter({ userId, enterpriseId });
+  if (filter === null) return { total: 0, history: [] };
+
+  const dateFormat = getDateFormat(period);
+
+  const rows = await Expense.findAll({
+    where: filter,
+    attributes: [
+      [fn("TO_CHAR", col("date"), dateFormat), "period"],
+      [fn("SUM", col("amount")), "value"],
     ],
     group: ["period"],
     order: [["period", "ASC"]],
@@ -299,4 +326,5 @@ module.exports = {
   getClients,
   getRevenueByCategory,
   getTopProducts,
+  getExpensesStats,
 };
