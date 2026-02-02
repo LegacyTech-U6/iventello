@@ -41,7 +41,8 @@
             </div>
 
             <InvoiceItemsTable :items="invoice.items" />
-            <InvoiceSummary :items="invoice.items" :discount="invoice.discount" :tax-rate="invoice.taxRate" />
+            <InvoiceSummary :items="invoice.items" :discount="invoice.discount" :tax="invoice.tax"
+              :tax-rate="invoice.taxRate" />
             <PaymentTerms />
           </div>
         </div>
@@ -117,6 +118,7 @@ async function downloadPDF() {
     show('Invoice created successfully! Preparing for print...', 'success')
     const clientName = clientData.value?.client_name || 'customer'
     const fileName = `invoice-${clientName}-${props.invoice.id}.pdf`
+    console.log('Invoice content:', invoiceContent.value)
     // Étape 4️⃣ — Appeler l'export vers PDF
     await exportToPDF(invoiceContent.value, fileName)
 

@@ -7,13 +7,13 @@
       </div>
 
       <div v-if="discount > 0" class="summary-row">
-        <span class="label">Discount ({{ discount }}%):</span>
-        <span class="value discount">-{{ format(discountAmount) }}</span>
+        <span class="label">Discount:</span>
+        <span class="value discount">-{{ format(discount) }}</span>
       </div>
 
       <div class="summary-row">
         <span class="label">Tax ({{ taxRate }}%):</span>
-        <span class="value">{{ format(taxAmount) }}</span>
+        <span class="value">{{ format(tax) }}</span>
       </div>
 
       <div class="summary-row total">
@@ -26,29 +26,27 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useCurrency} from '@/composable/useCurrency'
-const {format} = useCurrency()
+import { useCurrency } from '@/composable/useCurrency'
+const { format } = useCurrency()
 
 const props = defineProps({
   items: { type: Array, default: () => [] },
-  discount: { type: Number, default: 0 },
-  taxRate: { type: Number, default: 0 },
+  discount: { type: Number, default: 0 },   // Amount
+  tax: { type: Number, default: 0 },        // Amount
+  taxRate: { type: Number, default: 0 }     // For display only
 })
 
+// Subtotal = Sum(ItemPrice * Qty - ItemDiscount)
 const subtotal = computed(() =>
-  props.items.reduce((sum, item) => sum + item.selling_price * item.quantity, 0),
-)
-
-const discountAmount = computed(() =>
-  parseFloat(((subtotal.value * props.discount) / 100).toFixed(2)),
-)
-
-const taxAmount = computed(() =>
-  parseFloat((((subtotal.value - discountAmount.value) * props.taxRate) / 100).toFixed(2)),
+  props.items.reduce((sum, item) => {
+    const itemTotal = item.selling_price * item.quantity;
+    const itemDiscount = item.discount || 0;
+    return sum + (itemTotal - itemDiscount);
+  }, 0)
 )
 
 const total = computed(() =>
-  parseFloat((subtotal.value - discountAmount.value + taxAmount.value).toFixed(2)),
+  parseFloat((subtotal.value - props.discount + props.tax).toFixed(2))
 )
 
 

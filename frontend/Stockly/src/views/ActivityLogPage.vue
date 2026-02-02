@@ -138,7 +138,6 @@ const search = ref('')
 
 onMounted(async () => {
   await activityStore.fetchActivities()
-  await activityStore.fetchDailySalesReport()
   loading.value = false
 })
 

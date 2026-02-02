@@ -7,6 +7,7 @@
           <th class="text-left">Description</th>
           <th class="text-center">Qty</th>
           <th class="text-right">Unit Price</th>
+          <th class="text-right">Discount</th>
           <th class="text-right">Amount</th>
         </tr>
       </thead>
@@ -14,12 +15,14 @@
         <tr v-for="(item, index) in items" :key="item.id">
           <td class="index">{{ index + 1 }}</td>
           <td class="description">
-            <div class="item-name">{{ item.Prod_name }}</div>
+            <div class="item-name">{{ item.Prod_name || item.product?.Prod_name || 'Product' }}</div>
             <div v-if="item.description" class="item-desc">{{ item.description }}</div>
           </td>
           <td class="quantity">{{ item.quantity }}</td>
-          <td class="unit-price">{{ format(item.selling_price) }}</td>
-          <td class="amount">{{format(item.quantity * item.selling_price) }}</td>
+          <td class="unit-price text-right">{{ format(item.selling_price || item.unit_price || 0) }}</td>
+          <td class="discount text-right">{{ format(item.discount || 0) }}</td>
+          <td class="amount text-right">{{ format((item.quantity * (item.selling_price || item.unit_price || 0)) -
+            (item.discount || 0)) }}</td>
         </tr>
       </tbody>
     </table>
@@ -28,7 +31,7 @@
 
 <script setup>
 import { useCurrency } from '@/composable/useCurrency';
-const {format} = useCurrency()
+const { format } = useCurrency()
 defineProps({
   items: Array,
 })
@@ -93,6 +96,7 @@ defineProps({
 }
 
 .unit-price,
+.discount,
 .amount {
   text-align: right;
   width: 100px;
@@ -102,9 +106,11 @@ defineProps({
 .text-left {
   text-align: left;
 }
+
 .text-center {
   text-align: center;
 }
+
 .text-right {
   text-align: right;
 }

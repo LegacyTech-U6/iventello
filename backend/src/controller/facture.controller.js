@@ -24,9 +24,12 @@ const InvoiceController = {
 
       let total_hors_reduction = 0;
       for (const item of items) {
-        total_hors_reduction +=
-          Number(item.quantity) * Number(item.selling_price);
+        // Calculate item total cost: (Price * Qty) - Discount
+        const itemTotal = Number(item.quantity) * Number(item.selling_price);
+        const itemDiscount = Number(item.discount) || 0;
+        total_hors_reduction += itemTotal - itemDiscount;
       }
+
       const general_total =
         total_hors_reduction - Number(discount) + Number(tax);
       const total = total_hors_reduction;
@@ -58,7 +61,7 @@ const InvoiceController = {
           product_id: item.id,
           quantity: item.quantity,
           unit_price: item.selling_price,
-          tva: item.vat || 0,
+          tva: item.tva || 0, // Frontend might not send this, default to 0
           discount: item.discount || 0,
         });
 
@@ -71,12 +74,16 @@ const InvoiceController = {
         product.quantity -= item.quantity;
         await product.save();
 
+        const itemDiscount = Number(item.discount) || 0;
+        const finalItemTotal =
+          Number(item.selling_price) * Number(item.quantity) - itemDiscount;
+
         const sale = await Sales.create({
           product_id: item.id,
           quantity_sold: item.quantity,
-          total_price: item.selling_price * item.quantity,
+          total_price: finalItemTotal,
           total_profit:
-            (item.selling_price - product.cost_price) * item.quantity,
+            finalItemTotal - Number(product.cost_price) * Number(item.quantity),
           entreprise_id,
         });
 
@@ -91,7 +98,7 @@ const InvoiceController = {
           entity_id: product.id,
           description: `Sold ${item.quantity} units of "${product.Prod_name}"`,
           quantity: item.quantity,
-          amount: item.quantity * item.selling_price,
+          amount: finalItemTotal,
           ip_address: req.ip,
           user_agent: req.headers["user-agent"],
           entreprise_id,
