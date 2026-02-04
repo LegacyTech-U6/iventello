@@ -89,7 +89,7 @@ export const useAuthStore = defineStore('auth', {
         // ⚠️ backend ne renvoie que { message }
         this.successMessage = res.data.message || 'Inscription réussie 🎉'
       } catch (err) {
-        this.error = err.response?.data?.message || "Erreur d'inscription ❌"
+        this.error = this.getExactError(err)
       } finally {
         this.isLoading = false
       }
@@ -110,7 +110,7 @@ export const useAuthStore = defineStore('auth', {
         await this.getAccount() // ⬅️ récupère et met à jour user + type
         this.redirectAfterLogin() // ⬅️ redirection selon le type
       } catch (err) {
-        this.error = err.response?.data?.message || 'Erreur de connexion ❌'
+        this.error = this.getExactError(err)
         this.user = null
         this.token = null
       } finally {
@@ -146,12 +146,56 @@ export const useAuthStore = defineStore('auth', {
           this.user.roleName = 'Admin'
         }
       } catch (err) {
-        this.error = err.response?.data?.message || 'Impossible de récupérer le compte ❌'
+        this.error = this.getExactError(err)
         this.user = null
         this.token = null
         localStorage.removeItem('token')
       }
     },
+
+    /**
+     * Récupère l'erreur exacte du réseau ou du serveur
+     */
+    getExactError(err) {
+      // Erreur de réponse du serveur
+      if (err.response?.data?.message) {
+        return err.response.data.message
+      }
+
+      // Autres erreurs du serveur
+      if (err.response?.data?.error) {
+        return err.response.data.error
+      }
+
+      // Erreur réseau (pas de connexion au serveur)
+      if (err.message === 'Network Error') {
+        return 'Erreur réseau : impossible de se connecter au serveur'
+      }
+
+      // Timeout de la requête
+      if (err.code === 'ECONNABORTED') {
+        return 'Délai d\'expiration dépassé : le serveur a mis trop de temps à répondre'
+      }
+
+      // Pas de connexion Internet
+      if (err.message === 'ERR_NETWORK') {
+        return 'Pas de connexion Internet détectée'
+      }
+
+      // Erreur de requête (avant envoi)
+      if (err.request && !err.response) {
+        return `Erreur réseau: ${err.message || 'Impossible de contacter le serveur'}`
+      }
+
+      // Message d'erreur d'axios générique
+      if (err.message) {
+        return err.message
+      }
+
+      // Fallback
+      return 'Une erreur est survenue'
+    },
+
     /**
      * Déconnexion utilisateur
      */
@@ -193,7 +237,7 @@ export const useAuthStore = defineStore('auth', {
         const res = await axios.post(`${this.API_URL}/auth/forgot-password`, { email })
         this.successMessage = res.data.message || 'Lien envoyé 📩'
       } catch (err) {
-        this.error = err.response?.data?.message || 'Erreur lors de la demande ❌'
+        this.error = this.getExactError(err)
       } finally {
         this.isLoading = false
       }
@@ -213,7 +257,7 @@ export const useAuthStore = defineStore('auth', {
         })
         this.successMessage = res.data.message
       } catch (err) {
-        this.error = err.response?.data?.error || 'Erreur réinitialisation ❌'
+        this.error = this.getExactError(err)
       } finally {
         this.isLoading = false
       }
@@ -234,7 +278,7 @@ export const useAuthStore = defineStore('auth', {
         )
         this.successMessage = res.data.message
       } catch (err) {
-        this.error = err.response?.data?.message || 'Erreur changement mot de passe ❌'
+        this.error = this.getExactError(err)
       } finally {
         this.isLoading = false
       }
@@ -251,7 +295,7 @@ export const useAuthStore = defineStore('auth', {
         const res = await axios.get(`${this.API_URL}/auth/activate/${token}`)
         this.successMessage = res.data.message || 'Compte activé avec succès 🎉'
       } catch (err) {
-        this.error = err.response?.data?.message || 'Lien invalide ou expiré ❌'
+        this.error = this.getExactError(err)
       } finally {
         this.isLoading = false
       }
@@ -270,7 +314,7 @@ export const useAuthStore = defineStore('auth', {
         this.user = res.data.user || res.data // selon ta réponse backend
         this.successMessage = res.data.message || 'Profil mis à jour ✅'
       } catch (err) {
-        this.error = err.response?.data?.message || 'Erreur de mise à jour ❌'
+        this.error = this.getExactError(err)
       } finally {
         this.isLoading = false
       }
