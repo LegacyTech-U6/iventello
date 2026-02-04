@@ -19,10 +19,9 @@
             <div v-if="item.description" class="item-desc">{{ item.description }}</div>
           </td>
           <td class="quantity">{{ item.quantity }}</td>
-          <td class="unit-price text-right">{{ format(item.selling_price || item.unit_price || 0) }}</td>
-          <td class="discount text-right">{{ format(item.discount || 0) }}</td>
-          <td class="amount text-right">{{ format((item.quantity * (item.selling_price || item.unit_price || 0)) -
-            (item.discount || 0)) }}</td>
+          <td class="unit-price text-right">{{ format(Number(item.selling_price || item.unit_price || 0)) }}</td>
+          <td class="discount text-right">{{ format(Number(item.discount || 0)) }}</td>
+          <td class="amount text-right">{{ format(Number(item.quantity) * Number(item.selling_price || item.unit_price || 0) - Number(item.discount || 0)) }}</td>
         </tr>
       </tbody>
     </table>

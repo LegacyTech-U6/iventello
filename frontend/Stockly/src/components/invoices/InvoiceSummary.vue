@@ -39,9 +39,11 @@ const props = defineProps({
 // Subtotal = Sum(ItemPrice * Qty - ItemDiscount)
 const subtotal = computed(() =>
   props.items.reduce((sum, item) => {
-    const itemTotal = item.selling_price * item.quantity;
-    const itemDiscount = item.discount || 0;
-    return sum + (itemTotal - itemDiscount);
+    const price = Number(item.selling_price || item.unit_price || 0);
+    const qty = Number(item.quantity || 0);
+    const discount = Number(item.discount || 0);
+    const itemTotal = price * qty;
+    return sum + (itemTotal - discount);
   }, 0)
 )
 

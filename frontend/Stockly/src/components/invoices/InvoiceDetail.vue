@@ -121,12 +121,12 @@
                 </td>
                 <td class="border border-gray-300 px-4 py-3 text-center">{{ item.quantity }}</td>
                 <td class="border border-gray-300 px-4 py-3 text-right font-mono"
-                  :style="getDynamicStyle(item.selling_price)">
-                  {{ format(item.selling_price) }}
+                  :style="getDynamicStyle(Number(item.selling_price || item.unit_price || 0))">
+                  {{ format(Number(item.selling_price || item.unit_price || 0)) }}
                 </td>
                 <td class="border border-gray-300 px-4 py-3 text-right font-mono font-semibold"
-                  :style="getDynamicStyle(item.quantity * item.selling_price)">
-                  {{ format(item.quantity * item.selling_price) }}
+                  :style="getDynamicStyle(item.quantity * (item.selling_price || item.unit_price || 0))">
+                  {{ format(Number(item.quantity) * Number(item.selling_price || item.unit_price || 0)) }}
                 </td>
               </tr>
             </tbody>
@@ -232,18 +232,24 @@ async function loadInvoice(id) {
 }
 
 function calculateSubtotal() {
-  return invoice.value.items.reduce((sum, item) => sum + item.selling_price * item.quantity, 0)
+  return invoice.value.items.reduce((sum, item) => {
+    const price = Number(item.selling_price || item.unit_price || 0);
+    const qty = Number(item.quantity || 0);
+    return sum + (price * qty);
+  }, 0);
 }
 
 function calculateDiscount() {
-  const subtotal = calculateSubtotal()
-  return (subtotal * invoice.value.discount) / 100
+  const subtotal = calculateSubtotal();
+  const discountPercent = Number(invoice.value.discount || 0);
+  return (subtotal * discountPercent) / 100;
 }
 
 function calculateTax() {
-  const subtotal = calculateSubtotal()
-  const discount = calculateDiscount()
-  return ((subtotal - discount) * invoice.value.tva) / 100
+  const subtotal = calculateSubtotal();
+  const discount = calculateDiscount();
+  const taxRate = Number(invoice.value.tva || 0);
+  return ((subtotal - discount) * taxRate) / 100;
 }
 
 function formatDate(date) {
