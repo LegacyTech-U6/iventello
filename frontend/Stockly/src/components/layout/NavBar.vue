@@ -21,6 +21,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
 const navItems = [
   { name: 'Fonctionnalités', to: '/features', icon: BoltIcon },
+  { name: 'Tarifs', to: '/pricing', icon: LifebuoyIcon },
   { name: 'Blog', to: '/blogs', icon: BookOpenIcon },
 ]
 
