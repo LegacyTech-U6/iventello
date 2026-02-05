@@ -16,6 +16,7 @@ import {
   getClientsTats,
   getAdminDashboard,
   getExpenseStats,
+  getReportDiscounts,
 } from '@/service/api'
 
 export const useStatisticsStore = defineStore('statistics', {
@@ -27,7 +28,9 @@ export const useStatisticsStore = defineStore('statistics', {
     bestByCategory: {},
     revenue: { total: 0, history: [] },
     profit: { total: 0, history: [] },
+    profit: { total: 0, history: [] },
     expenses: { total: 0, history: [] },
+    discounts: { totalDiscount: 0 },
     salesComparison: null,
     quarterlySales: [],
     salesTrend: [],
@@ -201,16 +204,7 @@ export const useStatisticsStore = defineStore('statistics', {
 
       this.revenueByCategory = data.revenue
     },
-    async fetchTopProducts() {
-      // Mock API call, replace with your backend API
-      this.topProducts = [
-        { id: 1, name: 'Product A', quantity_sold: 120, revenue: 2400, profit: 900 },
-        { id: 2, name: 'Product B', quantity_sold: 90, revenue: 1800, profit: 700 },
-        { id: 3, name: 'Product C', quantity_sold: 75, revenue: 1500, profit: 600 },
-        { id: 4, name: 'Product D', quantity_sold: 60, revenue: 1200, profit: 400 },
-        { id: 5, name: 'Product E', quantity_sold: 50, revenue: 1000, profit: 350 },
-      ]
-    },
+
     async fetchProductDistributionByCategory() {
       try {
         const data = await getProductDistributionByCategory()
@@ -267,6 +261,19 @@ export const useStatisticsStore = defineStore('statistics', {
         console.log('Expenses:', data)
         console.log('====================================')
         this.expenses = data.expenses || { total: 0, history: [] }
+      } catch (err) {
+        this.error = err.message
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // 🔹 Fetch discounts for a period
+    async fetchDiscountReport(period = 'month') {
+      this.loading = true
+      try {
+        const data = await getReportDiscounts(period)
+        this.discounts = data.data || { totalDiscount: 0 }
       } catch (err) {
         this.error = err.message
       } finally {

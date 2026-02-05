@@ -150,10 +150,13 @@ const columns = [
     title: 'Entreprise',
     key: 'name',
     render(row) {
+      const logoUrl = row.logo_url 
+        ? (row.logo_url.startsWith('http') ? row.logo_url : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002'}/uploads/${row.logo_url}`)
+        : null
       return h('div', { class: 'flex items-center gap-3' }, [
         h('div', { class: 'w-10 h-10 rounded-xl bg-gray-100 border border-gray-100 overflow-hidden flex-shrink-0 flex items-center justify-center' }, [
-          row.logo_url
-            ? h('img', { src: row.logo_url, class: 'w-full h-full object-contain' })
+          logoUrl
+            ? h('img', { src: logoUrl, class: 'w-full h-full object-contain', alt: row.name })
             : h(NIcon, { class: 'text-gray-400' }, { default: () => h(BuildingOfficeIcon) })
         ]),
         h('div', null, [

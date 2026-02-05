@@ -257,7 +257,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'reports',
         name: 'reports',
-        component: () => import('@/views/SalesReport.vue'),
+        component: () => import('@/views/Reports/ReportsPage.vue'),
         meta: { permission: 'canViewInvoices' },
       },
       {
@@ -287,6 +287,13 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 })
 
 router.beforeEach(async (to, from, next) => {

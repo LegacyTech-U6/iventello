@@ -119,7 +119,7 @@
                 <div class="flex justify-between items-center mb-6">
                   <span class="text-lg font-bold text-gray-900">{{ $t('sales.total') }}</span>
                   <span class="text-2xl font-black text-primary" :style="getDynamicStyle(total)">{{ format(total)
-                    }}</span>
+                  }}</span>
                 </div>
 
                 <n-button type="primary" block size="large" @click="createInvoice"
@@ -319,7 +319,7 @@ async function createInvoice() {
     // Let's Map items to ensure correctness
     const payloadItems = saleItems.value.map(item => ({
       ...item,
-      discount: (item.discount || 0) * item.quantity // Convert Unit Discount to Total Line Discount for Model
+      discount: (item.discount || 0) // Send as Fixed Total Discount (User requested: not multiplied by quantity)
     }));
 
     const payload = {

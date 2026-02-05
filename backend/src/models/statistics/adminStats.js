@@ -76,6 +76,7 @@ async function getRecentGlobalActivities(limit = 10) {
       { model: db.User, as: "user", attributes: ["username"] },
       { model: db.Entreprise, as: "entreprise", attributes: ["name", "uuid"] },
       { model: db.Worker, as: "worker", attributes: ["name"] },
+      { model: db.Product, as: "product", attributes: ["name"] },
     ],
   });
   return logs;

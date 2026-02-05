@@ -118,7 +118,21 @@ const columns = [
         title: t('activities.table.action'),
         key: 'action',
         render(row) {
-            return h('span', { class: 'font-medium text-gray-600' }, { default: () => row.action })
+            return h('span', { class: 'font-medium text-gray-600' }, { default: () => row.action || '-' })
+        }
+    },
+    {
+        title: t('activities.table.product'),
+        key: 'product',
+        render(row) {
+            return h('span', { class: 'font-medium text-blue-600' }, { default: () => row.product?.name || '-' })
+        }
+    },
+    {
+        title: t('activities.table.description'),
+        key: 'description',
+        render(row) {
+            return h('span', { class: 'text-gray-500 italic text-xs' }, { default: () => row.description || '-' })
         }
     },
     {

@@ -10,7 +10,7 @@
         </div>
 
         <!-- Toggle Advanced Analytics -->
-        <div
+        <!-- <div
           class="flex items-center gap-3 bg-white dark:bg-gray-900 px-4 py-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
           <span class="text-sm font-bold text-gray-600 dark:text-gray-300"
             :class="{ 'text-indigo-600': showAdvancedAnalytics }">{{
@@ -21,16 +21,16 @@
             <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
               :class="showAdvancedAnalytics ? 'translate-x-6' : 'translate-x-1'" />
           </button>
-        </div>
+        </div> -->
       </div>
 
       <!-- Advanced Analytics View -->
-      <div v-if="showAdvancedAnalytics">
+      <!-- <div v-if="showAdvancedAnalytics">
         <AdvancedAnalytics />
-      </div>
+      </div> -->
 
       <!-- Default Dashboard View -->
-      <div v-else class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <GridCard v-for="stat in topStats" :key="stat.id" :title="stat.label" :value="stat.value" :icon="stat.icon"
             :is-currency="stat.isCurrency" :bgColor="stat.bgColor" :trend="stat.trend" />
@@ -80,7 +80,8 @@ import RecentSales from '@/components/statistics/RecentSales.vue'
 import RevenueCatgeory from '@/components/statistics/RevenueCatgeory.vue'
 
 // Icons
-import { CubeIcon, CurrencyDollarIcon, UsersIcon, Square3Stack3DIcon, ArrowPathIcon, WalletIcon, ChartBarSquareIcon } from '@heroicons/vue/24/outline'
+// Icons
+import { CubeIcon, CurrencyDollarIcon, UsersIcon, Square3Stack3DIcon, ArrowPathIcon, WalletIcon, ChartBarSquareIcon, TicketIcon, ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
 import mascot from '@/assets/image/professional.png'
 import AdvancedAnalytics from '@/components/statistics/AdvancedAnalytics.vue'
 

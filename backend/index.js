@@ -31,6 +31,7 @@ const DemoDataGenerator = require("./src/utils/demo-data-generator");
 const productExcelRoutes = require("./src/routes/excel/productExcel.routes");
 const adminStatsRoutes = require("./src/routes/adminStats.routes");
 const expenseRoutes = require("./src/routes/expense.routes");
+const reportsRoutes = require("./src/routes/reports.routes");
 const { startCurrencyCron, getRates } = require("./src/utils/currency.service");
 // Database
 // ton index.js Sequelize
@@ -148,5 +149,6 @@ app.use("/api/pdf", pdfRoute);
 app.use("/api/excel", productExcelRoutes);
 app.use("/api/admin", adminStatsRoutes);
 app.use("/api/expenses", expenseRoutes);
+app.use("/api/reports", reportsRoutes);
 
 module.exports = app;

@@ -582,3 +582,104 @@ export async function deleteExpense(id) {
   const { data } = await API.delete(`/expenses/${id}`)
   return data
 }
+// Reports API
+export async function getReportSummary(period = 'month') {
+  const entrepriseId = getEnterpriseIdFromStorage()
+  const { data } = await API.get('/reports/summary', {
+    params: { period },
+    headers: entrepriseId ? { 'X-Entreprise-Id': entrepriseId } : {},
+  })
+  return data
+}
+
+export async function getSalesByCategory(period = 'month') {
+  const entrepriseId = getEnterpriseIdFromStorage()
+  const { data } = await API.get('/reports/sales-by-category', {
+    params: { period },
+    headers: entrepriseId ? { 'X-Entreprise-Id': entrepriseId } : {},
+  })
+  return data
+}
+
+export async function getReportExpenses(period = 'month') {
+  const entrepriseId = getEnterpriseIdFromStorage()
+  const { data } = await API.get('/reports/expenses', {
+    params: { period },
+    headers: entrepriseId ? { 'X-Entreprise-Id': entrepriseId } : {},
+  })
+  return data
+}
+
+export async function getReportProfits(period = 'month') {
+  const entrepriseId = getEnterpriseIdFromStorage()
+  const { data } = await API.get('/reports/profits', {
+    params: { period },
+    headers: entrepriseId ? { 'X-Entreprise-Id': entrepriseId } : {},
+  })
+  return data
+}
+
+export async function getBestSellingProductReport(period = 'month') {
+  const entrepriseId = getEnterpriseIdFromStorage()
+  const { data } = await API.get('/reports/best-selling-product', {
+    params: { period },
+    headers: entrepriseId ? { 'X-Entreprise-Id': entrepriseId } : {},
+  })
+  return data
+}
+
+export async function getReportDiscounts(period = 'month') {
+  const entrepriseId = getEnterpriseIdFromStorage()
+  const { data } = await API.get('/reports/discounts', {
+    params: { period },
+    headers: entrepriseId ? { 'X-Entreprise-Id': entrepriseId } : {},
+  })
+  return data
+}
+
+export async function getReportTable({
+  period = 'month',
+  reportType,
+  groupBy,
+  date,
+  includeDetails = false,
+} = {}) {
+  const entrepriseId = getEnterpriseIdFromStorage()
+  const params = {
+    period,
+    report_type: reportType,
+    include_details: includeDetails,
+  }
+
+  if (groupBy) {
+    params.group_by = groupBy
+  }
+  if (date) {
+    params.date = date
+  }
+
+  const { data } = await API.get('/reports/table', {
+    params,
+    headers: entrepriseId ? { 'X-Entreprise-Id': entrepriseId } : {},
+  })
+  return data
+}
+
+function getEnterpriseIdFromStorage() {
+  // Chercher l'ID actif dans localStorage ou depuis l'URL
+  try {
+    const activeEnterprise = localStorage.getItem('activeEnterprise')
+    if (activeEnterprise) {
+      return JSON.parse(activeEnterprise).id || activeEnterprise
+    }
+    // Essayer d'extraire de l'URL si en format /uuid/...
+    const pathParts = window.location.pathname.split('/')
+    if (pathParts[1] && pathParts[1].includes('-')) {
+      return pathParts[1]
+    }
+    return null
+  } catch (error) {
+    console.error('Erreur getEnterpriseIdFromStorage:', error)
+    return null
+  }
+}
