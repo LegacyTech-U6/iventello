@@ -49,7 +49,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6 md:gap-8">
           <TopSellingProducts class="xl:col-span-1" />
           <RevenueCatgeory class="xl:col-span-1" />
           <RecentSales class="lg:col-span-2 xl:col-span-3" />

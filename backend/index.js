@@ -32,6 +32,11 @@ const productExcelRoutes = require("./src/routes/excel/productExcel.routes");
 const adminStatsRoutes = require("./src/routes/adminStats.routes");
 const expenseRoutes = require("./src/routes/expense.routes");
 const reportsRoutes = require("./src/routes/reports.routes");
+const planRoutes = require("./src/routes/payment/plan.routes");
+const subscriptionRoutes = require("./src/routes/payment/subscription.routes");
+
+// ... (other app.use calls)
+
 const { startCurrencyCron, getRates } = require("./src/utils/currency.service");
 // Database
 // ton index.js Sequelize
@@ -150,5 +155,7 @@ app.use("/api/excel", productExcelRoutes);
 app.use("/api/admin", adminStatsRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/reports", reportsRoutes);
+app.use("/api/payment/plans", planRoutes);
+app.use("/api/payment/subscriptions", subscriptionRoutes);
 
 module.exports = app;

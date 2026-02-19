@@ -46,7 +46,7 @@
 
         <!-- Pricing Cards -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 pb-32">
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                 <div v-for="plan in plans" :key="plan.id"
                     class="relative bg-surface border rounded-2xl p-8 flex flex-col transition-all duration-300 hover:shadow-xl hover:border-primary/50 group"
                     :class="[

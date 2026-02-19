@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { CheckIcon, ArrowRightIcon } from '@heroicons/vue/24/solid'
-import featureImageInfo from '@/assets/image/il-1.png' // Variable placeholder as requested
+import featureImageInfo from '@/assets/image/invoice_view.png' // Variable placeholder as requested
 
 // You can change this image path to your own
 const featureImage = ref(featureImageInfo)
@@ -48,7 +48,7 @@ const features = [
         </div>
 
         <!-- Image Placeholder (Right) -->
-        <div class="w-full lg:w-1/2 relative">
+        <div class="w-full  relative">
           <!-- Placeholder Variable applied here -->
           <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100 bg-gray-50">
             <img :src="featureImage" alt="Feature Interface"

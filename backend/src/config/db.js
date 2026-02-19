@@ -82,6 +82,11 @@ db.Entreprise = require("../models/enterprise.model")(sequelize, DataTypes);
 
 db.roles = require("../models/role.model")(sequelize, DataTypes);
 db.Expense = require("../models/expense.model")(sequelize, DataTypes);
+db.Plan = require("../models/payment/plan.model")(sequelize, DataTypes);
+db.Subscription = require("../models/payment/subscription.model")(
+  sequelize,
+  DataTypes,
+);
 
 // =============================================================
 // 🔗 RELATIONS ENTRE LES MODÈLES (Stockly)
@@ -332,6 +337,18 @@ db.Setting.belongsTo(db.Entreprise, {
   foreignKey: "entreprise_id",
   as: "entreprise",
 });
+
+// ===============================
+// 💳 SUBSCRIPTION RELATIONS
+// ===============================
+db.User.hasOne(db.Subscription, { as: "subscription", foreignKey: "user_id" });
+db.Subscription.belongsTo(db.User, { foreignKey: "user_id", as: "user" });
+
+db.Plan.hasMany(db.Subscription, {
+  as: "subscriptions",
+  foreignKey: "plan_id",
+});
+db.Subscription.belongsTo(db.Plan, { foreignKey: "plan_id", as: "plan" });
 
 // ===============================
 // EXPORT
